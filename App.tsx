@@ -8,7 +8,8 @@ import { UsersList } from './components/UsersList';
 import { Reports } from './components/Reports';
 import { DatabaseSettings } from './components/DatabaseSettings';
 import { ResourceRegister } from './components/ResourceRegister';
-import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase } from 'lucide-react';
+import { SystemUsersManagement } from './components/SystemUsersManagement';
+import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck } from 'lucide-react';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -71,6 +72,7 @@ const App: React.FC = () => {
 
           <div className="pt-2 border-t border-slate-800 mt-2">
              <p className={`px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-4 ${!isSidebarOpen && 'hidden'}`}>Sistema</p>
+             <NavItem view="MANAGE_ACCESS" icon={ShieldCheck} label="Usuários de Acesso" />
              <NavItem view="DB_SETTINGS" icon={Settings} label="Configuração BD" />
           </div>
         </nav>
@@ -121,6 +123,7 @@ const App: React.FC = () => {
           {currentView === 'REGISTER_FILIAL' && <ResourceRegister type="FILIAL" />}
           {currentView === 'REGISTER_DEPARTAMENTO' && <ResourceRegister type="DEPARTAMENTO" />}
           {currentView === 'REGISTER_SETOR' && <ResourceRegister type="SETOR" />}
+          {currentView === 'MANAGE_ACCESS' && <SystemUsersManagement />}
         </div>
       </main>
     </div>

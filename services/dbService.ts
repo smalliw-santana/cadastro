@@ -1,8 +1,9 @@
 
-
-import { User } from '../types';
+import { User, SystemUser } from '../types';
 
 const DB_KEY = 'k_system_users_db';
+const SYSTEM_USERS_KEY = 'k_system_access_users'; // New DB for Login Users
+
 const KEYS = {
     FILIAIS: 'k_system_filiais',
     DEPARTAMENTOS: 'k_system_departamentos',
@@ -11,7 +12,7 @@ const KEYS = {
 
 // Initial Data Defaults
 const DEFAULTS = {
-    FILIAIS: ['L01 - CONDOR', 'L02 - A.CACELA', 'L03 - DOCA', 'BELO HORIZONTE', 'CURITIBA', 'PORTO ALEGRE'],
+    FILIAIS: ['L01 - CONDOR', 'L02 - A.CACELA', 'L03 - DOCA', 'L04 - OBIDOS', 'CURITIBA', 'PORTO ALEGRE'],
     DEPARTAMENTOS: ['TECNOLOGIA DA INFORMAÇÃO', 'RECURSOS HUMANOS', 'FINANCEIRO', 'COMERCIAL', 'OPERACIONAL', 'LOGÍSTICA'],
     SETORES: ['DESENVOLVIMENTO', 'INFRAESTRUTURA', 'RECRUTAMENTO', 'CONTABILIDADE', 'VENDAS', 'ALMOXARIFADO']
 };
@@ -20,25 +21,26 @@ const INITIAL_USERS: User[] = [
   {
     id: '1',
     matricula: '1001',
-    nomeCompleto: 'ADMINISTRADOR',
+    nomeCompleto: 'FUNCIONARIO EXEMPLO',
     filial: 'MATRIZ',
-    login: 'ADMIN',
+    login: 'FUNC.1',
     senha: '123',
     departamento: 'TECNOLOGIA DA INFORMAÇÃO',
     setor: 'INFRAESTRUTURA',
     dataCadastro: new Date().toISOString()
-  },
-  {
-    id: '2',
-    matricula: '1002',
-    nomeCompleto: 'JOAO SILVA',
-    filial: 'SÃO PAULO',
-    login: 'JSILVA',
-    senha: '123',
-    departamento: 'COMERCIAL',
-    setor: 'VENDAS',
-    dataCadastro: new Date(Date.now() - 86400000 * 2).toISOString()
   }
+];
+
+// Default Admin for the new Access System
+const INITIAL_SYSTEM_USERS: SystemUser[] = [
+    {
+        id: 'admin-01',
+        nome: 'ADMINISTRADOR SISTEMA',
+        login: 'ADMIN',
+        senha: '123',
+        role: 'ADMIN',
+        createdAt: new Date().toISOString()
+    }
 ];
 
 // Helper to get list or init default
@@ -73,7 +75,52 @@ const removeFromList = (key: string, value: string): boolean => {
 };
 
 export const dbService = {
-  // --- USERS ---
+  // --- AUTHENTICATION & SYSTEM USERS (NEW) ---
+  getSystemUsers: (): SystemUser[] => {
+      const stored = localStorage.getItem(SYSTEM_USERS_KEY);
+      if (!stored) {
+          localStorage.setItem(SYSTEM_USERS_KEY, JSON.stringify(INITIAL_SYSTEM_USERS));
+          return INITIAL_SYSTEM_USERS;
+      }
+      return JSON.parse(stored);
+  },
+
+  addSystemUser: (user: Omit<SystemUser, 'id' | 'createdAt'>): { success: boolean; message: string } => {
+      const users = dbService.getSystemUsers();
+      if (users.some(u => u.login === user.login)) {
+          return { success: false, message: 'Este login já está em uso.' };
+      }
+      
+      const newUser: SystemUser = {
+          ...user,
+          id: crypto.randomUUID(),
+          createdAt: new Date().toISOString()
+      };
+      
+      users.push(newUser);
+      localStorage.setItem(SYSTEM_USERS_KEY, JSON.stringify(users));
+      return { success: true, message: 'Usuário de sistema criado com sucesso.' };
+  },
+
+  deleteSystemUser: (id: string): { success: boolean; message: string } => {
+      const users = dbService.getSystemUsers();
+      // Prevent deleting the last admin or specific protection logic could go here
+      if (users.length <= 1) return { success: false, message: 'Não é possível excluir o único usuário do sistema.' };
+
+      const newUsers = users.filter(u => u.id !== id);
+      localStorage.setItem(SYSTEM_USERS_KEY, JSON.stringify(newUsers));
+      return { success: true, message: 'Acesso revogado com sucesso.' };
+  },
+
+  authenticateSystemUser: (login: string, password: string): boolean => {
+      const users = dbService.getSystemUsers();
+      // Case insensitive login
+      const user = users.find(u => u.login.toUpperCase() === login.toUpperCase() && u.senha === password);
+      return !!user;
+  },
+
+
+  // --- EMPLOYEES / COLLABORATORS (OLD USERS) ---
   getAllUsers: (): User[] => {
     const stored = localStorage.getItem(DB_KEY);
     if (!stored) {
@@ -94,8 +141,9 @@ export const dbService = {
     if (users.some(u => u.matricula === user.matricula)) {
       return { success: false, message: `A matrícula ${user.matricula} já está cadastrada.` };
     }
+    // We still check for unique login among employees to avoid confusion, though they are separate DBs now
     if (users.some(u => u.login === user.login)) {
-      return { success: false, message: `Erro: O login ${user.login} já está em uso.` };
+      return { success: false, message: `Erro: O login ${user.login} já está em uso por outro colaborador.` };
     }
     const newUser: User = {
       ...user,

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { dbService } from '../services/dbService';
 import { User, Lock } from 'lucide-react';
@@ -19,10 +20,10 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     // Simulate network delay for realism
     setTimeout(() => {
-      const users = dbService.getAllUsers();
-      const user = users.find(u => u.login === login.toUpperCase() && u.senha === password);
+      // Use the new Authentication method against System Users DB
+      const isValid = dbService.authenticateSystemUser(login, password);
 
-      if (user) {
+      if (isValid) {
         onLoginSuccess();
       } else {
         setError('Acesso negado. Verifique suas credenciais.');

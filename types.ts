@@ -11,6 +11,15 @@ export interface User {
   dataCadastro: string;
 }
 
+export interface SystemUser {
+  id: string;
+  nome: string;
+  login: string;
+  senha?: string; // Optional for display, required for creation
+  role: 'ADMIN' | 'OPERADOR';
+  createdAt: string;
+}
+
 export type ViewState = 
   | 'LOGIN' 
   | 'DASHBOARD' 
@@ -20,4 +29,5 @@ export type ViewState =
   | 'DB_SETTINGS'
   | 'REGISTER_FILIAL'
   | 'REGISTER_DEPARTAMENTO'
-  | 'REGISTER_SETOR';
+  | 'REGISTER_SETOR'
+  | 'MANAGE_ACCESS';
