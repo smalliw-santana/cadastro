@@ -1,41 +1,23 @@
 
-export enum Filial {
-  MATRIZ = 'MATRIZ',
-  SAO_PAULO = 'SÃO PAULO',
-  RIO_DE_JANEIRO = 'RIO DE JANEIRO',
-  BELO_HORIZONTE = 'BELO HORIZONTE',
-  CURITIBA = 'CURITIBA',
-  PORTO_ALEGRE = 'PORTO ALEGRE'
-}
-
-export enum Departamento {
-  TI = 'TECNOLOGIA DA INFORMAÇÃO',
-  RH = 'RECURSOS HUMANOS',
-  FINANCEIRO = 'FINANCEIRO',
-  COMERCIAL = 'COMERCIAL',
-  OPERACIONAL = 'OPERACIONAL',
-  LOGISTICA = 'LOGÍSTICA'
-}
-
-export enum Setor {
-  DESENVOLVIMENTO = 'DESENVOLVIMENTO',
-  INFRAESTRUTURA = 'INFRAESTRUTURA',
-  RECRUTAMENTO = 'RECRUTAMENTO',
-  CONTABILIDADE = 'CONTABILIDADE',
-  VENDAS = 'VENDAS',
-  ALMOXARIFADO = 'ALMOXARIFADO'
-}
-
 export interface User {
   id: string;
   matricula: string;
   nomeCompleto: string;
-  filial: Filial;
+  filial: string; // Changed from Enum to string to support dynamic entries
   login: string;
-  senha?: string; // Optional because we might verify it but not display it
-  departamento: Departamento;
-  setor: Setor;
-  dataCadastro: string; // ISO String
+  senha?: string;
+  departamento: string; // Changed from Enum to string
+  setor: string; // Changed from Enum to string
+  dataCadastro: string;
 }
 
-export type ViewState = 'LOGIN' | 'DASHBOARD' | 'REGISTER' | 'USERS_LIST' | 'REPORTS';
+export type ViewState = 
+  | 'LOGIN' 
+  | 'DASHBOARD' 
+  | 'REGISTER' 
+  | 'USERS_LIST' 
+  | 'REPORTS' 
+  | 'DB_SETTINGS'
+  | 'REGISTER_FILIAL'
+  | 'REGISTER_DEPARTAMENTO'
+  | 'REGISTER_SETOR';

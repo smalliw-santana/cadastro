@@ -1,18 +1,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
-import { User, Filial } from '../types';
+import { User } from '../types';
 import { FileBarChart2, Printer, Users, Building2, MapPin } from 'lucide-react';
 
 export const Reports: React.FC = () => {
   const [selectedFilial, setSelectedFilial] = useState<string>('');
   const [users, setUsers] = useState<User[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [filialOptions, setFilialOptions] = useState<string[]>([]);
 
   useEffect(() => {
-    // Load users on mount
     const data = dbService.getAllUsers();
     setAllUsers(data);
+    setFilialOptions(dbService.getFiliais());
   }, []);
 
   useEffect(() => {
@@ -32,7 +33,6 @@ export const Reports: React.FC = () => {
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 print:shadow-none print:border-none">
         
-        {/* Header - Hidden on Print to save ink/style */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 print:hidden">
           <div>
             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -52,7 +52,6 @@ export const Reports: React.FC = () => {
           </button>
         </div>
 
-        {/* Filter Controls */}
         <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8 print:hidden">
             <label className="block text-sm font-medium text-slate-700 mb-2">Selecione a Filial de Origem</label>
             <div className="relative max-w-md">
@@ -65,7 +64,7 @@ export const Reports: React.FC = () => {
                     className="w-full pl-10 pr-4 py-3 bg-white border border-slate-300 rounded-lg appearance-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all outline-none"
                 >
                     <option value="">-- Selecione uma opção --</option>
-                    {Object.values(Filial).map((f) => (
+                    {filialOptions.map((f) => (
                         <option key={f} value={f}>{f}</option>
                     ))}
                 </select>
@@ -75,10 +74,8 @@ export const Reports: React.FC = () => {
             </div>
         </div>
 
-        {/* Report Content */}
         {selectedFilial && (
           <div className="animate-[fadeIn_0.3s_ease-out]">
-            {/* Report Header for Print/Display */}
             <div className="border-b-2 border-slate-100 pb-6 mb-6 flex justify-between items-end">
                 <div>
                     <h3 className="text-2xl font-bold text-slate-900">{selectedFilial}</h3>

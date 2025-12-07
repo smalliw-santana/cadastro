@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
-import { Filial, Departamento, Setor } from '../types';
 import { Input } from './Input';
 import { Select } from './Select';
 import { Save, AlertCircle, CheckCircle2 } from 'lucide-react';
@@ -16,7 +16,23 @@ export const RegisterUser: React.FC = () => {
     setor: ''
   });
 
+  // Dynamic Options States
+  const [options, setOptions] = useState({
+      filiais: [] as string[],
+      departamentos: [] as string[],
+      setores: [] as string[]
+  });
+
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+  useEffect(() => {
+    // Load dynamic options from DB
+    setOptions({
+        filiais: dbService.getFiliais(),
+        departamentos: dbService.getDepartamentos(),
+        setores: dbService.getSetores()
+    });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -28,32 +44,23 @@ export const RegisterUser: React.FC = () => {
     }
 
     setFormData(prev => ({ ...prev, [name]: finalValue }));
-    // Clear feedback when typing
     if (feedback) setFeedback(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if empty (basic validation)
     if (Object.values(formData).some(x => x === '')) {
         setFeedback({ type: 'error', message: 'Por favor, preencha todos os campos.' });
         return;
     }
 
     const result = dbService.addUser({
-        matricula: formData.matricula,
-        nomeCompleto: formData.nomeCompleto,
-        filial: formData.filial as Filial,
-        login: formData.login,
-        senha: formData.senha,
-        departamento: formData.departamento as Departamento,
-        setor: formData.setor as Setor
+        ...formData
     });
 
     if (result.success) {
         setFeedback({ type: 'success', message: result.message });
-        // Reset form
         setFormData({
             matricula: '',
             nomeCompleto: '',
@@ -103,7 +110,7 @@ export const RegisterUser: React.FC = () => {
                         name="filial"
                         value={formData.filial}
                         onChange={handleChange}
-                        options={Object.values(Filial)}
+                        options={options.filiais}
                         required
                     />
                 </div>
@@ -152,7 +159,7 @@ export const RegisterUser: React.FC = () => {
                         name="departamento"
                         value={formData.departamento}
                         onChange={handleChange}
-                        options={Object.values(Departamento)}
+                        options={options.departamentos}
                         required
                     />
                 </div>
@@ -162,7 +169,7 @@ export const RegisterUser: React.FC = () => {
                         name="setor"
                         value={formData.setor}
                         onChange={handleChange}
-                        options={Object.values(Setor)}
+                        options={options.setores}
                         required
                     />
                 </div>

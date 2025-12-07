@@ -1,20 +1,89 @@
+
 import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
 import { User } from '../types';
-import { Trash2, Search, Database, ShieldAlert } from 'lucide-react';
+import { Trash2, Search, Database, ShieldAlert, Edit2, Plus, X, Save, CheckCircle2 } from 'lucide-react';
+import { Input } from './Input';
+import { Select } from './Select';
 
-export const UsersList: React.FC = () => {
+interface UsersListProps {
+  onNavigateToRegister?: () => void;
+}
+
+export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Dynamic Options for Edit
+  const [options, setOptions] = useState({
+      filiais: [] as string[],
+      departamentos: [] as string[],
+      setores: [] as string[]
+  });
+
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   useEffect(() => {
-    setUsers(dbService.getAllUsers());
+    loadUsers();
+    // Load options for the edit modal
+    setOptions({
+        filiais: dbService.getFiliais(),
+        departamentos: dbService.getDepartamentos(),
+        setores: dbService.getSetores()
+    });
   }, []);
 
-  const handleDelete = (id: string, name: string) => {
+  const loadUsers = () => {
+    setUsers(dbService.getAllUsers());
+  };
+
+  const handleDelete = (e: React.MouseEvent, id: string, name: string) => {
+    e.stopPropagation(); 
     if (window.confirm(`Tem certeza que deseja excluir o usuário ${name}? Esta ação não pode ser desfeita.`)) {
-        dbService.deleteUser(id);
-        setUsers(dbService.getAllUsers()); // Refresh list
+        const result = dbService.deleteUser(id);
+        if (result.success) {
+            setFeedback({ type: 'success', message: result.message });
+            loadUsers();
+            setTimeout(() => setFeedback(null), 3000);
+        } else {
+            setFeedback({ type: 'error', message: result.message });
+        }
+    }
+  };
+
+  const handleEditClick = (user: User) => {
+    setEditingUser({ ...user });
+    setFeedback(null);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (!editingUser) return;
+    const { name, value } = e.target;
+    let finalValue = value;
+    if (['nomeCompleto', 'login'].includes(name)) {
+        finalValue = value.toUpperCase();
+    }
+    setEditingUser({ ...editingUser, [name]: finalValue });
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+
+    const result = dbService.updateUser(editingUser);
+    if (result.success) {
+        setFeedback({ type: 'success', message: result.message });
+        loadUsers();
+        setIsEditModalOpen(false);
+        setFeedback({ type: 'success', message: 'Usuário atualizado com sucesso!' });
+        setTimeout(() => setFeedback(null), 3000);
+    } else {
+        setFeedback({ type: 'error', message: result.message });
     }
   };
 
@@ -26,6 +95,17 @@ export const UsersList: React.FC = () => {
 
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
+        
+        {feedback && !isEditModalOpen && (
+            <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
+                feedback.type === 'success' ? 'bg-white border-green-200 text-green-700' : 'bg-white border-red-200 text-red-700'
+            }`}>
+                {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <ShieldAlert className="w-5 h-5 text-red-500"/>}
+                <span className="font-medium">{feedback.message}</span>
+                <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
+            </div>
+        )}
+
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
                 <div>
@@ -35,15 +115,28 @@ export const UsersList: React.FC = () => {
                     </h2>
                     <p className="text-slate-500 text-sm mt-1">Gerenciamento completo dos registros do sistema</p>
                 </div>
-                <div className="relative w-full md:w-72 group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
-                    <input
-                        type="text"
-                        placeholder="Buscar por nome, matrícula..."
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                
+                <div className="flex gap-3 w-full md:w-auto">
+                    <div className="relative flex-1 md:w-64 group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                        <input
+                            type="text"
+                            placeholder="Buscar..."
+                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    
+                    {onNavigateToRegister && (
+                        <button 
+                            onClick={onNavigateToRegister}
+                            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary-500/20 font-medium text-sm whitespace-nowrap"
+                        >
+                            <Plus className="w-4 h-4" />
+                            Novo Usuário
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -77,15 +170,12 @@ export const UsersList: React.FC = () => {
                                         <div className="text-sm text-slate-700">{user.departamento}</div>
                                         <div className="text-xs text-slate-500">{user.setor}</div>
                                     </td>
-                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded">{user.login}</td>
+                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2">{user.login}</td>
                                     <td className="p-4 text-right">
-                                        <button
-                                            onClick={() => handleDelete(user.id, user.nomeCompleto)}
-                                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-                                            title="Excluir Registro"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                            <button onClick={() => handleEditClick(user)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"><Edit2 className="w-4 h-4" /></button>
+                                            <button onClick={(e) => handleDelete(e, user.id, user.nomeCompleto)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -95,7 +185,6 @@ export const UsersList: React.FC = () => {
                                     <div className="flex flex-col items-center justify-center text-slate-400">
                                         <ShieldAlert className="w-12 h-12 mb-3 text-slate-300" />
                                         <p className="text-lg font-medium text-slate-500">Nenhum registro encontrado</p>
-                                        <p className="text-sm">Tente ajustar sua busca ou cadastre um novo usuário.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -109,6 +198,46 @@ export const UsersList: React.FC = () => {
                 <p>Banco de dados local (Browser Storage)</p>
             </div>
         </div>
+
+        {isEditModalOpen && editingUser && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-[fadeIn_0.2s]">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scaleIn_0.2s_ease-out]">
+                    <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                            <Edit2 className="w-5 h-5 text-primary-600"/>
+                            Editar Usuário
+                        </h3>
+                        <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                            <X className="w-6 h-6" />
+                        </button>
+                    </div>
+                    
+                    <form onSubmit={handleSaveEdit} className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Input label="Matrícula" name="matricula" value={editingUser.matricula} onChange={handleEditChange} required />
+                            <Select label="Filial" name="filial" value={editingUser.filial} onChange={handleEditChange} options={options.filiais} required />
+                            <div className="col-span-1 md:col-span-2">
+                                <Input label="Nome Completo" name="nomeCompleto" value={editingUser.nomeCompleto} onChange={handleEditChange} required />
+                            </div>
+                            <Input label="Login" name="login" value={editingUser.login} onChange={handleEditChange} required />
+                            <Input label="Senha" name="senha" type="password" value={editingUser.senha || ''} onChange={handleEditChange} required />
+                            <Select label="Departamento" name="departamento" value={editingUser.departamento} onChange={handleEditChange} options={options.departamentos} required />
+                            <Select label="Setor" name="setor" value={editingUser.setor} onChange={handleEditChange} options={options.setores} required />
+                        </div>
+                        {feedback && isEditModalOpen && (
+                            <div className={`mt-4 p-3 rounded-lg flex items-center gap-2 text-sm ${feedback.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                {feedback.type === 'success' ? <CheckCircle2 className="w-4 h-4"/> : <ShieldAlert className="w-4 h-4"/>}
+                                {feedback.message}
+                            </div>
+                        )}
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors font-medium">Cancelar</button>
+                            <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium shadow-lg shadow-primary-500/20"><Save className="w-4 h-4" />Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
     </div>
   );
 };

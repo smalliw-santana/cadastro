@@ -6,7 +6,9 @@ import { RegisterUser } from './components/RegisterUser';
 import { Dashboard } from './components/Dashboard';
 import { UsersList } from './components/UsersList';
 import { Reports } from './components/Reports';
-import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList } from 'lucide-react';
+import { DatabaseSettings } from './components/DatabaseSettings';
+import { ResourceRegister } from './components/ResourceRegister';
+import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase } from 'lucide-react';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -38,11 +40,11 @@ const App: React.FC = () => {
       {/* Sidebar */}
       <aside 
         className={`
-          bg-slate-900 text-white transition-all duration-300 flex flex-col z-20
+          bg-slate-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar
           ${isSidebarOpen ? 'w-64' : 'w-20'}
         `}
       >
-        <div className="p-6 flex items-center gap-3">
+        <div className="p-6 flex items-center gap-3 shrink-0">
           <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center shrink-0">
             <span className="font-bold text-white text-lg">K</span>
           </div>
@@ -52,13 +54,28 @@ const App: React.FC = () => {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
-          <NavItem view="DASHBOARD" icon={LayoutDashboard} label="Dashboard Geral" />
-          <NavItem view="REGISTER" icon={UserPlus} label="Novo Cadastro" />
-          <NavItem view="USERS_LIST" icon={Database} label="Base de Dados" />
-          <NavItem view="REPORTS" icon={ClipboardList} label="Relatórios" />
+          <div className="pb-2">
+             <p className={`px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ${!isSidebarOpen && 'hidden'}`}>Principal</p>
+             <NavItem view="DASHBOARD" icon={LayoutDashboard} label="Dashboard Geral" />
+             <NavItem view="REGISTER" icon={UserPlus} label="Novo Cadastro" />
+             <NavItem view="USERS_LIST" icon={Database} label="Base de Dados" />
+             <NavItem view="REPORTS" icon={ClipboardList} label="Relatórios" />
+          </div>
+
+          <div className="pt-2 border-t border-slate-800">
+             <p className={`px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-4 ${!isSidebarOpen && 'hidden'}`}>Cadastros Auxiliares</p>
+             <NavItem view="REGISTER_FILIAL" icon={Building} label="Cadastrar Filial" />
+             <NavItem view="REGISTER_DEPARTAMENTO" icon={Layers} label="Cadastrar Depto." />
+             <NavItem view="REGISTER_SETOR" icon={Briefcase} label="Cadastrar Setor" />
+          </div>
+
+          <div className="pt-2 border-t border-slate-800 mt-2">
+             <p className={`px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-4 ${!isSidebarOpen && 'hidden'}`}>Sistema</p>
+             <NavItem view="DB_SETTINGS" icon={Settings} label="Configuração BD" />
+          </div>
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800 shrink-0">
           <button 
              onClick={() => setIsAuthenticated(false)}
              className={`
@@ -75,7 +92,7 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10 shrink-0">
            <button 
              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
              className="p-2 hover:bg-slate-100 rounded-lg text-slate-600"
@@ -98,8 +115,12 @@ const App: React.FC = () => {
         <div className="flex-1 overflow-auto bg-slate-50">
           {currentView === 'DASHBOARD' && <Dashboard />}
           {currentView === 'REGISTER' && <RegisterUser />}
-          {currentView === 'USERS_LIST' && <UsersList />}
+          {currentView === 'USERS_LIST' && <UsersList onNavigateToRegister={() => setCurrentView('REGISTER')} />}
           {currentView === 'REPORTS' && <Reports />}
+          {currentView === 'DB_SETTINGS' && <DatabaseSettings />}
+          {currentView === 'REGISTER_FILIAL' && <ResourceRegister type="FILIAL" />}
+          {currentView === 'REGISTER_DEPARTAMENTO' && <ResourceRegister type="DEPARTAMENTO" />}
+          {currentView === 'REGISTER_SETOR' && <ResourceRegister type="SETOR" />}
         </div>
       </main>
     </div>
