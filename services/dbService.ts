@@ -1,4 +1,5 @@
 
+
 import { User } from '../types';
 
 const DB_KEY = 'k_system_users_db';
@@ -62,10 +63,13 @@ const addToList = (key: string, value: string): boolean => {
 };
 
 // Helper to remove from list
-const removeFromList = (key: string, value: string) => {
+const removeFromList = (key: string, value: string): boolean => {
     const list = getList(key, []);
-    const newList = list.filter(item => item !== value);
+    const target = value.trim();
+    const newList = list.filter(item => item !== target);
+    if (list.length === newList.length) return false; // Nothing removed
     localStorage.setItem(key, JSON.stringify(newList));
+    return true;
 };
 
 export const dbService = {
@@ -77,6 +81,12 @@ export const dbService = {
       return INITIAL_USERS;
     }
     return JSON.parse(stored);
+  },
+
+  // Helper for realtime validation
+  checkMatriculaExists: (matricula: string): boolean => {
+      const users = dbService.getAllUsers();
+      return users.some(u => u.matricula === matricula);
   },
 
   addUser: (user: Omit<User, 'id' | 'dataCadastro'>): { success: boolean; message: string } => {

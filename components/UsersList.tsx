@@ -43,6 +43,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister }) =>
 
   const handleDelete = (e: React.MouseEvent, id: string, name: string) => {
     e.stopPropagation(); 
+    e.preventDefault();
     if (window.confirm(`Tem certeza que deseja excluir o usuário ${name}? Esta ação não pode ser desfeita.`)) {
         const result = dbService.deleteUser(id);
         if (result.success) {
@@ -172,9 +173,9 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister }) =>
                                     </td>
                                     <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2">{user.login}</td>
                                     <td className="p-4 text-right">
-                                        <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                                            <button onClick={() => handleEditClick(user)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"><Edit2 className="w-4 h-4" /></button>
-                                            <button onClick={(e) => handleDelete(e, user.id, user.nomeCompleto)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button onClick={() => handleEditClick(user)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Editar"><Edit2 className="w-4 h-4" /></button>
+                                            <button onClick={(e) => handleDelete(e, user.id, user.nomeCompleto)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Excluir"><Trash2 className="w-4 h-4" /></button>
                                         </div>
                                     </td>
                                 </tr>

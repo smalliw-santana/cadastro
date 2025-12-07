@@ -24,6 +24,7 @@ export const RegisterUser: React.FC = () => {
   });
 
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ matricula?: string }>({});
 
   useEffect(() => {
     // Load dynamic options from DB
@@ -44,7 +45,23 @@ export const RegisterUser: React.FC = () => {
     }
 
     setFormData(prev => ({ ...prev, [name]: finalValue }));
+    
+    // Clear field specific error when user starts typing again
+    if (name === 'matricula') {
+        setFieldErrors(prev => ({ ...prev, matricula: undefined }));
+    }
+
     if (feedback) setFeedback(null);
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      if (name === 'matricula' && value) {
+          const exists = dbService.checkMatriculaExists(value);
+          if (exists) {
+              setFieldErrors(prev => ({ ...prev, matricula: `A matrícula ${value} já está cadastrada no sistema.` }));
+          }
+      }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,6 +69,11 @@ export const RegisterUser: React.FC = () => {
     
     if (Object.values(formData).some(x => x === '')) {
         setFeedback({ type: 'error', message: 'Por favor, preencha todos os campos.' });
+        return;
+    }
+
+    if (fieldErrors.matricula) {
+        setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
         return;
     }
 
@@ -101,6 +123,8 @@ export const RegisterUser: React.FC = () => {
                         placeholder="Ex: 1005"
                         value={formData.matricula}
                         onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={fieldErrors.matricula}
                         required
                     />
                 </div>

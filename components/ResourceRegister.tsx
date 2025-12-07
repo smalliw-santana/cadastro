@@ -68,12 +68,19 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
     }
   };
 
-  const handleDelete = (item: string) => {
+  const handleDelete = (e: React.MouseEvent, item: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
     if (window.confirm(`Deseja realmente excluir "${item}"?`)) {
-      config.remove(item);
-      loadItems();
-      setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
-      setTimeout(() => setFeedback(null), 3000);
+      const success = config.remove(item);
+      if (success) {
+          loadItems();
+          setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
+          setTimeout(() => setFeedback(null), 3000);
+      } else {
+          setFeedback({ type: 'error', message: 'Erro ao remover item. Tente recarregar a página.' });
+      }
     }
   };
 
@@ -141,12 +148,12 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
              </h3>
 
              <div className="max-h-[400px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
-                {items.length > 0 ? items.map((item, idx) => (
-                   <div key={`${item}-${idx}`} className="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition-all group">
+                {items.length > 0 ? items.map((item) => (
+                   <div key={item} className="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition-all group">
                       <span className="font-medium text-slate-700 pl-2">{item}</span>
                       <button 
                         type="button"
-                        onClick={() => handleDelete(item)}
+                        onClick={(e) => handleDelete(e, item)}
                         className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
                         title="Excluir"
                       >
