@@ -1,0 +1,192 @@
+import React, { useState } from 'react';
+import { dbService } from '../services/dbService';
+import { Filial, Departamento, Setor } from '../types';
+import { Input } from './Input';
+import { Select } from './Select';
+import { Save, AlertCircle, CheckCircle2 } from 'lucide-react';
+
+export const RegisterUser: React.FC = () => {
+  const [formData, setFormData] = useState({
+    matricula: '',
+    nomeCompleto: '',
+    filial: '',
+    login: '',
+    senha: '',
+    departamento: '',
+    setor: ''
+  });
+
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    
+    // Apply Uppercase constraints immediately
+    let finalValue = value;
+    if (['nomeCompleto', 'login'].includes(name)) {
+        finalValue = value.toUpperCase();
+    }
+
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
+    // Clear feedback when typing
+    if (feedback) setFeedback(null);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Check if empty (basic validation)
+    if (Object.values(formData).some(x => x === '')) {
+        setFeedback({ type: 'error', message: 'Por favor, preencha todos os campos.' });
+        return;
+    }
+
+    const result = dbService.addUser({
+        matricula: formData.matricula,
+        nomeCompleto: formData.nomeCompleto,
+        filial: formData.filial as Filial,
+        login: formData.login,
+        senha: formData.senha,
+        departamento: formData.departamento as Departamento,
+        setor: formData.setor as Setor
+    });
+
+    if (result.success) {
+        setFeedback({ type: 'success', message: result.message });
+        // Reset form
+        setFormData({
+            matricula: '',
+            nomeCompleto: '',
+            filial: '',
+            login: '',
+            senha: '',
+            departamento: '',
+            setor: ''
+        });
+    } else {
+        setFeedback({ type: 'error', message: result.message });
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out]">
+      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 flex items-center justify-between">
+            <div>
+                <h2 className="text-2xl font-bold text-white">Novo Colaborador</h2>
+                <p className="text-slate-400 text-sm mt-1">Preencha os dados abaixo para cadastrar um novo usuário no sistema.</p>
+            </div>
+            <div className="hidden sm:block text-right">
+                <p className="text-slate-400 text-xs uppercase tracking-wider">Data do Cadastro</p>
+                <p className="text-white font-mono">{new Date().toLocaleDateString()}</p>
+            </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* ID and Branch Row */}
+                <div className="col-span-1">
+                    <Input 
+                        label="Matrícula"
+                        name="matricula"
+                        type="number"
+                        placeholder="Ex: 1005"
+                        value={formData.matricula}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="col-span-1">
+                     <Select
+                        label="Filial"
+                        name="filial"
+                        value={formData.filial}
+                        onChange={handleChange}
+                        options={Object.values(Filial)}
+                        required
+                    />
+                </div>
+
+                {/* Name Row */}
+                <div className="col-span-1 md:col-span-2">
+                    <Input 
+                        label="Nome Completo (Automático Caixa Alta)"
+                        name="nomeCompleto"
+                        type="text"
+                        placeholder="NOME DO FUNCIONÁRIO"
+                        value={formData.nomeCompleto}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+
+                {/* Login Info */}
+                <div className="col-span-1">
+                    <Input 
+                        label="Login (Automático Caixa Alta)"
+                        name="login"
+                        type="text"
+                        placeholder="USUARIO.LOGIN"
+                        value={formData.login}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="col-span-1">
+                    <Input 
+                        label="Senha"
+                        name="senha"
+                        type="password"
+                        placeholder="••••••••"
+                        value={formData.senha}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+
+                {/* Job Info */}
+                <div className="col-span-1">
+                    <Select
+                        label="Departamento"
+                        name="departamento"
+                        value={formData.departamento}
+                        onChange={handleChange}
+                        options={Object.values(Departamento)}
+                        required
+                    />
+                </div>
+                <div className="col-span-1">
+                     <Select
+                        label="Setor"
+                        name="setor"
+                        value={formData.setor}
+                        onChange={handleChange}
+                        options={Object.values(Setor)}
+                        required
+                    />
+                </div>
+            </div>
+
+            {/* Feedback Message */}
+            {feedback && (
+                <div className={`mt-6 p-4 rounded-lg flex items-center gap-3 ${feedback.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                    {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5"/> : <AlertCircle className="w-5 h-5"/>}
+                    <span className="font-medium">{feedback.message}</span>
+                </div>
+            )}
+
+            <div className="mt-8 flex justify-end">
+                <button 
+                    type="submit"
+                    className="flex items-center gap-2 bg-primary-600 text-white px-8 py-3 rounded-xl hover:bg-primary-700 active:scale-95 transition-all shadow-lg shadow-primary-500/30 font-semibold"
+                >
+                    <Save className="w-5 h-5" />
+                    Salvar Cadastro
+                </button>
+            </div>
+        </form>
+      </div>
+    </div>
+  );
+};
