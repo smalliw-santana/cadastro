@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
-import { Plus, Trash2, List, Save, Building, Briefcase, Layers } from 'lucide-react';
+import { Plus, Trash2, List, Save, Building, Briefcase, Layers, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { Input } from './Input';
 
 interface ResourceRegisterProps {
@@ -11,6 +11,7 @@ interface ResourceRegisterProps {
 export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState('');
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   
   const config = {
     FILIAL: {
@@ -44,6 +45,8 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
 
   useEffect(() => {
     loadItems();
+    setFeedback(null);
+    setNewItem('');
   }, [type]);
 
   const loadItems = () => {
@@ -58,15 +61,19 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
     if (success) {
       setNewItem('');
       loadItems();
+      setFeedback({ type: 'success', message: 'Item cadastrado com sucesso!' });
+      setTimeout(() => setFeedback(null), 3000);
     } else {
-      alert('Este item já existe!');
+      setFeedback({ type: 'error', message: 'Este item já existe na lista.' });
     }
   };
 
   const handleDelete = (item: string) => {
-    if (confirm(`Deseja realmente excluir "${item}"?`)) {
+    if (window.confirm(`Deseja realmente excluir "${item}"?`)) {
       config.remove(item);
       loadItems();
+      setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
+      setTimeout(() => setFeedback(null), 3000);
     }
   };
 
@@ -74,6 +81,17 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
 
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
+        {/* Feedback Toast */}
+        {feedback && (
+            <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
+                feedback.type === 'success' ? 'bg-white border-green-200 text-green-700' : 'bg-white border-red-200 text-red-700'
+            }`}>
+                {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <AlertCircle className="w-5 h-5 text-red-500"/>}
+                <span className="font-medium">{feedback.message}</span>
+                <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
+            </div>
+        )}
+
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         
         {/* Header */}
@@ -124,11 +142,12 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
 
              <div className="max-h-[400px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                 {items.length > 0 ? items.map((item, idx) => (
-                   <div key={idx} className="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition-all group">
+                   <div key={`${item}-${idx}`} className="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition-all group">
                       <span className="font-medium text-slate-700 pl-2">{item}</span>
                       <button 
+                        type="button"
                         onClick={() => handleDelete(item)}
-                        className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                        className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
                         title="Excluir"
                       >
                          <Trash2 className="w-4 h-4" />
