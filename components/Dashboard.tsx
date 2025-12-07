@@ -100,10 +100,6 @@ export const Dashboard: React.FC = () => {
               <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Total Colaboradores</p>
               <p className="text-2xl font-bold text-blue-900">{filteredUsers.length}</p>
            </div>
-           <div className="bg-red-50 px-6 py-3 rounded-xl border border-red-100">
-              <p className="text-xs text-red-600 font-bold uppercase tracking-wider">Custo Operacional</p>
-              <p className="text-2xl font-bold text-red-900">R$ --,--</p>
-           </div>
         </div>
       </div>
 
