@@ -38,7 +38,7 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden print:h-auto print:overflow-visible">
+    <div className="flex h-screen bg-slate-50 overflow-hidden print:block print:h-auto print:overflow-visible">
       {/* Sidebar */}
       <aside 
         className={`
@@ -93,7 +93,7 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative print:h-auto print:overflow-visible print:w-full">
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative print:block print:h-auto print:overflow-visible print:w-full print:static">
         {/* Top Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10 shrink-0 print:hidden">
            <button 
@@ -115,7 +115,7 @@ const App: React.FC = () => {
         </header>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-auto bg-slate-50 print:overflow-visible print:bg-white print:h-auto">
+        <div className="flex-1 overflow-auto bg-slate-50 print:overflow-visible print:bg-white print:h-auto print:block">
           {currentView === 'DASHBOARD' && <Dashboard />}
           {currentView === 'REGISTER' && <RegisterUser />}
           {currentView === 'USERS_LIST' && <UsersList onNavigateToRegister={() => setCurrentView('REGISTER')} />}

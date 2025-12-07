@@ -59,7 +59,7 @@ export const Dashboard: React.FC = () => {
         <div className="w-full md:w-1/3">
            <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
              <Building2 className="w-5 h-5 text-primary-500"/> 
-             Filtro por Unidade
+             Filtro por Filial
            </h2>
            <div className="relative">
               <select

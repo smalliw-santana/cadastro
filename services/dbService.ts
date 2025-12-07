@@ -12,8 +12,8 @@ const KEYS = {
 
 // Initial Data Defaults
 const DEFAULTS = {
-    FILIAIS: ['L01 - CONDOR', 'L02 - A.CACELA', 'L03 - DOCA', 'L04 - OBIDOS', 'CURITIBA', 'PORTO ALEGRE'],
-    DEPARTAMENTOS: ['TECNOLOGIA DA INFORMAÇÃO', 'RECURSOS HUMANOS', 'FINANCEIRO', 'COMERCIAL', 'OPERACIONAL', 'LOGÍSTICA'],
+    FILIAIS: ['L01 - CONDOR', 'L02 - A.CACELA', 'L03 - DOCA', 'L04 - OBIDOS', 'L05 - CASTANHEITA', 'L06 - MGZ CASTANHEIRA'],
+    DEPARTAMENTOS: ['TECNOLOGIA DA INFORMAÇÃO', 'CPD', 'CM', 'ESTOQUE', 'GERENCIA', 'DEP.TROCA'],
     SETORES: ['DESENVOLVIMENTO', 'INFRAESTRUTURA', 'RECRUTAMENTO', 'CONTABILIDADE', 'VENDAS', 'ALMOXARIFADO']
 };
 
@@ -38,6 +38,15 @@ const INITIAL_SYSTEM_USERS: SystemUser[] = [
         nome: 'ADMINISTRADOR',
         login: 'ADMIN',
         senha: '123',
+        role: 'ADMIN',
+        createdAt: new Date().toISOString()
+    },
+
+    {
+        id: 'admin-02',
+        nome: 'WILLAMS',
+        login: 'WILLAMS',
+        senha: '1235',
         role: 'ADMIN',
         createdAt: new Date().toISOString()
     }
@@ -173,10 +182,18 @@ export const dbService = {
 
   deleteUser: (id: string): { success: boolean; message: string } => {
     const users = dbService.getAllUsers();
-    const newUsers = users.filter(u => u.id !== id);
-    if (users.length === newUsers.length) return { success: false, message: 'Erro: Usuário não encontrado.' };
+    // Use String conversion for safer comparison in case of legacy number IDs
+    const newUsers = users.filter(u => String(u.id) !== String(id));
+    
+    if (users.length === newUsers.length) return { success: false, message: 'Erro: Usuário não encontrado para exclusão.' };
+    
     localStorage.setItem(DB_KEY, JSON.stringify(newUsers));
     return { success: true, message: 'Usuário excluído com sucesso.' };
+  },
+
+  deleteAllUsers: (): { success: boolean; message: string } => {
+    localStorage.setItem(DB_KEY, '[]');
+    return { success: true, message: 'Base de dados limpa com sucesso.' };
   },
 
   // --- FILIAIS ---

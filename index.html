@@ -51,6 +51,23 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #94a3b8; 
       }
+
+      /* CRITICAL PRINT STYLES */
+      @media print {
+        html, body, #root {
+          height: auto !important;
+          min-height: 100% !important;
+          overflow: visible !important;
+          overflow-y: visible !important;
+          position: static !important;
+          display: block !important;
+        }
+        
+        /* Hide scrollbars in print */
+        ::-webkit-scrollbar {
+          display: none;
+        }
+      }
     </style>
   <script type="importmap">
 {
