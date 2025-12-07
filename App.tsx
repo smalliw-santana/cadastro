@@ -1,9 +1,12 @@
+
 import React, { useState } from 'react';
 import { ViewState } from './types';
 import { Login } from './components/Login';
 import { RegisterUser } from './components/RegisterUser';
 import { Dashboard } from './components/Dashboard';
-import { LayoutDashboard, UserPlus, LogOut, Menu } from 'lucide-react';
+import { UsersList } from './components/UsersList';
+import { Reports } from './components/Reports';
+import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList } from 'lucide-react';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,6 +54,8 @@ const App: React.FC = () => {
         <nav className="flex-1 px-4 py-6 space-y-2">
           <NavItem view="DASHBOARD" icon={LayoutDashboard} label="Dashboard Geral" />
           <NavItem view="REGISTER" icon={UserPlus} label="Novo Cadastro" />
+          <NavItem view="USERS_LIST" icon={Database} label="Base de Dados" />
+          <NavItem view="REPORTS" icon={ClipboardList} label="Relatórios" />
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -93,6 +98,8 @@ const App: React.FC = () => {
         <div className="flex-1 overflow-auto bg-slate-50">
           {currentView === 'DASHBOARD' && <Dashboard />}
           {currentView === 'REGISTER' && <RegisterUser />}
+          {currentView === 'USERS_LIST' && <UsersList />}
+          {currentView === 'REPORTS' && <Reports />}
         </div>
       </main>
     </div>

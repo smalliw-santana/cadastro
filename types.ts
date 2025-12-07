@@ -1,3 +1,4 @@
+
 export enum Filial {
   MATRIZ = 'MATRIZ',
   SAO_PAULO = 'SÃO PAULO',
@@ -37,4 +38,4 @@ export interface User {
   dataCadastro: string; // ISO String
 }
 
-export type ViewState = 'LOGIN' | 'DASHBOARD' | 'REGISTER' | 'USERS_LIST';
+export type ViewState = 'LOGIN' | 'DASHBOARD' | 'REGISTER' | 'USERS_LIST' | 'REPORTS';
