@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { dbService } from '../services/dbService';
 import { User } from '../types';
 import { Trash2, Search, Database, ShieldAlert, Edit2, Plus, X, Save, CheckCircle2 } from 'lucide-react';
@@ -88,11 +88,20 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister }) =>
     }
   };
 
-  const filteredUsers = users.filter(user =>
-    user.nomeCompleto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.matricula.includes(searchTerm) ||
-    user.filial.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Optimized Search Logic using useMemo
+  const filteredUsers = useMemo(() => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return users;
+
+    return users.filter(user =>
+      user.nomeCompleto.toLowerCase().includes(term) ||
+      user.matricula.includes(term) ||
+      user.filial.toLowerCase().includes(term) ||
+      user.departamento.toLowerCase().includes(term) ||
+      user.setor.toLowerCase().includes(term) ||
+      user.login.toLowerCase().includes(term)
+    );
+  }, [users, searchTerm]);
 
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
@@ -122,7 +131,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister }) =>
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
                         <input
                             type="text"
-                            placeholder="Buscar..."
+                            placeholder="Buscar por nome, setor..."
                             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}

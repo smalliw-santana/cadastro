@@ -30,9 +30,19 @@ export const Reports: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 print:shadow-none print:border-none">
+    <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out] print:p-0 print:space-y-0">
+      {/* Styles specifically for printing to ensure backgrounds render */}
+      <style>{`
+        @media print {
+          @page { margin: 1cm; size: auto; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .no-print { display: none !important; }
+        }
+      `}</style>
+
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 print:shadow-none print:border-none print:p-0">
         
+        {/* Header Section - Hide buttons on print */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 print:hidden">
           <div>
             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -45,13 +55,14 @@ export const Reports: React.FC = () => {
           <button 
             onClick={handlePrint}
             disabled={!selectedFilial || users.length === 0}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium print:hidden"
           >
             <Printer className="w-4 h-4" />
             Imprimir Relatório
           </button>
         </div>
 
+        {/* Filter Section - Hide on print */}
         <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8 print:hidden">
             <label className="block text-sm font-medium text-slate-700 mb-2">Selecione a Filial de Origem</label>
             <div className="relative max-w-md">
@@ -75,16 +86,18 @@ export const Reports: React.FC = () => {
         </div>
 
         {selectedFilial && (
-          <div className="animate-[fadeIn_0.3s_ease-out]">
-            <div className="border-b-2 border-slate-100 pb-6 mb-6 flex justify-between items-end">
+          <div className="animate-[fadeIn_0.3s_ease-out] print:w-full">
+            {/* Header for Print / View */}
+            <div className="border-b-2 border-slate-100 pb-6 mb-6 flex justify-between items-end print:border-slate-300">
                 <div>
-                    <h3 className="text-2xl font-bold text-slate-900">{selectedFilial}</h3>
+                    <div className="hidden print:block mb-2 text-2xl font-bold text-slate-900">K-System Enterprise</div>
+                    <h3 className="text-2xl font-bold text-slate-900 print:text-xl">{selectedFilial}</h3>
                     <div className="flex items-center gap-2 text-slate-500 text-sm mt-1">
                         <MapPin className="w-4 h-4" />
                         <span>Relatório Detalhado de Colaboradores Ativos</span>
                     </div>
                 </div>
-                <div className="text-right bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 print:bg-transparent print:border-none">
+                <div className="text-right bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 print:bg-transparent print:border-none print:px-0">
                     <p className="text-xs text-blue-600 font-bold uppercase tracking-wider print:text-slate-500">Total de Registros</p>
                     <p className="text-2xl font-bold text-blue-900 print:text-slate-900 flex items-center justify-end gap-2">
                         <Users className="w-5 h-5 opacity-50" />
@@ -94,38 +107,38 @@ export const Reports: React.FC = () => {
             </div>
 
             {users.length > 0 ? (
-                <div className="overflow-hidden rounded-lg border border-slate-200">
+                <div className="overflow-hidden rounded-lg border border-slate-200 print:border-slate-300">
                     <table className="w-full text-left border-collapse text-sm">
-                        <thead className="bg-slate-50">
+                        <thead className="bg-slate-50 print:bg-slate-100">
                             <tr>
-                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200">Matrícula</th>
-                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200">Nome do Colaborador</th>
-                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200">Departamento</th>
-                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200">Setor</th>
-                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200">Data Cadastro</th>
+                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200 print:text-slate-900 print:border-slate-300">Matrícula</th>
+                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200 print:text-slate-900 print:border-slate-300">Nome do Colaborador</th>
+                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200 print:text-slate-900 print:border-slate-300">Departamento</th>
+                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200 print:text-slate-900 print:border-slate-300">Setor</th>
+                                <th className="p-3 font-semibold text-slate-600 border-b border-slate-200 print:text-slate-900 print:border-slate-300">Data Cadastro</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 print:divide-slate-200">
                             {users.map((user, index) => (
-                                <tr key={user.id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}>
-                                    <td className="p-3 font-mono text-slate-600">{user.matricula}</td>
-                                    <td className="p-3 font-medium text-slate-800">{user.nomeCompleto}</td>
-                                    <td className="p-3 text-slate-600">{user.departamento}</td>
-                                    <td className="p-3 text-slate-600">{user.setor}</td>
-                                    <td className="p-3 text-slate-500">{new Date(user.dataCadastro).toLocaleDateString()}</td>
+                                <tr key={user.id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30 print:bg-slate-50'}>
+                                    <td className="p-3 font-mono text-slate-600 print:text-black">{user.matricula}</td>
+                                    <td className="p-3 font-medium text-slate-800 print:text-black">{user.nomeCompleto}</td>
+                                    <td className="p-3 text-slate-600 print:text-black">{user.departamento}</td>
+                                    <td className="p-3 text-slate-600 print:text-black">{user.setor}</td>
+                                    <td className="p-3 text-slate-500 print:text-black">{new Date(user.dataCadastro).toLocaleDateString()}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
             ) : (
-                <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-300 print:bg-white print:border-slate-400">
                     <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                     <p className="text-slate-500 font-medium">Nenhum colaborador encontrado para esta filial.</p>
                 </div>
             )}
             
-            <div className="mt-8 pt-4 border-t border-slate-100 text-xs text-slate-400 flex justify-between print:flex">
+            <div className="mt-8 pt-4 border-t border-slate-100 text-xs text-slate-400 flex justify-between print:flex print:text-slate-500 print:border-slate-300">
                 <p>Gerado pelo K-System Enterprise</p>
                 <p>{new Date().toLocaleString()}</p>
             </div>

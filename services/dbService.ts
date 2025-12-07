@@ -35,7 +35,7 @@ const INITIAL_USERS: User[] = [
 const INITIAL_SYSTEM_USERS: SystemUser[] = [
     {
         id: 'admin-01',
-        nome: 'ADMINISTRADOR SISTEMA',
+        nome: 'ADMINISTRADOR',
         login: 'ADMIN',
         senha: '123',
         role: 'ADMIN',
@@ -112,11 +112,11 @@ export const dbService = {
       return { success: true, message: 'Acesso revogado com sucesso.' };
   },
 
-  authenticateSystemUser: (login: string, password: string): boolean => {
+  authenticateSystemUser: (login: string, password: string): SystemUser | null => {
       const users = dbService.getSystemUsers();
       // Case insensitive login
       const user = users.find(u => u.login.toUpperCase() === login.toUpperCase() && u.senha === password);
-      return !!user;
+      return user || null;
   },
 
 

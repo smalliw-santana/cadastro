@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
 import { dbService } from '../services/dbService';
+import { SystemUser } from '../types';
 import { User, Lock } from 'lucide-react';
 
 interface LoginProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (user: SystemUser) => void;
 }
 
 export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
@@ -21,10 +22,10 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     // Simulate network delay for realism
     setTimeout(() => {
       // Use the new Authentication method against System Users DB
-      const isValid = dbService.authenticateSystemUser(login, password);
+      const user = dbService.authenticateSystemUser(login, password);
 
-      if (isValid) {
-        onLoginSuccess();
+      if (user) {
+        onLoginSuccess(user);
       } else {
         setError('Acesso negado. Verifique suas credenciais.');
         setLoading(false);
@@ -51,7 +52,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             
             <div className="mt-4">
                 <button className="border-2 border-white text-white rounded-full px-10 py-2.5 font-semibold text-xs tracking-wider uppercase hover:bg-white hover:text-indigo-600 transition-all duration-300">
-                   Suporte
+                   
                 </button>
             </div>
         </div>
@@ -97,7 +98,6 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
                     <div className="flex justify-end">
                         <a href="#" className="text-xs text-slate-400 hover:text-indigo-600 transition-colors">
-                            Esqueceu sua senha?
                         </a>
                     </div>
 

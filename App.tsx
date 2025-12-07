@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ViewState } from './types';
+import { ViewState, SystemUser } from './types';
 import { Login } from './components/Login';
 import { RegisterUser } from './components/RegisterUser';
 import { Dashboard } from './components/Dashboard';
@@ -12,12 +12,13 @@ import { SystemUsersManagement } from './components/SystemUsersManagement';
 import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Now storing the full user object instead of just boolean
+  const [currentUser, setCurrentUser] = useState<SystemUser | null>(null);
   const [currentView, setCurrentView] = useState<ViewState>('DASHBOARD');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  if (!isAuthenticated) {
-    return <Login onLoginSuccess={() => setIsAuthenticated(true)} />;
+  if (!currentUser) {
+    return <Login onLoginSuccess={(user) => setCurrentUser(user)} />;
   }
 
   const NavItem = ({ view, icon: Icon, label }: { view: ViewState, icon: any, label: string }) => (
@@ -37,11 +38,11 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className="flex h-screen bg-slate-50 overflow-hidden print:h-auto print:overflow-visible">
       {/* Sidebar */}
       <aside 
         className={`
-          bg-slate-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar
+          bg-slate-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar print:hidden
           ${isSidebarOpen ? 'w-64' : 'w-20'}
         `}
       >
@@ -79,7 +80,7 @@ const App: React.FC = () => {
 
         <div className="p-4 border-t border-slate-800 shrink-0">
           <button 
-             onClick={() => setIsAuthenticated(false)}
+             onClick={() => setCurrentUser(null)}
              className={`
                w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all
                ${!isSidebarOpen && 'justify-center'}
@@ -92,9 +93,9 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative print:h-auto print:overflow-visible print:w-full">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10 shrink-0">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10 shrink-0 print:hidden">
            <button 
              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
              className="p-2 hover:bg-slate-100 rounded-lg text-slate-600"
@@ -104,17 +105,17 @@ const App: React.FC = () => {
 
            <div className="flex items-center gap-4">
              <div className="text-right hidden sm:block">
-               <p className="text-sm font-bold text-slate-800">ADMINISTRADOR SISTEMA</p>
-               <p className="text-xs text-slate-500">Matriz - TI</p>
+               <p className="text-sm font-bold text-slate-800">{currentUser.nome}</p>
+               <p className="text-xs text-slate-500 capitalize">{currentUser.role === 'ADMIN' ? 'Administrador' : 'Operador'} do Sistema</p>
              </div>
-             <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden">
-               <img src="https://picsum.photos/200" alt="Profile" className="w-full h-full object-cover" />
+             <div className="w-10 h-10 rounded-full bg-indigo-100 border-2 border-indigo-50 shadow-sm overflow-hidden flex items-center justify-center">
+                <span className="font-bold text-indigo-600 text-lg">{currentUser.nome.charAt(0)}</span>
              </div>
            </div>
         </header>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-auto bg-slate-50">
+        <div className="flex-1 overflow-auto bg-slate-50 print:overflow-visible print:bg-white print:h-auto">
           {currentView === 'DASHBOARD' && <Dashboard />}
           {currentView === 'REGISTER' && <RegisterUser />}
           {currentView === 'USERS_LIST' && <UsersList onNavigateToRegister={() => setCurrentView('REGISTER')} />}
