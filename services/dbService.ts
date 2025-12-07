@@ -113,10 +113,11 @@ export const dbService = {
 
   deleteSystemUser: (id: string): { success: boolean; message: string } => {
       const users = dbService.getSystemUsers();
-      // Prevent deleting the last admin or specific protection logic could go here
       if (users.length <= 1) return { success: false, message: 'Não é possível excluir o único usuário do sistema.' };
 
-      const newUsers = users.filter(u => u.id !== id);
+      const newUsers = users.filter(u => String(u.id) !== String(id));
+      if (newUsers.length === users.length) return { success: false, message: 'Usuário não encontrado.' };
+
       localStorage.setItem(SYSTEM_USERS_KEY, JSON.stringify(newUsers));
       return { success: true, message: 'Acesso revogado com sucesso.' };
   },

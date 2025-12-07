@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
 import { SystemUser } from '../types';
-import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X, AlertTriangle } from 'lucide-react';
 import { Input } from './Input';
 import { Select } from './Select';
 
@@ -16,6 +16,10 @@ export const SystemUsersManagement: React.FC = () => {
       senha: '',
       role: 'ADMIN' as 'ADMIN' | 'OPERADOR'
   });
+
+  // Delete Modal State
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<SystemUser | null>(null);
 
   useEffect(() => {
     loadUsers();
@@ -49,18 +53,27 @@ export const SystemUsersManagement: React.FC = () => {
       }
   };
 
-  const handleDelete = (e: React.MouseEvent, id: string) => {
+  const confirmDelete = (e: React.MouseEvent, user: SystemUser) => {
       e.preventDefault();
       e.stopPropagation();
-      if (window.confirm('Tem certeza que deseja revogar o acesso deste usuário?')) {
-          const result = dbService.deleteSystemUser(id);
-          if (result.success) {
-              loadUsers();
-              setFeedback({ type: 'success', message: result.message });
-          } else {
-              setFeedback({ type: 'error', message: result.message });
-          }
+      setUserToDelete(user);
+      setIsDeleteModalOpen(true);
+  };
+
+  const handleExecuteDelete = () => {
+      if (!userToDelete) return;
+
+      const result = dbService.deleteSystemUser(userToDelete.id);
+      if (result.success) {
+          loadUsers();
+          setFeedback({ type: 'success', message: result.message });
+      } else {
+          setFeedback({ type: 'error', message: result.message });
       }
+      
+      setIsDeleteModalOpen(false);
+      setUserToDelete(null);
+      setTimeout(() => setFeedback(null), 3000);
   };
 
   return (
@@ -168,7 +181,7 @@ export const SystemUsersManagement: React.FC = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <button 
-                                            onClick={(e) => handleDelete(e, user.id)}
+                                            onClick={(e) => confirmDelete(e, user)}
                                             className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                                             title="Revogar Acesso"
                                         >
@@ -184,6 +197,39 @@ export const SystemUsersManagement: React.FC = () => {
 
         </div>
       </div>
+
+       {/* Delete Confirmation Modal */}
+        {isDeleteModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-[fadeIn_0.2s]">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-[scaleIn_0.2s_ease-out]">
+                    <div className="p-6 text-center">
+                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <AlertTriangle className="w-8 h-8 text-red-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-800 mb-2">Confirmar Revogação</h3>
+                        <p className="text-slate-500 mb-6">
+                            Tem certeza que deseja revogar o acesso do usuário <strong>{userToDelete?.nome}</strong> (Login: {userToDelete?.login})?
+                        </p>
+                        
+                        <div className="flex gap-3 justify-center">
+                            <button 
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                className="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium"
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                onClick={handleExecuteDelete}
+                                className="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium shadow-lg shadow-red-500/30 flex items-center gap-2"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Sim, Revogar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>
   );
 };
