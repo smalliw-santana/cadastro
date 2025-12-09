@@ -90,13 +90,13 @@ export const SystemUsersManagement: React.FC = () => {
         )}
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="bg-slate-900 p-6 flex items-center gap-4">
-          <div className="p-3 bg-indigo-500/20 rounded-lg">
-             <ShieldCheck className="w-6 h-6 text-indigo-400" />
+        <div className="bg-primary-900 p-6 flex items-center gap-4">
+          <div className="p-3 bg-white/20 rounded-lg">
+             <ShieldCheck className="w-6 h-6 text-white" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">Controle de Acesso</h2>
-            <p className="text-slate-400 text-sm">Gerencie os usuários que podem fazer login no sistema.</p>
+            <p className="text-primary-200 text-sm">Gerencie os usuários que podem fazer login no sistema.</p>
           </div>
         </div>
 
@@ -141,7 +141,7 @@ export const SystemUsersManagement: React.FC = () => {
 
                     <button 
                         type="submit"
-                        className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-all font-semibold shadow-lg shadow-indigo-500/20 mt-4"
+                        className="w-full flex items-center justify-center gap-2 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition-all font-semibold shadow-lg shadow-primary-500/20 mt-4"
                     >
                         <Save className="w-4 h-4" />
                         Criar Acesso
@@ -175,7 +175,7 @@ export const SystemUsersManagement: React.FC = () => {
                                     </td>
                                     <td className="p-4 text-sm font-mono text-slate-600 bg-slate-50 w-fit rounded">{user.login}</td>
                                     <td className="p-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                                        <span className={`px-2 py-1 rounded text-xs font-bold ${user.role === 'ADMIN' ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-700'}`}>
                                             {user.role}
                                         </span>
                                     </td>

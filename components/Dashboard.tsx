@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { dbService } from '../services/dbService';
 import { User } from '../types';
 import { Users, Building2, TrendingUp } from 'lucide-react';
+import { Spinner } from './Spinner';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -23,10 +24,17 @@ export const Dashboard: React.FC = () => {
   const [selectedFilial, setSelectedFilial] = useState<string>('TODAS');
   const [users, setUsers] = useState<User[]>([]);
   const [filialOptions, setFilialOptions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setUsers(dbService.getAllUsers());
-    setFilialOptions(dbService.getFiliais());
+    // Simulate Data Fetching
+    const loadData = async () => {
+        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
+        setUsers(dbService.getAllUsers());
+        setFilialOptions(dbService.getFiliais());
+        setIsLoading(false);
+    };
+    loadData();
   }, []);
 
   const filteredUsers = useMemo(() => {
@@ -50,7 +58,18 @@ export const Dashboard: React.FC = () => {
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [filteredUsers]);
 
-  const COLORS = ['#0ea5e9', '#ef4444', '#f59e0b', '#10b981', '#6366f1', '#8b5cf6'];
+  const COLORS = ['#ef4444', '#f97316', '#f59e0b', '#84cc16', '#06b6d4', '#6366f1'];
+
+  if (isLoading) {
+      return (
+          <div className="flex h-full items-center justify-center min-h-[400px] animate-[fadeIn_0.3s]">
+              <div className="flex flex-col items-center gap-4">
+                  <Spinner size="lg" />
+                  <p className="text-slate-400 text-sm font-medium animate-pulse">Carregando indicadores...</p>
+              </div>
+          </div>
+      );
+  }
 
   return (
     <div className="p-6 space-y-8 animate-[fadeIn_0.4s_ease-out]">
@@ -81,9 +100,9 @@ export const Dashboard: React.FC = () => {
         </div>
         
         <div className="flex gap-4">
-           <div className="bg-blue-50 px-6 py-3 rounded-xl border border-blue-100">
-              <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Total Colaboradores</p>
-              <p className="text-2xl font-bold text-blue-900">{filteredUsers.length}</p>
+           <div className="bg-red-50 px-6 py-3 rounded-xl border border-red-100">
+              <p className="text-xs text-red-600 font-bold uppercase tracking-wider">Total Colaboradores</p>
+              <p className="text-2xl font-bold text-red-900">{filteredUsers.length}</p>
            </div>
         </div>
       </div>

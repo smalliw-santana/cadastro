@@ -9,6 +9,7 @@ import { Reports } from './components/Reports';
 import { DatabaseSettings } from './components/DatabaseSettings';
 import { ResourceRegister } from './components/ResourceRegister';
 import { SystemUsersManagement } from './components/SystemUsersManagement';
+import { Logo } from './components/Logo';
 import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -27,8 +28,8 @@ const App: React.FC = () => {
       className={`
         w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
         ${currentView === view 
-          ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-500/30' 
-          : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+          ? 'bg-white text-primary-700 shadow-lg' 
+          : 'text-primary-100 hover:bg-primary-800 hover:text-white'
         }
       `}
     >
@@ -42,13 +43,13 @@ const App: React.FC = () => {
       {/* Sidebar */}
       <aside 
         className={`
-          bg-slate-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar print:hidden
+          bg-primary-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar print:hidden
           ${isSidebarOpen ? 'w-64' : 'w-20'}
         `}
       >
         <div className="p-6 flex items-center gap-3 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center shrink-0">
-            <span className="font-bold text-white text-lg">K</span>
+          <div className="w-8 h-8 flex items-center justify-center shrink-0">
+            <Logo className="w-8 h-8" variant="white" />
           </div>
           {isSidebarOpen && (
             <span className="font-bold text-xl tracking-tight animate-[fadeIn_0.2s]">System</span>
@@ -57,32 +58,32 @@ const App: React.FC = () => {
 
         <nav className="flex-1 px-4 py-6 space-y-2">
           <div className="pb-2">
-             <p className={`px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ${!isSidebarOpen && 'hidden'}`}>Principal</p>
+             <p className={`px-4 text-xs font-bold text-primary-300 uppercase tracking-wider mb-2 ${!isSidebarOpen && 'hidden'}`}>Principal</p>
              <NavItem view="DASHBOARD" icon={LayoutDashboard} label="Dashboard Geral" />
              <NavItem view="REGISTER" icon={UserPlus} label="Novo Cadastro" />
              <NavItem view="USERS_LIST" icon={Database} label="Base de Dados" />
              <NavItem view="REPORTS" icon={ClipboardList} label="Relatórios" />
           </div>
 
-          <div className="pt-2 border-t border-slate-800">
-             <p className={`px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-4 ${!isSidebarOpen && 'hidden'}`}>Cadastros Auxiliares</p>
+          <div className="pt-2 border-t border-primary-800">
+             <p className={`px-4 text-xs font-bold text-primary-300 uppercase tracking-wider mb-2 mt-4 ${!isSidebarOpen && 'hidden'}`}>Cadastros Auxiliares</p>
              <NavItem view="REGISTER_FILIAL" icon={Building} label="Cadastrar Filial" />
              <NavItem view="REGISTER_DEPARTAMENTO" icon={Layers} label="Cadastrar Depto." />
              <NavItem view="REGISTER_SETOR" icon={Briefcase} label="Cadastrar Setor" />
           </div>
 
-          <div className="pt-2 border-t border-slate-800 mt-2">
-             <p className={`px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-4 ${!isSidebarOpen && 'hidden'}`}>Sistema</p>
+          <div className="pt-2 border-t border-primary-800 mt-2">
+             <p className={`px-4 text-xs font-bold text-primary-300 uppercase tracking-wider mb-2 mt-4 ${!isSidebarOpen && 'hidden'}`}>Sistema</p>
              <NavItem view="MANAGE_ACCESS" icon={ShieldCheck} label="Usuários de Acesso" />
              <NavItem view="DB_SETTINGS" icon={Settings} label="Configuração BD" />
           </div>
         </nav>
 
-        <div className="p-4 border-t border-slate-800 shrink-0">
+        <div className="p-4 border-t border-primary-800 shrink-0">
           <button 
              onClick={() => setCurrentUser(null)}
              className={`
-               w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all
+               w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-300 hover:bg-red-950/30 hover:text-red-200 transition-all
                ${!isSidebarOpen && 'justify-center'}
              `}
           >
@@ -108,8 +109,8 @@ const App: React.FC = () => {
                <p className="text-sm font-bold text-slate-800">{currentUser.nome}</p>
                <p className="text-xs text-slate-500 capitalize">{currentUser.role === 'ADMIN' ? 'Administrador' : 'Operador'} do Sistema</p>
              </div>
-             <div className="w-10 h-10 rounded-full bg-indigo-100 border-2 border-indigo-50 shadow-sm overflow-hidden flex items-center justify-center">
-                <span className="font-bold text-indigo-600 text-lg">{currentUser.nome.charAt(0)}</span>
+             <div className="w-10 h-10 rounded-full bg-red-50 border-2 border-red-100 shadow-sm overflow-hidden flex items-center justify-center">
+                <span className="font-bold text-primary-600 text-lg">{currentUser.nome.charAt(0)}</span>
              </div>
            </div>
         </header>

@@ -4,6 +4,7 @@ import { dbService } from '../services/dbService';
 import { Input } from './Input';
 import { Select } from './Select';
 import { Save, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Spinner } from './Spinner';
 
 export const RegisterUser: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ export const RegisterUser: React.FC = () => {
     setor: ''
   });
 
+  const [isSaving, setIsSaving] = useState(false);
+
   // Dynamic Options States
   const [options, setOptions] = useState({
       filiais: [] as string[],
@@ -24,7 +27,7 @@ export const RegisterUser: React.FC = () => {
   });
 
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<{ matricula?: string }>({});
+  const [fieldErrors, setFieldErrors] = useState<{ login?: string }>({});
 
   useEffect(() => {
     // Load dynamic options from DB
@@ -47,8 +50,8 @@ export const RegisterUser: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: finalValue }));
     
     // Clear field specific error when user starts typing again
-    if (name === 'matricula') {
-        setFieldErrors(prev => ({ ...prev, matricula: undefined }));
+    if (name === 'login') {
+        setFieldErrors(prev => ({ ...prev, login: undefined }));
     }
 
     if (feedback) setFeedback(null);
@@ -56,10 +59,10 @@ export const RegisterUser: React.FC = () => {
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      if (name === 'matricula' && value) {
-          const exists = dbService.checkMatriculaExists(value);
+      if (name === 'login' && value) {
+          const exists = dbService.checkLoginExists(value);
           if (exists) {
-              setFieldErrors(prev => ({ ...prev, matricula: `A matrícula ${value} já está cadastrada no sistema.` }));
+              setFieldErrors(prev => ({ ...prev, login: `O login ${value} já está em uso.` }));
           }
       }
   };
@@ -72,41 +75,46 @@ export const RegisterUser: React.FC = () => {
         return;
     }
 
-    if (fieldErrors.matricula) {
+    if (fieldErrors.login) {
         setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
         return;
     }
 
-    const result = dbService.addUser({
-        ...formData
-    });
-
-    if (result.success) {
-        setFeedback({ type: 'success', message: result.message });
-        setFormData({
-            matricula: '',
-            nomeCompleto: '',
-            filial: '',
-            login: '',
-            senha: '',
-            departamento: '',
-            setor: ''
+    setIsSaving(true);
+    // Simulate API delay
+    setTimeout(() => {
+        const result = dbService.addUser({
+            ...formData
         });
-    } else {
-        setFeedback({ type: 'error', message: result.message });
-    }
+
+        if (result.success) {
+            setFeedback({ type: 'success', message: result.message });
+            setFormData({
+                matricula: '',
+                nomeCompleto: '',
+                filial: '',
+                login: '',
+                senha: '',
+                departamento: '',
+                setor: ''
+            });
+        } else {
+            setFeedback({ type: 'error', message: result.message });
+        }
+        setIsSaving(false);
+    }, 1000);
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out]">
       <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 flex items-center justify-between">
+        <div className="bg-primary-900 p-6 flex items-center justify-between">
             <div>
                 <h2 className="text-2xl font-bold text-white">Novo Colaborador</h2>
-                <p className="text-slate-400 text-sm mt-1">Preencha os dados abaixo para cadastrar um novo usuário no sistema.</p>
+                <p className="text-primary-100 text-sm mt-1">Preencha os dados abaixo para cadastrar um novo usuário no sistema.</p>
             </div>
             <div className="hidden sm:block text-right">
-                <p className="text-slate-400 text-xs uppercase tracking-wider">Data do Cadastro</p>
+                <p className="text-primary-200 text-xs uppercase tracking-wider">Data do Cadastro</p>
                 <p className="text-white font-mono">{new Date().toLocaleDateString()}</p>
             </div>
         </div>
@@ -123,9 +131,8 @@ export const RegisterUser: React.FC = () => {
                         placeholder="Ex: 1005"
                         value={formData.matricula}
                         onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={fieldErrors.matricula}
                         required
+                        disabled={isSaving}
                     />
                 </div>
                 <div className="col-span-1">
@@ -136,6 +143,7 @@ export const RegisterUser: React.FC = () => {
                         onChange={handleChange}
                         options={options.filiais}
                         required
+                        disabled={isSaving}
                     />
                 </div>
 
@@ -149,6 +157,7 @@ export const RegisterUser: React.FC = () => {
                         value={formData.nomeCompleto}
                         onChange={handleChange}
                         required
+                        disabled={isSaving}
                     />
                 </div>
 
@@ -161,7 +170,10 @@ export const RegisterUser: React.FC = () => {
                         placeholder="USUARIO.LOGIN"
                         value={formData.login}
                         onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={fieldErrors.login}
                         required
+                        disabled={isSaving}
                     />
                 </div>
                 <div className="col-span-1">
@@ -173,6 +185,7 @@ export const RegisterUser: React.FC = () => {
                         value={formData.senha}
                         onChange={handleChange}
                         required
+                        disabled={isSaving}
                     />
                 </div>
 
@@ -185,6 +198,7 @@ export const RegisterUser: React.FC = () => {
                         onChange={handleChange}
                         options={options.departamentos}
                         required
+                        disabled={isSaving}
                     />
                 </div>
                 <div className="col-span-1">
@@ -195,6 +209,7 @@ export const RegisterUser: React.FC = () => {
                         onChange={handleChange}
                         options={options.setores}
                         required
+                        disabled={isSaving}
                     />
                 </div>
             </div>
@@ -210,10 +225,11 @@ export const RegisterUser: React.FC = () => {
             <div className="mt-8 flex justify-end">
                 <button 
                     type="submit"
-                    className="flex items-center gap-2 bg-primary-600 text-white px-8 py-3 rounded-xl hover:bg-primary-700 active:scale-95 transition-all shadow-lg shadow-primary-500/30 font-semibold"
+                    disabled={isSaving}
+                    className="flex items-center gap-2 bg-primary-600 text-white px-8 py-3 rounded-xl hover:bg-primary-700 active:scale-95 transition-all shadow-lg shadow-primary-500/30 font-semibold disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                    <Save className="w-5 h-5" />
-                    Salvar Cadastro
+                    {isSaving ? <Spinner size="sm" variant="white" /> : <Save className="w-5 h-5" />}
+                    {isSaving ? 'Salvando...' : 'Salvar Cadastro'}
                 </button>
             </div>
         </form>

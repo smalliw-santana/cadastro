@@ -140,18 +140,18 @@ export const dbService = {
     return JSON.parse(stored);
   },
 
-  // Helper for realtime validation
-  checkMatriculaExists: (matricula: string): boolean => {
+  // Helper for realtime login validation
+  checkLoginExists: (login: string): boolean => {
       const users = dbService.getAllUsers();
-      return users.some(u => u.matricula === matricula);
+      return users.some(u => u.login === login);
   },
 
   addUser: (user: Omit<User, 'id' | 'dataCadastro'>): { success: boolean; message: string } => {
     const users = dbService.getAllUsers();
-    if (users.some(u => u.matricula === user.matricula)) {
-      return { success: false, message: `A matrícula ${user.matricula} já está cadastrada.` };
-    }
-    // We still check for unique login among employees to avoid confusion, though they are separate DBs now
+    
+    // Removed Matricula Check
+    
+    // Check for unique login
     if (users.some(u => u.login === user.login)) {
       return { success: false, message: `Erro: O login ${user.login} já está em uso por outro colaborador.` };
     }
@@ -170,8 +170,7 @@ export const dbService = {
     const index = users.findIndex(u => u.id === updatedUser.id);
     if (index === -1) return { success: false, message: 'Usuário não encontrado.' };
 
-    const existingMatricula = users.find(u => u.matricula === updatedUser.matricula && u.id !== updatedUser.id);
-    if (existingMatricula) return { success: false, message: `A matrícula ${updatedUser.matricula} já pertence a outro usuário.` };
+    // Removed existingMatricula Check
 
     const existingLogin = users.find(u => u.login === updatedUser.login && u.id !== updatedUser.id);
     if (existingLogin) return { success: false, message: `O login ${updatedUser.login} já está em uso.` };

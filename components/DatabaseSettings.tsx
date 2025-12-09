@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Input } from './Input';
 import { Select } from './Select';
-import { Database, Server, Save, Activity, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { Database, Server, Save, Activity, CheckCircle2, XCircle } from 'lucide-react';
+import { Spinner } from './Spinner';
 
 export const DatabaseSettings: React.FC = () => {
   const [config, setConfig] = useState({
@@ -60,25 +62,25 @@ export const DatabaseSettings: React.FC = () => {
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="bg-slate-900 p-6 flex items-center justify-between">
+            <div className="bg-primary-900 p-6 flex items-center justify-between">
                 <div>
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Server className="w-6 h-6 text-primary-400"/>
+                        <Server className="w-6 h-6 text-primary-200"/>
                         Configuração de Conexão
                     </h2>
-                    <p className="text-slate-400 text-sm mt-1">Gerencie a conexão com o banco de dados externo.</p>
+                    <p className="text-primary-200 text-sm mt-1">Gerencie a conexão com o banco de dados externo.</p>
                 </div>
-                <div className="hidden sm:flex items-center gap-3 bg-slate-800 px-4 py-2 rounded-lg border border-slate-700">
+                <div className="hidden sm:flex items-center gap-3 bg-primary-800 px-4 py-2 rounded-lg border border-primary-700">
                     <div className="text-right">
-                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Status Atual</p>
+                        <p className="text-xs text-primary-200 uppercase tracking-wider font-semibold">Status Atual</p>
                         <p className={`text-sm font-bold flex items-center justify-end gap-1.5 ${
                             status === 'CONNECTED' ? 'text-green-400' : 
                             status === 'CONNECTING' ? 'text-yellow-400' : 
-                            status === 'ERROR' ? 'text-red-400' : 'text-slate-500'
+                            status === 'ERROR' ? 'text-red-300' : 'text-slate-300'
                         }`}>
                             {status === 'CONNECTED' && <CheckCircle2 className="w-4 h-4" />}
                             {status === 'ERROR' && <XCircle className="w-4 h-4" />}
-                            {status === 'CONNECTING' && <RefreshCw className="w-4 h-4 animate-spin" />}
+                            {status === 'CONNECTING' && <Spinner size="sm" variant="white" />}
                             {status === 'DISCONNECTED' && <Activity className="w-4 h-4" />}
                             {status === 'CONNECTED' ? 'CONECTADO' : 
                              status === 'CONNECTING' ? 'CONECTANDO...' : 
@@ -191,7 +193,10 @@ export const DatabaseSettings: React.FC = () => {
                                 `}
                             >
                                 {status === 'CONNECTING' ? (
-                                    <>Verificando...</>
+                                    <>
+                                        <Spinner size="sm" variant="white" />
+                                        <span>Verificando...</span>
+                                    </>
                                 ) : (
                                     <>
                                         <Save className="w-5 h-5" />
@@ -207,11 +212,11 @@ export const DatabaseSettings: React.FC = () => {
 
         {/* Info Card */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-blue-50 border border-blue-100 p-6 rounded-xl flex items-start gap-4">
-                <Database className="w-8 h-8 text-blue-500 shrink-0" />
+            <div className="bg-red-50 border border-red-100 p-6 rounded-xl flex items-start gap-4">
+                <Database className="w-8 h-8 text-red-500 shrink-0" />
                 <div>
-                    <h4 className="font-bold text-blue-900 mb-1">Modo Híbrido</h4>
-                    <p className="text-sm text-blue-700 leading-relaxed">
+                    <h4 className="font-bold text-red-900 mb-1">Modo Híbrido</h4>
+                    <p className="text-sm text-red-700 leading-relaxed">
                         O sistema operará em modo offline (Local Storage) caso a conexão com o servidor falhe.
                     </p>
                 </div>

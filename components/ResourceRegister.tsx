@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
-import { Plus, Trash2, List, Save, Building, Briefcase, Layers, CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { Plus, Trash2, List, Save, Building, Briefcase, Layers, CheckCircle2, AlertCircle, X, AlertTriangle } from 'lucide-react';
 import { Input } from './Input';
+import { Spinner } from './Spinner';
 
 interface ResourceRegisterProps {
   type: 'FILIAL' | 'DEPARTAMENTO' | 'SETOR';
@@ -12,6 +13,11 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  
+  // Delete Modal State
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const config = {
     FILIAL: {
@@ -47,6 +53,8 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
     loadItems();
     setFeedback(null);
     setNewItem('');
+    setIsDeleteModalOpen(false);
+    setItemToDelete(null);
   }, [type]);
 
   const loadItems = () => {
@@ -68,20 +76,37 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
     }
   };
 
-  const handleDelete = (e: React.MouseEvent, item: string) => {
+  // Open the custom delete modal
+  const requestDelete = (e: React.MouseEvent, item: string) => {
     e.stopPropagation();
     e.preventDefault();
+    setItemToDelete(item);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Execute the deletion
+  const confirmDelete = () => {
+    if (!itemToDelete) return;
     
-    if (window.confirm(`Deseja realmente excluir "${item}"?`)) {
-      const success = config.remove(item);
-      if (success) {
-          loadItems();
-          setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
-          setTimeout(() => setFeedback(null), 3000);
-      } else {
-          setFeedback({ type: 'error', message: 'Erro ao remover item. Tente recarregar a página.' });
-      }
-    }
+    setIsProcessing(true);
+    
+    // Simulate a small delay for better UX
+    setTimeout(() => {
+        const success = config.remove(itemToDelete);
+        
+        if (success) {
+            loadItems();
+            setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
+        } else {
+            setFeedback({ type: 'error', message: 'Erro ao remover item. Tente recarregar a página.' });
+        }
+        
+        setIsProcessing(false);
+        setIsDeleteModalOpen(false);
+        setItemToDelete(null);
+        
+        setTimeout(() => setFeedback(null), 3000);
+    }, 500);
   };
 
   const Icon = config.icon;
@@ -102,13 +127,13 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         
         {/* Header */}
-        <div className="bg-slate-900 p-6 flex items-center gap-4">
-          <div className="p-3 bg-slate-800 rounded-lg">
-             <Icon className="w-6 h-6 text-primary-400" />
+        <div className="bg-primary-900 p-6 flex items-center gap-4">
+          <div className="p-3 bg-primary-800 rounded-lg">
+             <Icon className="w-6 h-6 text-white" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">{config.title}</h2>
-            <p className="text-slate-400 text-sm">{config.description}</p>
+            <p className="text-primary-200 text-sm">{config.description}</p>
           </div>
         </div>
 
@@ -153,7 +178,7 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
                       <span className="font-medium text-slate-700 pl-2">{item}</span>
                       <button 
                         type="button"
-                        onClick={(e) => handleDelete(e, item)}
+                        onClick={(e) => requestDelete(e, item)}
                         className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
                         title="Excluir"
                       >
@@ -170,6 +195,43 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type }) => {
 
         </div>
       </div>
+
+       {/* Delete Confirmation Modal */}
+       {isDeleteModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-[fadeIn_0.2s]">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-[scaleIn_0.2s_ease-out]">
+                    <div className="p-6 text-center">
+                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <AlertTriangle className="w-8 h-8 text-red-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-800 mb-2">Confirmar Exclusão</h3>
+                        <p className="text-slate-500 mb-6">
+                            Tem certeza que deseja excluir o item <strong>"{itemToDelete}"</strong>?
+                            <br/>
+                            <span className="text-xs text-slate-400 mt-1 block">Esta ação não pode ser desfeita.</span>
+                        </p>
+                        
+                        <div className="flex gap-3 justify-center">
+                            <button 
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                disabled={isProcessing}
+                                className="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium disabled:opacity-50"
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                onClick={confirmDelete}
+                                disabled={isProcessing}
+                                className="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium shadow-lg shadow-red-500/30 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            >
+                                {isProcessing ? <Spinner size="sm" variant="white" /> : <Trash2 className="w-4 h-4" />}
+                                {isProcessing ? "Excluindo..." : "Sim, Excluir"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>
   );
 };

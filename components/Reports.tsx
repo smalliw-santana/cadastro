@@ -159,9 +159,9 @@ export const Reports: React.FC = () => {
                         <span>{selectedFilial === 'TODAS' ? 'Listagem Completa de Colaboradores' : 'Relatório Detalhado de Colaboradores Ativos'}</span>
                     </div>
                 </div>
-                <div className="text-right bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 print:bg-transparent print:border-none print:px-0">
-                    <p className="text-xs text-blue-600 font-bold uppercase tracking-wider print:text-slate-500">Total de Registros</p>
-                    <p className="text-2xl font-bold text-blue-900 print:text-slate-900 flex items-center justify-end gap-2">
+                <div className="text-right bg-red-50 px-4 py-2 rounded-lg border border-red-100 print:bg-transparent print:border-none print:px-0">
+                    <p className="text-xs text-red-600 font-bold uppercase tracking-wider print:text-slate-500">Total de Registros</p>
+                    <p className="text-2xl font-bold text-red-900 print:text-slate-900 flex items-center justify-end gap-2">
                         <Users className="w-5 h-5 opacity-50" />
                         {users.length}
                     </p>
