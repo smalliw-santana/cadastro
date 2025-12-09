@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -6,6 +7,8 @@
     <title>K-System Enterprise</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- PDF Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -36,6 +39,11 @@
       }
     </script>
     <style>
+      /* Global Font Enforcement */
+      body, input, textarea, select, button {
+        font-family: 'Inter', sans-serif !important;
+      }
+
       /* Custom scrollbar for Webkit */
       ::-webkit-scrollbar {
         width: 8px;
