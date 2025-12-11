@@ -7,8 +7,9 @@ interface LogoProps {
 }
 
 export const Logo: React.FC<LogoProps> = ({ className = "w-10 h-10", variant = 'primary' }) => {
-  const color = variant === 'white' ? '#ffffff' : '#dc2626';
-  const fill = variant === 'white' ? '#ffffff' : '#dc2626';
+  // Use new Indigo 600 color (#4f46e5) instead of Red
+  const color = variant === 'white' ? '#ffffff' : '#4f46e5';
+  const fill = variant === 'white' ? '#ffffff' : '#4f46e5';
   
   return (
     <svg 

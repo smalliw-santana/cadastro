@@ -1,5 +1,6 @@
+
 import { GoogleGenAI } from "@google/genai";
-import { User } from "../types";
+import { User } from "../types.ts";
 
 // NOTE: Ideally this comes from process.env.API_KEY, handled by the developer instructions.
 // The user of the generated code must ensure the environment variable is set or the key is provided.

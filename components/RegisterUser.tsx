@@ -1,12 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { dbService } from '../services/dbService';
-import { Input } from './Input';
-import { Select } from './Select';
-import { Save, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { Spinner } from './Spinner';
+import { dbService } from '../services/dbService.ts';
+import { Input } from './Input.tsx';
+import { Select } from './Select.tsx';
+import { Save, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Spinner } from './Spinner.tsx';
 
-export const RegisterUser: React.FC = () => {
+interface RegisterUserProps {
+  userRole?: 'ADMIN' | 'CONVIDADO';
+}
+
+export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDADO' }) => {
   const [formData, setFormData] = useState({
     matricula: '',
     nomeCompleto: '',
@@ -104,6 +108,22 @@ export const RegisterUser: React.FC = () => {
         setIsSaving(false);
     }, 1000);
   };
+
+  if (userRole !== 'ADMIN') {
+      return (
+          <div className="flex h-full items-center justify-center p-6 animate-[fadeIn_0.3s]">
+              <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <ShieldAlert className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-slate-800 mb-2">Acesso Restrito</h2>
+                  <p className="text-slate-500">
+                      Seu nível de acesso (CONVIDADO) não permite realizar novos cadastros. Solicite permissão ao administrador.
+                  </p>
+              </div>
+          </div>
+      );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out]">

@@ -1,11 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Input } from './Input';
-import { Select } from './Select';
-import { Database, Server, Save, Activity, CheckCircle2, XCircle } from 'lucide-react';
-import { Spinner } from './Spinner';
+import { Input } from './Input.tsx';
+import { Select } from './Select.tsx';
+import { Database, Server, Save, Activity, CheckCircle2, XCircle, Lock } from 'lucide-react';
+import { Spinner } from './Spinner.tsx';
 
-export const DatabaseSettings: React.FC = () => {
+interface DatabaseSettingsProps {
+    userRole: 'ADMIN' | 'CONVIDADO';
+}
+
+export const DatabaseSettings: React.FC<DatabaseSettingsProps> = ({ userRole }) => {
   const [config, setConfig] = useState({
     type: '',
     host: '',
@@ -39,6 +43,8 @@ export const DatabaseSettings: React.FC = () => {
   const handleTestConnection = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (userRole !== 'ADMIN') return;
+
     if (!config.type || !config.host || !config.user) {
         setStatus('ERROR');
         return;
@@ -58,6 +64,8 @@ export const DatabaseSettings: React.FC = () => {
         }
     }, 2000);
   };
+
+  const isDisabled = userRole !== 'ADMIN';
 
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
@@ -91,6 +99,13 @@ export const DatabaseSettings: React.FC = () => {
             </div>
 
             <div className="p-8">
+                {isDisabled && (
+                    <div className="mb-6 p-4 bg-yellow-50 border border-yellow-100 rounded-lg flex items-center gap-3 text-yellow-800 text-sm">
+                        <Lock className="w-5 h-5" />
+                        <span>Modo de Leitura: Apenas administradores podem alterar as configurações de conexão.</span>
+                    </div>
+                )}
+
                 <form onSubmit={handleTestConnection}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div className="col-span-1 md:col-span-2">
@@ -107,6 +122,7 @@ export const DatabaseSettings: React.FC = () => {
                                 value={config.type}
                                 onChange={handleChange}
                                 required
+                                disabled={isDisabled}
                             />
                         </div>
                         <div className="col-span-1">
@@ -116,6 +132,7 @@ export const DatabaseSettings: React.FC = () => {
                                 placeholder="ex: k_system_prod"
                                 value={config.database}
                                 onChange={handleChange}
+                                disabled={isDisabled}
                             />
                         </div>
 
@@ -127,6 +144,7 @@ export const DatabaseSettings: React.FC = () => {
                                 value={config.host}
                                 onChange={handleChange}
                                 required
+                                disabled={isDisabled}
                             />
                         </div>
                         <div className="col-span-1 md:col-span-1">
@@ -137,6 +155,7 @@ export const DatabaseSettings: React.FC = () => {
                                 value={config.port}
                                 onChange={handleChange}
                                 type="number"
+                                disabled={isDisabled}
                             />
                         </div>
 
@@ -154,6 +173,7 @@ export const DatabaseSettings: React.FC = () => {
                                 value={config.user}
                                 onChange={handleChange}
                                 required
+                                disabled={isDisabled}
                             />
                         </div>
                         <div className="col-span-1">
@@ -164,6 +184,7 @@ export const DatabaseSettings: React.FC = () => {
                                 placeholder="••••••••"
                                 value={config.password}
                                 onChange={handleChange}
+                                disabled={isDisabled}
                             />
                         </div>
                     </div>
@@ -172,39 +193,41 @@ export const DatabaseSettings: React.FC = () => {
                         <div className="text-xs text-slate-400">
                             {lastCheck && <span>Última verificação: {lastCheck}</span>}
                         </div>
-                        <div className="flex gap-3">
-                            <button
-                                type="button" 
-                                onClick={() => {
-                                    setConfig({ type: '', host: '', port: '', database: '', user: '', password: '' });
-                                    setStatus('DISCONNECTED');
-                                    localStorage.removeItem('k_system_db_config');
-                                }}
-                                className="px-6 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors"
-                            >
-                                Limpar
-                            </button>
-                            <button 
-                                type="submit"
-                                disabled={status === 'CONNECTING'}
-                                className={`
-                                    flex items-center gap-2 px-8 py-2.5 bg-primary-600 text-white rounded-xl font-semibold shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-all active:scale-95
-                                    ${status === 'CONNECTING' ? 'opacity-70 cursor-not-allowed' : ''}
-                                `}
-                            >
-                                {status === 'CONNECTING' ? (
-                                    <>
-                                        <Spinner size="sm" variant="white" />
-                                        <span>Verificando...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Save className="w-5 h-5" />
-                                        Salvar e Conectar
-                                    </>
-                                )}
-                            </button>
-                        </div>
+                        {userRole === 'ADMIN' && (
+                            <div className="flex gap-3">
+                                <button
+                                    type="button" 
+                                    onClick={() => {
+                                        setConfig({ type: '', host: '', port: '', database: '', user: '', password: '' });
+                                        setStatus('DISCONNECTED');
+                                        localStorage.removeItem('k_system_db_config');
+                                    }}
+                                    className="px-6 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors"
+                                >
+                                    Limpar
+                                </button>
+                                <button 
+                                    type="submit"
+                                    disabled={status === 'CONNECTING'}
+                                    className={`
+                                        flex items-center gap-2 px-8 py-2.5 bg-primary-600 text-white rounded-xl font-semibold shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-all active:scale-95
+                                        ${status === 'CONNECTING' ? 'opacity-70 cursor-not-allowed' : ''}
+                                    `}
+                                >
+                                    {status === 'CONNECTING' ? (
+                                        <>
+                                            <Spinner size="sm" variant="white" />
+                                            <span>Verificando...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="w-5 h-5" />
+                                            Salvar e Conectar
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </form>
             </div>

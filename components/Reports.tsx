@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { dbService } from '../services/dbService';
-import { User } from '../types';
-import { FileBarChart2, Printer, Users, Building2, MapPin, ArrowUpDown, ArrowUp, ArrowDown, FileDown, Eye, X } from 'lucide-react';
-import { Logo } from './Logo';
-import { Spinner } from './Spinner';
+import { dbService } from '../services/dbService.ts';
+import { User } from '../types.ts';
+import { FileBarChart2, Users, Building2, MapPin, ArrowUpDown, ArrowUp, ArrowDown, FileDown, Eye, X, Printer } from 'lucide-react';
+import { Logo } from './Logo.tsx';
+import { Spinner } from './Spinner.tsx';
 
 type SortKeys = keyof User;
 
@@ -36,89 +36,6 @@ export const Reports: React.FC = () => {
     }
   }, [selectedFilial, allUsers]);
 
-  const handlePrint = () => {
-    if (showPreview) {
-        // --- PREVIEW PRINT STRATEGY (DOM PORTAL) ---
-        // Creates a temporary clone of the paper at the body root to bypass React nesting and existing layout CSS
-        const content = document.getElementById('preview-paper');
-        if (!content) return;
-
-        // 1. Create Portal Container
-        const printPortal = document.createElement('div');
-        printPortal.id = 'print-portal';
-        
-        // 2. Clone content (preserves Tailwind classes)
-        // We wrap it to ensure margins are handled correctly
-        const wrapper = document.createElement('div');
-        wrapper.appendChild(content.cloneNode(true));
-        printPortal.appendChild(wrapper);
-
-        document.body.appendChild(printPortal);
-
-        // 3. Inject Blocking CSS
-        const style = document.createElement('style');
-        style.id = 'print-portal-style';
-        style.textContent = `
-            @media print {
-                /* Aggressively hide EVERYTHING else */
-                body > *:not(#print-portal) { display: none !important; }
-                #root { display: none !important; } /* Specific override for index.html styles */
-                
-                /* Reset Body */
-                html, body { 
-                    height: auto !important; 
-                    overflow: visible !important; 
-                    background: white !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                }
-
-                /* Show Portal */
-                #print-portal {
-                    display: block !important;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    margin: 0;
-                    padding: 0;
-                    z-index: 99999;
-                }
-
-                /* Reset Paper Styles for pure print */
-                #print-portal > div > div {
-                    box-shadow: none !important;
-                    margin: 0 !important;
-                    padding: 10mm !important; /* Standard Margin */
-                    max-width: none !important;
-                    width: 100% !important;
-                    border: none !important;
-                }
-                
-                /* Ensure Text Color */
-                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // 4. Print
-        setTimeout(() => {
-            window.print();
-            
-            // 5. Cleanup (Clean up immediately after print dialog opens/closes)
-            // Using a slightly longer timeout to ensure browser captures the render
-            setTimeout(() => {
-                if (document.body.contains(printPortal)) document.body.removeChild(printPortal);
-                if (document.head.contains(style)) document.head.removeChild(style);
-            }, 500);
-        }, 100);
-
-    } else {
-        // --- NORMAL LIST PRINT STRATEGY ---
-        window.print();
-    }
-  };
-
   const handleExportPDF = () => {
     setIsExporting(true);
     
@@ -134,7 +51,7 @@ export const Reports: React.FC = () => {
       }
 
       const opt = {
-        margin: [10, 10, 10, 10], // mm
+        margin: [5, 5, 5, 5], // mm
         filename: `Relatorio_${selectedFilial.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -154,6 +71,13 @@ export const Reports: React.FC = () => {
         setIsExporting(false);
       }
     }, 200);
+  };
+
+  const handlePrint = () => {
+      // Small timeout to ensure DOM is ready if state just changed
+      setTimeout(() => {
+          window.print();
+      }, 100);
   };
 
   // Sorting Logic
@@ -212,20 +136,69 @@ export const Reports: React.FC = () => {
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out] print:p-0 print:space-y-0 print:w-full print:bg-white">
       {/* 
-        Standard List Print Styles 
-        Only active when NOT in preview mode (handlePrint handles preview mode manually)
+        ROBUST PRINT STYLES 
+        This logic ensures we target the correct element regardless of DOM structure depth.
       */}
       <style>{`
         @media print {
           @page { size: auto; margin: 0mm; }
-          body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           
-          /* Hide non-print elements globally */
+          body { 
+              background-color: white !important;
+              -webkit-print-color-adjust: exact !important; 
+              print-color-adjust: exact !important; 
+          }
+
+          /* Global Hides */
           nav, aside, header, .print\\:hidden { display: none !important; }
 
-          /* Default behaviour: Hide Modal stuff unless Portal is active (which is handled in JS) */
-          #preview-modal-container { display: none !important; }
-          #print-portal { display: block !important; }
+          ${showPreview ? `
+              /* 
+                 PRINT PREVIEW MODE:
+                 We use visibility: hidden on body to hide everything,
+                 then visibility: visible on the modal container to show it.
+                 This is more robust than display: none for deeply nested React components.
+              */
+              body * {
+                  visibility: hidden;
+              }
+
+              #preview-modal-container,
+              #preview-modal-container * {
+                  visibility: visible;
+              }
+
+              #preview-modal-container {
+                  position: absolute !important;
+                  left: 0 !important;
+                  top: 0 !important;
+                  width: 100% !important;
+                  height: auto !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  background: white !important;
+                  overflow: visible !important; /* Critical for multi-page */
+                  z-index: 9999 !important;
+              }
+
+              #preview-paper {
+                  box-shadow: none !important;
+                  margin: 0 auto !important;
+                  width: 100% !important;
+                  padding: 10mm !important; /* Keep internal padding */
+                  max-width: none !important;
+              }
+
+              /* Explicitly hide toolbar even if it's inside the visible container */
+              #preview-toolbar {
+                  display: none !important;
+              }
+
+          ` : `
+              /* NORMAL MODE (Printing the list view directly) */
+              #preview-modal-container { display: none !important; }
+              #reports-main-ui { display: block !important; }
+          `}
         }
       `}</style>
 
@@ -239,10 +212,19 @@ export const Reports: React.FC = () => {
               <FileBarChart2 className="w-6 h-6 text-primary-500" />
               Relatório de Colaboradores
             </h2>
-            <p className="text-slate-500 text-sm mt-1">Selecione uma filial para visualizar e imprimir o quadro de funcionários.</p>
+            <p className="text-slate-500 text-sm mt-1">Selecione uma filial para visualizar o quadro de funcionários.</p>
           </div>
           
           <div className="flex gap-2">
+             <button 
+                onClick={handlePrint}
+                disabled={!selectedFilial || users.length === 0}
+                className="flex items-center gap-2 px-5 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-all font-bold uppercase tracking-wider text-xs shadow-lg shadow-slate-900/10"
+              >
+                <Printer className="w-4 h-4" />
+                Imprimir
+              </button>
+
              <button 
                 onClick={() => setShowPreview(true)}
                 disabled={!selectedFilial || users.length === 0}
@@ -250,24 +232,6 @@ export const Reports: React.FC = () => {
               >
                 <Eye className="w-4 h-4" />
                 Visualizar
-              </button>
-
-             <button 
-                onClick={handlePrint}
-                disabled={!selectedFilial || users.length === 0}
-                className="flex items-center gap-2 px-5 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-all font-bold uppercase tracking-wider text-xs"
-              >
-                <Printer className="w-4 h-4" />
-                Imprimir
-              </button>
-
-              <button 
-                onClick={handleExportPDF}
-                disabled={!selectedFilial || users.length === 0 || isExporting}
-                className="flex items-center gap-2 px-5 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed font-bold uppercase tracking-wider text-xs w-40 justify-center"
-              >
-                {isExporting ? <Spinner size="sm" variant="white" /> : <FileDown className="w-4 h-4" />}
-                {isExporting ? 'Gerando...' : 'Exportar PDF'}
               </button>
           </div>
         </div>
@@ -304,7 +268,7 @@ export const Reports: React.FC = () => {
                 <div className="flex items-center gap-4">
                     <Logo className="w-12 h-12" variant="primary" />
                     <div>
-                        <h1 className="text-2xl font-bold text-black uppercase tracking-tight">K-System Enterprise</h1>
+                        <h1 className="text-2xl font-bold text-black uppercase tracking-tight">K-System</h1>
                         <p className="text-sm text-gray-600">Relatório de Controle de Acessos e Colaboradores</p>
                     </div>
                 </div>
@@ -337,12 +301,13 @@ export const Reports: React.FC = () => {
                         <thead className="bg-slate-50 print:bg-white print:border-b-2 print:border-black">
                             <tr>
                                 <ThSortable label="Matrícula" columnKey="matricula" />
-                                <ThSortable label="Nome do Colaborador" columnKey="nomeCompleto" />
+                                <ThSortable label="Nome Completo" columnKey="nomeCompleto" />
                                 {selectedFilial === 'TODAS' && (
                                     <ThSortable label="Filial" columnKey="filial" />
                                 )}
-                                <ThSortable label="Departamento" columnKey="departamento" />
-                                <ThSortable label="Setor" columnKey="setor" />
+                                <th className="p-3 font-bold text-slate-700 border-b border-slate-200 text-left print:text-black print:border-black print:text-xs print:uppercase print:p-2">
+                                    Departamento / Setor
+                                </th>
                                 <ThSortable label="Login" columnKey="login" />
                             </tr>
                         </thead>
@@ -350,17 +315,28 @@ export const Reports: React.FC = () => {
                             {sortedUsers.map((user, index) => (
                                 <tr key={user.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} print:bg-transparent`}>
                                     <td className="p-3 font-mono font-bold text-slate-600 print:text-black print:border-b print:border-gray-200">{user.matricula}</td>
-                                    <td className="p-3 font-medium text-slate-800 print:text-black print:border-b print:border-gray-200">{user.nomeCompleto}</td>
+                                    
+                                    <td className="p-3 print:text-black print:border-b print:border-gray-200">
+                                         <div className="font-semibold text-slate-800 print:text-black">{user.nomeCompleto}</div>
+                                         <div className="text-xs text-slate-400 print:hidden">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
+                                    </td>
+                                    
                                     {selectedFilial === 'TODAS' && (
                                         <td className="p-3 text-slate-600 print:text-black print:border-b print:border-gray-200">
-                                            <span className="print:hidden inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200">
+                                            {/* Screen Style: Red Pill */}
+                                            <span className="print:hidden inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100">
                                                 {user.filial}
                                             </span>
-                                            <span className="hidden print:inline font-semibold">{user.filial}</span>
+                                            {/* Print Style: Text */}
+                                            <span className="hidden print:inline font-bold text-xs">{user.filial}</span>
                                         </td>
                                     )}
-                                    <td className="p-3 text-slate-600 print:text-black print:border-b print:border-gray-200">{user.departamento}</td>
-                                    <td className="p-3 text-slate-600 print:text-black print:border-b print:border-gray-200">{user.setor}</td>
+                                    
+                                    <td className="p-3 print:text-black print:border-b print:border-gray-200">
+                                         <div className="text-sm text-slate-700 font-medium print:text-black">{user.departamento}</div>
+                                         <div className="text-xs text-slate-500 uppercase tracking-wide print:text-gray-600">{user.setor}</div>
+                                    </td>
+
                                     <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
                                         <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.login}</span>
                                     </td>
@@ -383,7 +359,7 @@ export const Reports: React.FC = () => {
             </div>
             
             <div className="mt-8 pt-4 border-t border-slate-100 text-xs text-slate-400 flex justify-between print:hidden">
-                <p>Gerado pelo K-System Enterprise</p>
+                <p>Gerado pelo K-System</p>
                 <p>{new Date().toLocaleString()}</p>
             </div>
           </div>
@@ -397,18 +373,43 @@ export const Reports: React.FC = () => {
                   
                   {/* Floating Toolbar */}
                   <div id="preview-toolbar" className="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex gap-4 items-center">
-                      <span className="text-sm font-semibold text-slate-300 pr-4 border-r border-slate-600">Visualização de Impressão</span>
+                      <span className="text-sm font-semibold text-slate-300 pr-4 border-r border-slate-600 hidden sm:block">Visualização</span>
                       
-                      <button onClick={handlePrint} className="hover:text-primary-400 transition-colors flex items-center gap-1 text-sm font-medium">
-                          <Printer className="w-4 h-4" /> Imprimir
-                      </button>
-                      
-                      <button onClick={handleExportPDF} disabled={isExporting} className="hover:text-primary-400 transition-colors flex items-center gap-1 text-sm font-medium">
-                           {isExporting ? <Spinner size="sm" variant="white" /> : <FileDown className="w-4 h-4" />} PDF
-                      </button>
+                      {/* PDF Button */}
+                      <div className="relative group">
+                          <button 
+                            onClick={handleExportPDF} 
+                            disabled={isExporting}
+                            className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-full transition-colors text-sm font-medium disabled:opacity-50"
+                          >
+                             {isExporting ? <Spinner size="sm" variant="white" /> : <FileDown className="w-4 h-4" />}
+                             <span className="hidden sm:inline">PDF</span>
+                          </button>
+                          <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 border border-slate-700">
+                                Baixar em PDF
+                                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 border-t border-l border-slate-700 rotate-45"></div>
+                          </div>
+                      </div>
 
-                      <button onClick={() => setShowPreview(false)} className="bg-slate-700 hover:bg-slate-600 rounded-full p-1 ml-2 transition-colors">
-                          <X className="w-5 h-5" />
+                      {/* Print Button */}
+                      <div className="relative group">
+                          <button 
+                            onClick={handlePrint}
+                            className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-full transition-colors text-sm font-medium"
+                          >
+                             <Printer className="w-4 h-4" />
+                             <span className="hidden sm:inline">Imprimir</span>
+                          </button>
+                          <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 border border-slate-700">
+                                Imprimir Relatório
+                                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 border-t border-l border-slate-700 rotate-45"></div>
+                          </div>
+                      </div>
+
+                      <div className="w-px h-6 bg-slate-600 mx-1"></div>
+
+                      <button onClick={() => setShowPreview(false)} className="bg-slate-700 hover:bg-red-600 rounded-full p-1.5 transition-colors">
+                          <X className="w-4 h-4" />
                       </button>
                   </div>
 
@@ -420,7 +421,7 @@ export const Reports: React.FC = () => {
                         <div className="flex items-center gap-4">
                             <Logo className="w-12 h-12" variant="primary" />
                             <div>
-                                <h1 className="text-2xl font-bold text-black uppercase tracking-tight">K-System Enterprise</h1>
+                                <h1 className="text-2xl font-bold text-black uppercase tracking-tight">K-System</h1>
                                 <p className="text-sm text-gray-600">Relatório de Controle de Acessos e Colaboradores</p>
                             </div>
                         </div>
@@ -451,8 +452,7 @@ export const Reports: React.FC = () => {
                                 {selectedFilial === 'TODAS' && (
                                      <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Filial</th>
                                 )}
-                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Departamento</th>
-                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Setor</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Departamento / Setor</th>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Login</th>
                             </tr>
                         </thead>
@@ -460,12 +460,21 @@ export const Reports: React.FC = () => {
                             {sortedUsers.map((user) => (
                                 <tr key={user.id} className="bg-transparent">
                                     <td className="p-2 text-black border-b border-gray-200 font-mono">{user.matricula}</td>
-                                    <td className="p-2 text-black border-b border-gray-200">{user.nomeCompleto}</td>
+                                    
+                                    <td className="p-2 text-black border-b border-gray-200">
+                                        <div className="font-bold">{user.nomeCompleto}</div>
+                                        <div className="text-xs text-gray-500">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
+                                    </td>
+                                    
                                     {selectedFilial === 'TODAS' && (
                                          <td className="p-2 text-black border-b border-gray-200 font-bold text-xs">{user.filial}</td>
                                     )}
-                                    <td className="p-2 text-black border-b border-gray-200 text-xs">{user.departamento}</td>
-                                    <td className="p-2 text-black border-b border-gray-200 text-xs">{user.setor}</td>
+                                    
+                                    <td className="p-2 text-black border-b border-gray-200">
+                                        <div className="text-xs font-bold">{user.departamento}</div>
+                                        <div className="text-[10px] text-gray-500">{user.setor}</div>
+                                    </td>
+                                    
                                     <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.login}</td>
                                 </tr>
                             ))}

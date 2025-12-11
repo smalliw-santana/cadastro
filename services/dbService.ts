@@ -1,5 +1,5 @@
 
-import { User, SystemUser } from '../types';
+import { User, SystemUser } from '../types.ts';
 
 const DB_KEY = 'k_system_users_db';
 const SYSTEM_USERS_KEY = 'k_system_access_users'; // New DB for Login Users
@@ -21,12 +21,48 @@ const INITIAL_USERS: User[] = [
   {
     id: '1',
     matricula: '1001',
-    nomeCompleto: 'FUNCIONARIO EXEMPLO',
-    filial: 'MATRIZ',
-    login: 'FUNC.1',
+    nomeCompleto: 'DAVID SOUZA',
+    filial: 'L06 - MGZ CASTANHEIRA',
+    login: '123',
     senha: '123',
     departamento: 'TECNOLOGIA DA INFORMAÇÃO',
     setor: 'INFRAESTRUTURA',
+    dataCadastro: new Date().toISOString()
+  },
+
+   {
+    id: '2',
+    matricula: '1002',
+    nomeCompleto: 'JOÃO PEDRO',
+    filial: 'L02 - A.CACELA',
+    login: '123',
+    senha: '123',
+    departamento: 'CPD',
+    setor: 'DESENVOLVIMENTO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '3',
+    matricula: '1003',
+    nomeCompleto: 'PAULO RICARDO',
+    filial: 'L01 - CONDOR',
+    login: '123',
+    senha: '123',
+    departamento: 'ESTOQUE',
+    setor: 'ALMOXARIFADO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '4',
+    matricula: '1004',
+    nomeCompleto: 'MARIA SOCORRO',
+    filial: 'L04 - OBIDOS',
+    login: '123',
+    senha: '123',
+    departamento: 'GERENCIA',
+    setor: 'CONTABILIDADE',
     dataCadastro: new Date().toISOString()
   }
 ];
@@ -49,7 +85,17 @@ const INITIAL_SYSTEM_USERS: SystemUser[] = [
         senha: '1235',
         role: 'ADMIN',
         createdAt: new Date().toISOString()
+    },
+
+    {
+        id: 'admin-03',
+        nome: 'TESTE',
+        login: 'TESTE',
+        senha: '123',
+        role: 'CONVIDADO',
+        createdAt: new Date().toISOString()
     }
+
 ];
 
 // Helper to get list or init default

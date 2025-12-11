@@ -16,7 +16,7 @@ export interface SystemUser {
   nome: string;
   login: string;
   senha?: string; // Optional for display, required for creation
-  role: 'ADMIN' | 'OPERADOR';
+  role: 'ADMIN' | 'CONVIDADO';
   createdAt: string;
 }
 

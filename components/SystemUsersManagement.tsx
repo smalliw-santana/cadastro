@@ -1,12 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { dbService } from '../services/dbService';
-import { SystemUser } from '../types';
-import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X, AlertTriangle } from 'lucide-react';
-import { Input } from './Input';
-import { Select } from './Select';
+import { dbService } from '../services/dbService.ts';
+import { SystemUser } from '../types.ts';
+import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X, AlertTriangle, User } from 'lucide-react';
+import { Input } from './Input.tsx';
+import { Select } from './Select.tsx';
 
-export const SystemUsersManagement: React.FC = () => {
+interface SystemUsersManagementProps {
+  userRole: 'ADMIN' | 'CONVIDADO';
+}
+
+export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ userRole }) => {
   const [users, setUsers] = useState<SystemUser[]>([]);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   
@@ -14,7 +18,7 @@ export const SystemUsersManagement: React.FC = () => {
       nome: '',
       login: '',
       senha: '',
-      role: 'ADMIN' as 'ADMIN' | 'OPERADOR'
+      role: 'ADMIN' as 'ADMIN' | 'CONVIDADO'
   });
 
   // Delete Modal State
@@ -96,61 +100,65 @@ export const SystemUsersManagement: React.FC = () => {
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">Controle de Acesso</h2>
-            <p className="text-primary-200 text-sm">Gerencie os usuários que podem fazer login no sistema.</p>
+            <p className="text-primary-200 text-sm">
+                {userRole === 'ADMIN' ? 'Gerencie os usuários que podem fazer login no sistema.' : 'Visualização de usuários com acesso ao sistema.'}
+            </p>
           </div>
         </div>
 
         <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-12">
             
-            {/* Formulario */}
-            <div className="lg:col-span-1 space-y-6">
-                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2">
-                    <UserPlus className="w-5 h-5 text-primary-500" />
-                    Novo Usuário de Sistema
-                </h3>
-                
-                <form onSubmit={handleAddUser} className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
-                    <Input 
-                        label="Nome do Usuário"
-                        value={newUser.nome}
-                        onChange={e => setNewUser({...newUser, nome: e.target.value.toUpperCase()})}
-                        placeholder="Ex: JOÃO SILVA"
-                        required
-                    />
-                    <Input 
-                        label="Login de Acesso"
-                        value={newUser.login}
-                        onChange={e => setNewUser({...newUser, login: e.target.value.toUpperCase()})}
-                        placeholder="Ex: ADMIN"
-                        required
-                    />
-                    <Input 
-                        label="Senha"
-                        type="password"
-                        value={newUser.senha}
-                        onChange={e => setNewUser({...newUser, senha: e.target.value})}
-                        placeholder="••••••"
-                        required
-                    />
-                    <Select 
-                        label="Nível de Permissão"
-                        value={newUser.role}
-                        onChange={e => setNewUser({...newUser, role: e.target.value as any})}
-                        options={['ADMIN', 'OPERADOR']}
-                    />
+            {/* Formulario - ONLY ADMIN */}
+            {userRole === 'ADMIN' && (
+                <div className="lg:col-span-1 space-y-6">
+                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2">
+                        <UserPlus className="w-5 h-5 text-primary-500" />
+                        Novo Usuário de Sistema
+                    </h3>
+                    
+                    <form onSubmit={handleAddUser} className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
+                        <Input 
+                            label="Nome do Usuário"
+                            value={newUser.nome}
+                            onChange={e => setNewUser({...newUser, nome: e.target.value.toUpperCase()})}
+                            placeholder="Ex: JOÃO SILVA"
+                            required
+                        />
+                        <Input 
+                            label="Login de Acesso"
+                            value={newUser.login}
+                            onChange={e => setNewUser({...newUser, login: e.target.value.toUpperCase()})}
+                            placeholder="Ex: ADMIN"
+                            required
+                        />
+                        <Input 
+                            label="Senha"
+                            type="password"
+                            value={newUser.senha}
+                            onChange={e => setNewUser({...newUser, senha: e.target.value})}
+                            placeholder="••••••"
+                            required
+                        />
+                        <Select 
+                            label="Nível de Permissão"
+                            value={newUser.role}
+                            onChange={e => setNewUser({...newUser, role: e.target.value as any})}
+                            options={['ADMIN', 'CONVIDADO']}
+                        />
 
-                    <button 
-                        type="submit"
-                        className="w-full flex items-center justify-center gap-2 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition-all font-semibold shadow-lg shadow-primary-500/20 mt-4"
-                    >
-                        <Save className="w-4 h-4" />
-                        Criar Acesso
-                    </button>
-                </form>
-            </div>
+                        <button 
+                            type="submit"
+                            className="w-full flex items-center justify-center gap-2 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition-all font-semibold shadow-lg shadow-primary-500/20 mt-4"
+                        >
+                            <Save className="w-4 h-4" />
+                            Criar Acesso
+                        </button>
+                    </form>
+                </div>
+            )}
 
-            {/* Lista */}
-            <div className="lg:col-span-2 space-y-4">
+            {/* Lista - Full width if Operator */}
+            <div className={`space-y-4 ${userRole !== 'ADMIN' ? 'lg:col-span-3' : 'lg:col-span-2'}`}>
                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2">
                     <Key className="w-5 h-5 text-slate-500" />
                     Usuários com Acesso ({users.length})
@@ -163,7 +171,7 @@ export const SystemUsersManagement: React.FC = () => {
                                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase">Usuário</th>
                                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase">Login</th>
                                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase">Permissão</th>
-                                <th className="p-4 text-xs font-semibold text-slate-500 uppercase text-right">Ações</th>
+                                {userRole === 'ADMIN' && <th className="p-4 text-xs font-semibold text-slate-500 uppercase text-right">Ações</th>}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -175,19 +183,22 @@ export const SystemUsersManagement: React.FC = () => {
                                     </td>
                                     <td className="p-4 text-sm font-mono text-slate-600 bg-slate-50 w-fit rounded">{user.login}</td>
                                     <td className="p-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold ${user.role === 'ADMIN' ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-700'}`}>
+                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold ${user.role === 'ADMIN' ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-700'}`}>
+                                            {user.role === 'ADMIN' ? <ShieldCheck className="w-3 h-3" /> : <User className="w-3 h-3" />}
                                             {user.role}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-right">
-                                        <button 
-                                            onClick={(e) => confirmDelete(e, user)}
-                                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                            title="Revogar Acesso"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </td>
+                                    {userRole === 'ADMIN' && (
+                                        <td className="p-4 text-right">
+                                            <button 
+                                                onClick={(e) => confirmDelete(e, user)}
+                                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                title="Revogar Acesso"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>
