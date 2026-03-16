@@ -1,16 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
+import { SystemUser } from '../types.ts';
 import { dbService } from '../services/dbService.ts';
 import { Plus, Trash2, List, Save, Building, Briefcase, Layers, CheckCircle2, AlertCircle, X, AlertTriangle } from 'lucide-react';
 import { Input } from './Input.tsx';
 import { Spinner } from './Spinner.tsx';
 
 interface ResourceRegisterProps {
-  type: 'FILIAL' | 'DEPARTAMENTO' | 'SETOR';
-  userRole: 'ADMIN' | 'CONVIDADO';
+  type: 'FILIAL' | 'FUNCAO' | 'SETOR';
+  currentUser?: SystemUser;
 }
 
-export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, userRole }) => {
+export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, currentUser }) => {
+  const userRole = currentUser?.role || 'CONVIDADO';
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
@@ -30,20 +32,20 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, userRo
       add: dbService.addFilial,
       remove: dbService.deleteFilial
     },
-    DEPARTAMENTO: {
-      title: 'Gerenciar Departamentos',
-      label: 'Novo Departamento',
+    FUNCAO: {
+      title: 'Gerenciar Funções',
+      label: 'Nova Função',
       icon: Layers,
       description: 'Estruture as grandes áreas da organização.',
-      get: dbService.getDepartamentos,
-      add: dbService.addDepartamento,
-      remove: dbService.deleteDepartamento
+      get: dbService.getFuncoes,
+      add: dbService.addFuncao,
+      remove: dbService.deleteFuncao
     },
     SETOR: {
       title: 'Gerenciar Setores',
       label: 'Novo Setor',
       icon: Briefcase,
-      description: 'Defina as divisões de trabalho dentro dos departamentos.',
+      description: 'Defina as divisões de trabalho dentro das funções.',
       get: dbService.getSetores,
       add: dbService.addSetor,
       remove: dbService.deleteSetor
@@ -68,6 +70,14 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, userRo
 
     const success = config.add(newItem);
     if (success) {
+      if (currentUser) {
+          dbService.addLog({
+              userName: currentUser.nome,
+              action: 'CREATE',
+              resource: type,
+              details: `Cadastrou ${type.toLowerCase()}: ${newItem.trim().toUpperCase()}`
+          });
+      }
       setNewItem('');
       loadItems();
       setFeedback({ type: 'success', message: 'Item cadastrado com sucesso!' });
@@ -96,6 +106,14 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, userRo
         const success = config.remove(itemToDelete);
         
         if (success) {
+            if (currentUser) {
+                dbService.addLog({
+                    userName: currentUser.nome,
+                    action: 'DELETE',
+                    resource: type,
+                    details: `Excluiu ${type.toLowerCase()}: ${itemToDelete}`
+                });
+            }
             loadItems();
             setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
         } else {
@@ -152,7 +170,7 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, userRo
                
                <form onSubmit={handleAdd} className="bg-slate-50 p-6 rounded-xl border border-slate-200">
                   <Input 
-                     label={`Nome do ${type === 'FILIAL' ? 'Filial' : type === 'SETOR' ? 'Setor' : 'Departamento'}`}
+                     label={`Nome do ${type === 'FILIAL' ? 'Filial' : type === 'SETOR' ? 'Setor' : 'Função'}`}
                      value={newItem}
                      onChange={(e) => setNewItem(e.target.value.toUpperCase())}
                      placeholder="Digite o nome..."

@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { dbService } from './services/dbService.ts';
 import { ViewState, SystemUser } from './types.ts';
 import { Login } from './components/Login.tsx';
 import { RegisterUser } from './components/RegisterUser.tsx';
@@ -9,8 +10,9 @@ import { Reports } from './components/Reports.tsx';
 import { DatabaseSettings } from './components/DatabaseSettings.tsx';
 import { ResourceRegister } from './components/ResourceRegister.tsx';
 import { SystemUsersManagement } from './components/SystemUsersManagement.tsx';
+import { SystemLogs } from './components/SystemLogs.tsx';
 import { Logo } from './components/Logo.tsx';
-import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck, User } from 'lucide-react';
+import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck, User, ScrollText } from 'lucide-react';
 
 // 15 Minutes in milliseconds
 const INACTIVITY_TIMEOUT = 15 * 60 * 1000; 
@@ -28,7 +30,12 @@ const App: React.FC = () => {
     if (!currentUser) return;
 
     const handleLogout = () => {
-      // Optional: You could save a flag in localStorage to show a "Session Expired" message on the login screen
+      dbService.addLog({
+          userName: currentUser.nome,
+          action: 'LOGOUT',
+          resource: 'Sistema',
+          details: 'Logout automático por inatividade.'
+      });
       setCurrentUser(null);
     };
 
@@ -83,7 +90,7 @@ const App: React.FC = () => {
       )}
       
       <Icon className={`w-5 h-5 transition-colors ${currentView === view ? 'text-primary-400' : 'group-hover:text-white'}`} />
-      <span className={`font-medium tracking-wide ${!isSidebarOpen && 'hidden md:hidden'}`}>{label}</span>
+      <span className={`font-medium tracking-wide ${!isSidebarOpen ? 'hidden md:hidden' : ''}`}>{label}</span>
     </button>
   );
 
@@ -109,7 +116,7 @@ const App: React.FC = () => {
 
         <nav className="flex-1 px-4 py-6 space-y-2">
           <div className="pb-2">
-             <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 mt-1 ${!isSidebarOpen && 'hidden'}`}>Principal</p>
+             <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 mt-1 ${!isSidebarOpen ? 'hidden' : ''}`}>Principal</p>
              <NavItem view="DASHBOARD" icon={LayoutDashboard} label="Dashboard Geral" />
              
              {/* REGISTER is visible in menu ONLY for ADMIN, but we secure the component too */}
@@ -124,9 +131,9 @@ const App: React.FC = () => {
           {/* Auxiliary Registers - Visible in menu ONLY for ADMIN, but we secure components too */}
           {currentUser.role === 'ADMIN' && (
             <div className="pt-4 mt-2 border-t border-slate-800">
-                <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ${!isSidebarOpen && 'hidden'}`}>Cadastros Auxiliares</p>
+                <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ${!isSidebarOpen ? 'hidden' : ''}`}>Cadastros Auxiliares</p>
                 <NavItem view="REGISTER_FILIAL" icon={Building} label="Cadastrar Filial" />
-                <NavItem view="REGISTER_DEPARTAMENTO" icon={Layers} label="Cadastrar Depto." />
+                <NavItem view="REGISTER_FUNCAO" icon={Layers} label="Cadastrar Função" />
                 <NavItem view="REGISTER_SETOR" icon={Briefcase} label="Cadastrar Setor" />
             </div>
           )}
@@ -134,9 +141,10 @@ const App: React.FC = () => {
           {/* System Settings - Visible in menu ONLY for ADMIN, but we secure components too */}
           {currentUser.role === 'ADMIN' && (
             <div className="pt-4 mt-2 border-t border-slate-800">
-               <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ${!isSidebarOpen && 'hidden'}`}>Sistema</p>
+               <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ${!isSidebarOpen ? 'hidden' : ''}`}>Sistema</p>
                <NavItem view="MANAGE_ACCESS" icon={ShieldCheck} label="Usuários de Acesso" />
                <NavItem view="DB_SETTINGS" icon={Settings} label="Configuração BD" />
+               <NavItem view="SYSTEM_LOGS" icon={ScrollText} label="Logs do Sistema" />
             </div>
           )}
         </nav>
@@ -173,10 +181,18 @@ const App: React.FC = () => {
           </div>
 
           <button 
-             onClick={() => setCurrentUser(null)}
+             onClick={() => {
+                 dbService.addLog({
+                     userName: currentUser.nome,
+                     action: 'LOGOUT',
+                     resource: 'Sistema',
+                     details: 'Logout manual.'
+                 });
+                 setCurrentUser(null);
+             }}
              className={`
                w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 group
-               ${!isSidebarOpen && 'justify-center'}
+               ${!isSidebarOpen ? 'justify-center' : ''}
              `}
           >
             <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
@@ -203,14 +219,15 @@ const App: React.FC = () => {
         <div className="flex-1 overflow-auto bg-slate-50 print:overflow-visible print:bg-white print:h-auto print:block scroll-smooth">
           <div className="max-w-7xl mx-auto w-full min-h-full flex flex-col">
             {currentView === 'DASHBOARD' && <Dashboard />}
-            {currentView === 'REGISTER' && <RegisterUser userRole={currentUser.role} />}
-            {currentView === 'USERS_LIST' && <UsersList onNavigateToRegister={() => setCurrentView('REGISTER')} userRole={currentUser.role} />}
+            {currentView === 'REGISTER' && <RegisterUser currentUser={currentUser} />}
+            {currentView === 'USERS_LIST' && <UsersList onNavigateToRegister={() => setCurrentView('REGISTER')} currentUser={currentUser} />}
             {currentView === 'REPORTS' && <Reports />}
             {currentView === 'DB_SETTINGS' && <DatabaseSettings userRole={currentUser.role} />}
-            {currentView === 'REGISTER_FILIAL' && <ResourceRegister type="FILIAL" userRole={currentUser.role} />}
-            {currentView === 'REGISTER_DEPARTAMENTO' && <ResourceRegister type="DEPARTAMENTO" userRole={currentUser.role} />}
-            {currentView === 'REGISTER_SETOR' && <ResourceRegister type="SETOR" userRole={currentUser.role} />}
-            {currentView === 'MANAGE_ACCESS' && <SystemUsersManagement userRole={currentUser.role} />}
+            {currentView === 'REGISTER_FILIAL' && <ResourceRegister type="FILIAL" currentUser={currentUser} />}
+            {currentView === 'REGISTER_FUNCAO' && <ResourceRegister type="FUNCAO" currentUser={currentUser} />}
+            {currentView === 'REGISTER_SETOR' && <ResourceRegister type="SETOR" currentUser={currentUser} />}
+            {currentView === 'MANAGE_ACCESS' && <SystemUsersManagement currentUser={currentUser} />}
+            {currentView === 'SYSTEM_LOGS' && <SystemLogs />}
           </div>
         </div>
       </main>

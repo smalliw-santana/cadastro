@@ -7,10 +7,11 @@ import { Input } from './Input.tsx';
 import { Select } from './Select.tsx';
 
 interface SystemUsersManagementProps {
-  userRole: 'ADMIN' | 'CONVIDADO';
+  currentUser?: SystemUser;
 }
 
-export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ userRole }) => {
+export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ currentUser }) => {
+  const userRole = currentUser?.role || 'CONVIDADO';
   const [users, setUsers] = useState<SystemUser[]>([]);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   
@@ -48,6 +49,14 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ us
       });
 
       if (result.success) {
+          if (currentUser) {
+              dbService.addLog({
+                  userName: currentUser.nome,
+                  action: 'CREATE',
+                  resource: 'Usuário de Sistema',
+                  details: `Cadastrou usuário de sistema: ${newUser.login.toUpperCase()} (${newUser.role})`
+              });
+          }
           setFeedback({ type: 'success', message: result.message });
           setNewUser({ nome: '', login: '', senha: '', role: 'ADMIN' });
           loadUsers();
@@ -69,6 +78,14 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ us
 
       const result = dbService.deleteSystemUser(userToDelete.id);
       if (result.success) {
+          if (currentUser) {
+              dbService.addLog({
+                  userName: currentUser.nome,
+                  action: 'DELETE',
+                  resource: 'Usuário de Sistema',
+                  details: `Excluiu usuário de sistema: ${userToDelete.login}`
+              });
+          }
           loadUsers();
           setFeedback({ type: 'success', message: result.message });
       } else {

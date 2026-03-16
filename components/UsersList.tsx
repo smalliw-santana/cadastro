@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { dbService } from '../services/dbService.ts';
-import { User } from '../types.ts';
+import { User, SystemUser } from '../types.ts';
 import { Search, Database, ShieldAlert, Plus, X, CheckCircle2, Eraser, AlertTriangle, Edit2, Trash2, Save, Eye } from 'lucide-react';
 import { Spinner } from './Spinner.tsx';
 import { Input } from './Input.tsx';
@@ -9,10 +9,11 @@ import { Select } from './Select.tsx';
 
 interface UsersListProps {
   onNavigateToRegister?: () => void;
-  userRole: 'ADMIN' | 'CONVIDADO';
+  currentUser?: SystemUser;
 }
 
-export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, userRole }) => {
+export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, currentUser }) => {
+  const userRole = currentUser?.role || 'CONVIDADO';
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +31,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
   const [editForm, setEditForm] = useState({
       nomeCompleto: '',
       filial: '',
-      departamento: '',
+      funcao: '',
       setor: '',
       login: '',
       senha: '' // Optional in edit
@@ -39,7 +40,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
   // Options for Edit Form
   const [options, setOptions] = useState({
     filiais: [] as string[],
-    departamentos: [] as string[],
+    funcoes: [] as string[],
     setores: [] as string[]
   });
 
@@ -48,7 +49,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
     // Load options for the edit modal
     setOptions({
         filiais: dbService.getFiliais(),
-        departamentos: dbService.getDepartamentos(),
+        funcoes: dbService.getFuncoes(),
         setores: dbService.getSetores()
     });
   }, []);
@@ -92,6 +93,14 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
         }
 
         if (result.success) {
+            if (currentUser) {
+                dbService.addLog({
+                    userName: currentUser.nome,
+                    action: 'DELETE',
+                    resource: 'Usuário (Colaborador)',
+                    details: deleteMode === 'ALL' ? 'Todos os usuários foram excluídos.' : `Usuário ${userToDelete?.login} excluído.`
+                });
+            }
             setFeedback({ type: 'success', message: result.message });
             loadUsers();
         } else {
@@ -112,7 +121,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
       setEditForm({
           nomeCompleto: user.nomeCompleto,
           filial: user.filial,
-          departamento: user.departamento,
+          funcao: user.funcao,
           setor: user.setor,
           login: user.login,
           senha: user.senha || ''
@@ -131,7 +140,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
           ...selectedUser,
           nomeCompleto: editForm.nomeCompleto.toUpperCase(),
           filial: editForm.filial,
-          departamento: editForm.departamento,
+          funcao: editForm.funcao,
           setor: editForm.setor,
           login: editForm.login.toUpperCase(),
           senha: editForm.senha // If empty, service logic might need adjustment, but usually we overwrite
@@ -141,6 +150,14 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
           const result = dbService.updateUser(updatedUser);
           
           if (result.success) {
+              if (currentUser) {
+                  dbService.addLog({
+                      userName: currentUser.nome,
+                      action: 'UPDATE',
+                      resource: 'Usuário (Colaborador)',
+                      details: `Usuário ${updatedUser.login} atualizado.`
+                  });
+              }
               setFeedback({ type: 'success', message: result.message });
               loadUsers();
               setIsDetailsModalOpen(false);
@@ -163,7 +180,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
       user.nomeCompleto.toLowerCase().includes(term) ||
       user.matricula.includes(term) ||
       user.filial.toLowerCase().includes(term) ||
-      user.departamento.toLowerCase().includes(term) ||
+      user.funcao.toLowerCase().includes(term) ||
       user.setor.toLowerCase().includes(term) ||
       user.login.toLowerCase().includes(term)
     );
@@ -266,7 +283,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Matrícula</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Nome Completo</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Filial</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Departamento / Setor</th>
+                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Função / Setor</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Login</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider text-right print:hidden">Ações</th>
                         </tr>
@@ -290,25 +307,38 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
                                         <div className="text-xs text-slate-400">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
                                     </td>
                                     <td className="p-4">
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100 print:bg-transparent print:border-none print:p-0 print:text-slate-800">
+                                        {/* Changed from Red to Indigo/Slate to look less like an error */}
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 print:bg-transparent print:border-none print:p-0 print:text-slate-800">
                                             {user.filial}
                                         </span>
                                     </td>
                                     <td className="p-4">
-                                        <div className="text-sm text-slate-700 print:text-slate-800">{user.departamento}</div>
+                                        <div className="text-sm text-slate-700 print:text-slate-800">{user.funcao}</div>
                                         <div className="text-xs text-slate-500">{user.setor}</div>
                                     </td>
                                     <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.login}</td>
                                     
-                                    {/* Action Column - VISUALIZAR Only */}
+                                    {/* Action Column */}
                                     <td className="p-4 text-right print:hidden">
-                                        <button 
-                                            onClick={() => handleViewClick(user)}
-                                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
-                                            title="Visualizar"
-                                        >
-                                            <Eye className="w-5 h-5" />
-                                        </button>
+                                        <div className="flex items-center justify-end gap-1">
+                                            <button 
+                                                onClick={() => handleViewClick(user)}
+                                                className="p-2 rounded-lg transition-all text-slate-400 hover:text-primary-600 hover:bg-primary-50"
+                                                title={userRole === 'ADMIN' ? "Editar" : "Visualizar"}
+                                            >
+                                                {userRole === 'ADMIN' ? <Edit2 className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                            </button>
+
+                                            {userRole === 'ADMIN' && (
+                                                <button 
+                                                    onClick={() => requestDeleteSingle(user)}
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                    title="Excluir"
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -397,10 +427,10 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, user
                             />
 
                             <Select 
-                                label="Departamento" 
-                                options={options.departamentos}
-                                value={editForm.departamento}
-                                onChange={e => setEditForm({...editForm, departamento: e.target.value})}
+                                label="Função" 
+                                options={options.funcoes}
+                                value={editForm.funcao}
+                                onChange={e => setEditForm({...editForm, funcao: e.target.value})}
                                 required
                                 disabled={userRole !== 'ADMIN'}
                             />

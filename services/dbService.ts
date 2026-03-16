@@ -1,20 +1,30 @@
 
-import { User, SystemUser } from '../types.ts';
+import { User, SystemUser, SystemLog } from '../types.ts';
 
 const DB_KEY = 'k_system_users_db';
 const SYSTEM_USERS_KEY = 'k_system_access_users'; // New DB for Login Users
+const SYSTEM_LOGS_KEY = 'k_system_logs'; // New DB for Logs
 
 const KEYS = {
     FILIAIS: 'k_system_filiais',
-    DEPARTAMENTOS: 'k_system_departamentos',
+    FUNCOES: 'k_system_funcoes',
     SETORES: 'k_system_setores'
+};
+
+// Robust ID Generator Fallback
+const generateId = () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+    // Fallback for non-secure contexts or older browsers
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 };
 
 // Initial Data Defaults
 const DEFAULTS = {
-    FILIAIS: ['L01 - CONDOR', 'L02 - A.CACELA', 'L03 - DOCA', 'L04 - OBIDOS', 'L05 - CASTANHEITA', 'L06 - MGZ CASTANHEIRA'],
-    DEPARTAMENTOS: ['TECNOLOGIA DA INFORMAÇÃO', 'CPD', 'CM', 'ESTOQUE', 'GERENCIA', 'DEP.TROCA'],
-    SETORES: ['DESENVOLVIMENTO', 'INFRAESTRUTURA', 'RECRUTAMENTO', 'CONTABILIDADE', 'VENDAS', 'ALMOXARIFADO']
+    FILIAIS: ['L01 - CONDOR', 'L02 - A.CACELA', 'L03 - DOCA', 'L04 - OBIDOS', 'L05 - CASTANHEITA', 'L06 - MGZ CASTANHEIRA', 'L07 - P.BARSIL', 'L08 - B.CAMPOS', 'L09 - HUMAITA', 'L10 - CASTANHAL', 'L11 - ICOARACI', 'L12 - BR', 'L15 - ESC.CENTRAL', 'L17 - CANUDOS'],
+    FUNCOES: ['TECNOLOGIA DA INFORMAÇÃO', 'CPD', 'CM', 'ESTOQUE', 'GERENCIA', 'DEP.TROCA', 'FRENTE DE LOJA', 'HOME CENTER', 'FARMACIA', ''],
+    SETORES: ['DESENVOLVIMENTO', 'INFRAESTRUTURA', 'RECRUTAMENTO', 'CONTABILIDADE', 'VENDAS', 'ALMOXARIFADO', 'NUTRILIDER', 'PET SHOP', 'OTICA', 'TESOURARIA']
 };
 
 const INITIAL_USERS: User[] = [
@@ -25,7 +35,7 @@ const INITIAL_USERS: User[] = [
     filial: 'L06 - MGZ CASTANHEIRA',
     login: '123',
     senha: '123',
-    departamento: 'TECNOLOGIA DA INFORMAÇÃO',
+    funcao: 'TECNOLOGIA DA INFORMAÇÃO',
     setor: 'INFRAESTRUTURA',
     dataCadastro: new Date().toISOString()
   },
@@ -37,7 +47,7 @@ const INITIAL_USERS: User[] = [
     filial: 'L02 - A.CACELA',
     login: '123',
     senha: '123',
-    departamento: 'CPD',
+    funcao: 'CPD',
     setor: 'DESENVOLVIMENTO',
     dataCadastro: new Date().toISOString()
   },
@@ -49,7 +59,7 @@ const INITIAL_USERS: User[] = [
     filial: 'L01 - CONDOR',
     login: '123',
     senha: '123',
-    departamento: 'ESTOQUE',
+    funcao: 'ESTOQUE',
     setor: 'ALMOXARIFADO',
     dataCadastro: new Date().toISOString()
   },
@@ -61,7 +71,151 @@ const INITIAL_USERS: User[] = [
     filial: 'L04 - OBIDOS',
     login: '123',
     senha: '123',
-    departamento: 'GERENCIA',
+    funcao: 'GERENCIA',
+    setor: 'CONTABILIDADE',
+    dataCadastro: new Date().toISOString()
+  },
+
+   {
+    id: '5',
+    matricula: '1005',
+    nomeCompleto: 'EDUARDO SANTOS',
+    filial: 'L06 - MGZ CASTANHEIRA',
+    login: '123',
+    senha: '123',
+    funcao: 'CM',
+    setor: 'VENDAS',
+    dataCadastro: new Date().toISOString()
+  },
+
+   {
+    id: '6',
+    matricula: '1006',
+    nomeCompleto: 'LUIZ VASCONCELOS',
+    filial: 'L02 - A.CACELA',
+    login: '123',
+    senha: '123',
+    funcao: 'DEP.TROCA',
+    setor: 'DESENVOLVIMENTO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '7',
+    matricula: '1007',
+    nomeCompleto: 'SOCORRO GOMES',
+    filial: 'L01 - CONDOR',
+    login: '123',
+    senha: '123',
+    funcao: 'CPD',
+    setor: 'ALMOXARIFADO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '8',
+    matricula: '1008',
+    nomeCompleto: 'PAULA CATARINA',
+    filial: 'L04 - OBIDOS',
+    login: '123',
+    senha: '123',
+    funcao: 'GERENCIA',
+    setor: 'CONTABILIDADE',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '9',
+    matricula: '1009',
+    nomeCompleto: 'DAVID SOUZA',
+    filial: 'L06 - MGZ CASTANHEIRA',
+    login: '123',
+    senha: '123',
+    funcao: 'TECNOLOGIA DA INFORMAÇÃO',
+    setor: 'INFRAESTRUTURA',
+    dataCadastro: new Date().toISOString()
+  },
+
+   {
+    id: '10',
+    matricula: '1010',
+    nomeCompleto: 'JOÃO PEDRO',
+    filial: 'L02 - A.CACELA',
+    login: '123',
+    senha: '123',
+    funcao: 'CPD',
+    setor: 'DESENVOLVIMENTO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '11',
+    matricula: '1011',
+    nomeCompleto: 'PAULO RICARDO',
+    filial: 'L01 - CONDOR',
+    login: '123',
+    senha: '123',
+    funcao: 'ESTOQUE',
+    setor: 'ALMOXARIFADO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '12',
+    matricula: '1012',
+    nomeCompleto: 'MARIA SOCORRO',
+    filial: 'L04 - OBIDOS',
+    login: '123',
+    senha: '123',
+    funcao: 'GERENCIA',
+    setor: 'CONTABILIDADE',
+    dataCadastro: new Date().toISOString()
+  },
+
+   {
+    id: '13',
+    matricula: '1013',
+    nomeCompleto: 'EDUARDO SANTOS',
+    filial: 'L06 - MGZ CASTANHEIRA',
+    login: '123',
+    senha: '123',
+    funcao: 'CM',
+    setor: 'VENDAS',
+    dataCadastro: new Date().toISOString()
+  },
+
+   {
+    id: '14',
+    matricula: '1014',
+    nomeCompleto: 'LUIZ VASCONCELOS',
+    filial: 'L02 - A.CACELA',
+    login: '123',
+    senha: '123',
+    funcao: 'DEP.TROCA',
+    setor: 'DESENVOLVIMENTO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '15',
+    matricula: '1015',
+    nomeCompleto: 'SOCORRO GOMES',
+    filial: 'L01 - CONDOR',
+    login: '123',
+    senha: '123',
+    funcao: 'CPD',
+    setor: 'ALMOXARIFADO',
+    dataCadastro: new Date().toISOString()
+  },
+
+  {
+    id: '16',
+    matricula: '1016',
+    nomeCompleto: 'PAULA CATARINA',
+    filial: 'L04 - OBIDOS',
+    login: '123',
+    senha: '123',
+    funcao: 'GERENCIA',
     setor: 'CONTABILIDADE',
     dataCadastro: new Date().toISOString()
   }
@@ -73,7 +227,7 @@ const INITIAL_SYSTEM_USERS: SystemUser[] = [
         id: 'admin-01',
         nome: 'ADMINISTRADOR',
         login: 'ADMIN',
-        senha: '123',
+        senha: '1235',
         role: 'ADMIN',
         createdAt: new Date().toISOString()
     },
@@ -105,7 +259,14 @@ const getList = (key: string, defaultList: string[]): string[] => {
         localStorage.setItem(key, JSON.stringify(defaultList));
         return defaultList;
     }
-    return JSON.parse(stored);
+    try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.every(item => typeof item === 'string')) {
+            return parsed;
+        }
+    } catch (e) {}
+    localStorage.setItem(key, JSON.stringify(defaultList));
+    return defaultList;
 };
 
 // Helper to add to list
@@ -130,6 +291,30 @@ const removeFromList = (key: string, value: string): boolean => {
 };
 
 export const dbService = {
+  // --- SYSTEM LOGS ---
+  getLogs: (): SystemLog[] => {
+      const stored = localStorage.getItem(SYSTEM_LOGS_KEY);
+      if (!stored) return [];
+      try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+      return [];
+  },
+
+  addLog: (log: Omit<SystemLog, 'id' | 'timestamp'>): void => {
+      const logs = dbService.getLogs();
+      const newLog: SystemLog = {
+          ...log,
+          id: generateId(),
+          timestamp: new Date().toISOString()
+      };
+      // Keep only the last 1000 logs to prevent localStorage overflow
+      logs.unshift(newLog);
+      if (logs.length > 1000) logs.pop();
+      localStorage.setItem(SYSTEM_LOGS_KEY, JSON.stringify(logs));
+  },
+
   // --- AUTHENTICATION & SYSTEM USERS (NEW) ---
   getSystemUsers: (): SystemUser[] => {
       const stored = localStorage.getItem(SYSTEM_USERS_KEY);
@@ -137,7 +322,12 @@ export const dbService = {
           localStorage.setItem(SYSTEM_USERS_KEY, JSON.stringify(INITIAL_SYSTEM_USERS));
           return INITIAL_SYSTEM_USERS;
       }
-      return JSON.parse(stored);
+      try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+      localStorage.setItem(SYSTEM_USERS_KEY, JSON.stringify(INITIAL_SYSTEM_USERS));
+      return INITIAL_SYSTEM_USERS;
   },
 
   addSystemUser: (user: Omit<SystemUser, 'id' | 'createdAt'>): { success: boolean; message: string } => {
@@ -148,7 +338,7 @@ export const dbService = {
       
       const newUser: SystemUser = {
           ...user,
-          id: crypto.randomUUID(),
+          id: generateId(),
           createdAt: new Date().toISOString()
       };
       
@@ -183,7 +373,12 @@ export const dbService = {
       localStorage.setItem(DB_KEY, JSON.stringify(INITIAL_USERS));
       return INITIAL_USERS;
     }
-    return JSON.parse(stored);
+    try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) return parsed;
+    } catch (e) {}
+    localStorage.setItem(DB_KEY, JSON.stringify(INITIAL_USERS));
+    return INITIAL_USERS;
   },
 
   // Helper for realtime login validation
@@ -192,18 +387,27 @@ export const dbService = {
       return users.some(u => u.login === login);
   },
 
+  checkMatriculaExists: (matricula: string): User | null => {
+      const users = dbService.getAllUsers();
+      return users.find(u => u.matricula === matricula) || null;
+  },
+
   addUser: (user: Omit<User, 'id' | 'dataCadastro'>): { success: boolean; message: string } => {
     const users = dbService.getAllUsers();
-    
-    // Removed Matricula Check
     
     // Check for unique login
     if (users.some(u => u.login === user.login)) {
       return { success: false, message: `Erro: O login ${user.login} já está em uso por outro colaborador.` };
     }
+    
+    // Check for unique matricula
+    if (users.some(u => u.matricula === user.matricula)) {
+      return { success: false, message: `Erro: A matrícula ${user.matricula} já está cadastrada.` };
+    }
+
     const newUser: User = {
       ...user,
-      id: crypto.randomUUID(),
+      id: generateId(),
       dataCadastro: new Date().toISOString()
     };
     users.push(newUser);
@@ -216,10 +420,11 @@ export const dbService = {
     const index = users.findIndex(u => u.id === updatedUser.id);
     if (index === -1) return { success: false, message: 'Usuário não encontrado.' };
 
-    // Removed existingMatricula Check
-
     const existingLogin = users.find(u => u.login === updatedUser.login && u.id !== updatedUser.id);
     if (existingLogin) return { success: false, message: `O login ${updatedUser.login} já está em uso.` };
+
+    const existingMatricula = users.find(u => u.matricula === updatedUser.matricula && u.id !== updatedUser.id);
+    if (existingMatricula) return { success: false, message: `A matrícula ${updatedUser.matricula} já está cadastrada.` };
 
     users[index] = updatedUser;
     localStorage.setItem(DB_KEY, JSON.stringify(users));
@@ -247,10 +452,10 @@ export const dbService = {
   addFilial: (name: string) => addToList(KEYS.FILIAIS, name),
   deleteFilial: (name: string) => removeFromList(KEYS.FILIAIS, name),
 
-  // --- DEPARTAMENTOS ---
-  getDepartamentos: () => getList(KEYS.DEPARTAMENTOS, DEFAULTS.DEPARTAMENTOS),
-  addDepartamento: (name: string) => addToList(KEYS.DEPARTAMENTOS, name),
-  deleteDepartamento: (name: string) => removeFromList(KEYS.DEPARTAMENTOS, name),
+  // --- FUNÇÕES ---
+  getFuncoes: () => getList(KEYS.FUNCOES, DEFAULTS.FUNCOES),
+  addFuncao: (name: string) => addToList(KEYS.FUNCOES, name),
+  deleteFuncao: (name: string) => removeFromList(KEYS.FUNCOES, name),
 
   // --- SETORES ---
   getSetores: () => getList(KEYS.SETORES, DEFAULTS.SETORES),

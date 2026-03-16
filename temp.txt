@@ -1,0 +1,642 @@
+components/ResourceRegister.tsx:import React, { useState, useEffect } from 'react';
+components/ResourceRegister.tsx:import { dbService } from '../services/dbService.ts';
+components/ResourceRegister.tsx:import { Plus, Trash2, List, Save, Building, Briefcase, Layers, CheckCircle2, AlertCircle, X, AlertTriangle } from 'lucide-react';
+components/ResourceRegister.tsx:import { Input } from './Input.tsx';
+components/ResourceRegister.tsx:import { Spinner } from './Spinner.tsx';
+components/ResourceRegister.tsx:interface ResourceRegisterProps {
+components/ResourceRegister.tsx:export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, userRole }) => {
+components/ResourceRegister.tsx:  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+components/ResourceRegister.tsx:  const config = {
+components/ResourceRegister.tsx:    FILIAL: {
+components/ResourceRegister.tsx:    DEPARTAMENTO: {
+components/ResourceRegister.tsx:    SETOR: {
+components/ResourceRegister.tsx:  useEffect(() => {
+components/ResourceRegister.tsx:  const loadItems = () => {
+components/ResourceRegister.tsx:  const handleAdd = (e: React.FormEvent) => {
+components/ResourceRegister.tsx:    if (success) {
+components/ResourceRegister.tsx:      setFeedback({ type: 'success', message: 'Item cadastrado com sucesso!' });
+components/ResourceRegister.tsx:    } else {
+components/ResourceRegister.tsx:      setFeedback({ type: 'error', message: 'Este item já existe na lista.' });
+components/ResourceRegister.tsx:  const requestDelete = (e: React.MouseEvent, item: string) => {
+components/ResourceRegister.tsx:  const confirmDelete = () => {
+components/ResourceRegister.tsx:    setTimeout(() => {
+components/ResourceRegister.tsx:        if (success) {
+components/ResourceRegister.tsx:            setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
+components/ResourceRegister.tsx:        } else {
+components/ResourceRegister.tsx:            setFeedback({ type: 'error', message: 'Erro ao remover item. Tente recarregar a página.' });
+components/ResourceRegister.tsx:        {/* Feedback Toast */}
+components/ResourceRegister.tsx:        {feedback && (
+components/ResourceRegister.tsx:            <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
+components/ResourceRegister.tsx:                {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <AlertCircle className="w-5 h-5 text-red-500"/>}
+components/ResourceRegister.tsx:                <span className="font-medium">{feedback.message}</span>
+components/ResourceRegister.tsx:                <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
+components/ResourceRegister.tsx:        {/* Header */}
+components/ResourceRegister.tsx:            <h2 className="text-xl font-bold text-white">{config.title}</h2>
+components/ResourceRegister.tsx:                {userRole === 'ADMIN' ? config.description : 'Visualização de registros do sistema.'}
+components/ResourceRegister.tsx:          {/* Left: Add Form - ONLY FOR ADMIN */}
+components/ResourceRegister.tsx:          {userRole === 'ADMIN' && (
+components/ResourceRegister.tsx:               <form onSubmit={handleAdd} className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+components/ResourceRegister.tsx:                     label={`Nome do ${type === 'FILIAL' ? 'Filial' : type === 'SETOR' ? 'Setor' : 'Departamento'}`}
+components/ResourceRegister.tsx:                     value={newItem}
+components/ResourceRegister.tsx:                     onChange={(e) => setNewItem(e.target.value.toUpperCase())}
+components/ResourceRegister.tsx:                    disabled={!newItem.trim()}
+components/ResourceRegister.tsx:          {/* Right: List - Full Width if Operator */}
+components/ResourceRegister.tsx:          <div className={`space-y-4 ${userRole !== 'ADMIN' ? 'col-span-1 md:col-span-2' : ''}`}>
+components/ResourceRegister.tsx:                Registros Atuais ({items.length})
+components/ResourceRegister.tsx:                {items.length > 0 ? items.map((item) => (
+components/ResourceRegister.tsx:                   <div key={item} className="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition-all group">
+components/ResourceRegister.tsx:                      <span className="font-medium text-slate-700 pl-2">{item}</span>
+components/ResourceRegister.tsx:                      {/* Delete Button - ONLY FOR ADMIN */}
+components/ResourceRegister.tsx:                      {userRole === 'ADMIN' && (
+components/ResourceRegister.tsx:                            onClick={(e) => requestDelete(e, item)}
+components/ResourceRegister.tsx:       {/* Delete Confirmation Modal */}
+components/ResourceRegister.tsx:       {isDeleteModalOpen && (
+components/ResourceRegister.tsx:                            Tem certeza que deseja excluir o item <strong>"{itemToDelete}"</strong>?
+components/ResourceRegister.tsx:                                onClick={() => setIsDeleteModalOpen(false)}
+components/ResourceRegister.tsx:                                disabled={isProcessing}
+components/ResourceRegister.tsx:                                onClick={confirmDelete}
+components/ResourceRegister.tsx:                                disabled={isProcessing}
+components/ResourceRegister.tsx:                                {isProcessing ? <Spinner size="sm" variant="white" /> : <Trash2 className="w-4 h-4" />}
+components/ResourceRegister.tsx:                                {isProcessing ? "Excluindo..." : "Sim, Excluir"}
+components/Input.tsx:interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+components/Input.tsx:export const Input: React.FC<InputProps> = ({ label, error, fullWidth, className, ...props }) => {
+components/Input.tsx:    <div className={`mb-4 ${fullWidth ? 'w-full' : ''} ${className}`}>
+components/Input.tsx:        {label}
+components/Input.tsx:        className={`
+components/Input.tsx:          ${error ? 'border-red-500' : 'border-slate-300'}
+components/Input.tsx:        {...props}
+components/Input.tsx:      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+components/RegisterUser.tsx:import React, { useState, useEffect } from 'react';
+components/RegisterUser.tsx:import { dbService } from '../services/dbService.ts';
+components/RegisterUser.tsx:import { Input } from './Input.tsx';
+components/RegisterUser.tsx:import { Select } from './Select.tsx';
+components/RegisterUser.tsx:import { Save, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
+components/RegisterUser.tsx:import { Spinner } from './Spinner.tsx';
+components/RegisterUser.tsx:interface RegisterUserProps {
+components/RegisterUser.tsx:export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDADO' }) => {
+components/RegisterUser.tsx:  const [formData, setFormData] = useState({
+components/RegisterUser.tsx:  const [options, setOptions] = useState({
+components/RegisterUser.tsx:  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+components/RegisterUser.tsx:  const [fieldErrors, setFieldErrors] = useState<{ login?: string }>({});
+components/RegisterUser.tsx:  useEffect(() => {
+components/RegisterUser.tsx:    setOptions({
+components/RegisterUser.tsx:  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+components/RegisterUser.tsx:    const { name, value } = e.target;
+components/RegisterUser.tsx:    if (['nomeCompleto', 'login'].includes(name)) {
+components/RegisterUser.tsx:    setFormData(prev => ({ ...prev, [name]: finalValue }));
+components/RegisterUser.tsx:    if (name === 'login') {
+components/RegisterUser.tsx:        setFieldErrors(prev => ({ ...prev, login: undefined }));
+components/RegisterUser.tsx:  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+components/RegisterUser.tsx:      const { name, value } = e.target;
+components/RegisterUser.tsx:      if (name === 'login' && value) {
+components/RegisterUser.tsx:          if (exists) {
+components/RegisterUser.tsx:              setFieldErrors(prev => ({ ...prev, login: `O login ${value} já está em uso.` }));
+components/RegisterUser.tsx:  const handleSubmit = (e: React.FormEvent) => {
+components/RegisterUser.tsx:    if (Object.values(formData).some(x => x === '')) {
+components/RegisterUser.tsx:        setFeedback({ type: 'error', message: 'Por favor, preencha todos os campos.' });
+components/RegisterUser.tsx:    if (fieldErrors.login) {
+components/RegisterUser.tsx:        setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
+components/RegisterUser.tsx:    setTimeout(() => {
+components/RegisterUser.tsx:        const result = dbService.addUser({
+components/RegisterUser.tsx:        if (result.success) {
+components/RegisterUser.tsx:            setFeedback({ type: 'success', message: result.message });
+components/RegisterUser.tsx:            setFormData({
+components/RegisterUser.tsx:        } else {
+components/RegisterUser.tsx:            setFeedback({ type: 'error', message: result.message });
+components/RegisterUser.tsx:  if (userRole !== 'ADMIN') {
+components/RegisterUser.tsx:                <p className="text-white font-mono">{new Date().toLocaleDateString()}</p>
+components/RegisterUser.tsx:        <form onSubmit={handleSubmit} className="p-8">
+components/RegisterUser.tsx:                {/* ID and Branch Row */}
+components/RegisterUser.tsx:                        value={formData.matricula}
+components/RegisterUser.tsx:                        onChange={handleChange}
+components/RegisterUser.tsx:                        disabled={isSaving}
+components/RegisterUser.tsx:                        value={formData.filial}
+components/RegisterUser.tsx:                        onChange={handleChange}
+components/RegisterUser.tsx:                        options={options.filiais}
+components/RegisterUser.tsx:                        disabled={isSaving}
+components/RegisterUser.tsx:                {/* Name Row */}
+components/RegisterUser.tsx:                        value={formData.nomeCompleto}
+components/RegisterUser.tsx:                        onChange={handleChange}
+components/RegisterUser.tsx:                        disabled={isSaving}
+components/RegisterUser.tsx:                {/* Login Info */}
+components/RegisterUser.tsx:                        value={formData.login}
+components/RegisterUser.tsx:                        onChange={handleChange}
+components/RegisterUser.tsx:                        onBlur={handleBlur}
+components/RegisterUser.tsx:                        error={fieldErrors.login}
+components/RegisterUser.tsx:                        disabled={isSaving}
+components/RegisterUser.tsx:                        value={formData.senha}
+components/RegisterUser.tsx:                        onChange={handleChange}
+components/RegisterUser.tsx:                        disabled={isSaving}
+components/RegisterUser.tsx:                {/* Job Info */}
+components/RegisterUser.tsx:                        value={formData.departamento}
+components/RegisterUser.tsx:                        onChange={handleChange}
+components/RegisterUser.tsx:                        options={options.departamentos}
+components/RegisterUser.tsx:                        disabled={isSaving}
+components/RegisterUser.tsx:                        value={formData.setor}
+components/RegisterUser.tsx:                        onChange={handleChange}
+components/RegisterUser.tsx:                        options={options.setores}
+components/RegisterUser.tsx:                        disabled={isSaving}
+components/RegisterUser.tsx:            {/* Feedback Message */}
+components/RegisterUser.tsx:            {feedback && (
+components/RegisterUser.tsx:                <div className={`mt-6 p-4 rounded-lg flex items-center gap-3 ${feedback.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+components/RegisterUser.tsx:                    {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5"/> : <AlertCircle className="w-5 h-5"/>}
+components/RegisterUser.tsx:                    <span className="font-medium">{feedback.message}</span>
+components/RegisterUser.tsx:                    disabled={isSaving}
+components/RegisterUser.tsx:                    {isSaving ? <Spinner size="sm" variant="white" /> : <Save className="w-5 h-5" />}
+components/RegisterUser.tsx:                    {isSaving ? 'Salvando...' : 'Salvar Cadastro'}
+components/SystemUsersManagement.tsx:import React, { useState, useEffect } from 'react';
+components/SystemUsersManagement.tsx:import { dbService } from '../services/dbService.ts';
+components/SystemUsersManagement.tsx:import { SystemUser } from '../types.ts';
+components/SystemUsersManagement.tsx:import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X, AlertTriangle, User } from 'lucide-react';
+components/SystemUsersManagement.tsx:import { Input } from './Input.tsx';
+components/SystemUsersManagement.tsx:import { Select } from './Select.tsx';
+components/SystemUsersManagement.tsx:interface SystemUsersManagementProps {
+components/SystemUsersManagement.tsx:export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ userRole }) => {
+components/SystemUsersManagement.tsx:  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+components/SystemUsersManagement.tsx:  const [newUser, setNewUser] = useState({
+components/SystemUsersManagement.tsx:  useEffect(() => {
+components/SystemUsersManagement.tsx:  const loadUsers = () => {
+components/SystemUsersManagement.tsx:  const handleAddUser = (e: React.FormEvent) => {
+components/SystemUsersManagement.tsx:      if (!newUser.nome || !newUser.login || !newUser.senha) {
+components/SystemUsersManagement.tsx:          setFeedback({ type: 'error', message: 'Preencha todos os campos obrigatórios.' });
+components/SystemUsersManagement.tsx:      const result = dbService.addSystemUser({
+components/SystemUsersManagement.tsx:      if (result.success) {
+components/SystemUsersManagement.tsx:          setFeedback({ type: 'success', message: result.message });
+components/SystemUsersManagement.tsx:          setNewUser({ nome: '', login: '', senha: '', role: 'ADMIN' });
+components/SystemUsersManagement.tsx:      } else {
+components/SystemUsersManagement.tsx:          setFeedback({ type: 'error', message: result.message });
+components/SystemUsersManagement.tsx:  const confirmDelete = (e: React.MouseEvent, user: SystemUser) => {
+components/SystemUsersManagement.tsx:  const handleExecuteDelete = () => {
+components/SystemUsersManagement.tsx:      if (result.success) {
+components/SystemUsersManagement.tsx:          setFeedback({ type: 'success', message: result.message });
+components/SystemUsersManagement.tsx:      } else {
+components/SystemUsersManagement.tsx:          setFeedback({ type: 'error', message: result.message });
+components/SystemUsersManagement.tsx:        {feedback && (
+components/SystemUsersManagement.tsx:            <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
+components/SystemUsersManagement.tsx:                {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <AlertCircle className="w-5 h-5 text-red-500"/>}
+components/SystemUsersManagement.tsx:                <span className="font-medium">{feedback.message}</span>
+components/SystemUsersManagement.tsx:                <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
+components/SystemUsersManagement.tsx:                {userRole === 'ADMIN' ? 'Gerencie os usuários que podem fazer login no sistema.' : 'Visualização de usuários com acesso ao sistema.'}
+components/SystemUsersManagement.tsx:            {/* Formulario - ONLY ADMIN */}
+components/SystemUsersManagement.tsx:            {userRole === 'ADMIN' && (
+components/SystemUsersManagement.tsx:                    <form onSubmit={handleAddUser} className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
+components/SystemUsersManagement.tsx:                            value={newUser.nome}
+components/SystemUsersManagement.tsx:                            onChange={e => setNewUser({...newUser, nome: e.target.value.toUpperCase()})}
+components/SystemUsersManagement.tsx:                            value={newUser.login}
+components/SystemUsersManagement.tsx:                            onChange={e => setNewUser({...newUser, login: e.target.value.toUpperCase()})}
+components/SystemUsersManagement.tsx:                            value={newUser.senha}
+components/SystemUsersManagement.tsx:                            onChange={e => setNewUser({...newUser, senha: e.target.value})}
+components/SystemUsersManagement.tsx:                            value={newUser.role}
+components/SystemUsersManagement.tsx:                            onChange={e => setNewUser({...newUser, role: e.target.value as any})}
+components/SystemUsersManagement.tsx:                            options={['ADMIN', 'CONVIDADO']}
+components/SystemUsersManagement.tsx:            {/* Lista - Full width if Operator */}
+components/SystemUsersManagement.tsx:            <div className={`space-y-4 ${userRole !== 'ADMIN' ? 'lg:col-span-3' : 'lg:col-span-2'}`}>
+components/SystemUsersManagement.tsx:                    Usuários com Acesso ({users.length})
+components/SystemUsersManagement.tsx:                                {userRole === 'ADMIN' && <th className="p-4 text-xs font-semibold text-slate-500 uppercase text-right">Ações</th>}
+components/SystemUsersManagement.tsx:                            {users.map(user => (
+components/SystemUsersManagement.tsx:                                <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+components/SystemUsersManagement.tsx:                                        <div className="font-bold text-slate-700">{user.nome}</div>
+components/SystemUsersManagement.tsx:                                        <div className="text-xs text-slate-400">Criado em: {new Date(user.createdAt).toLocaleDateString()}</div>
+components/SystemUsersManagement.tsx:                                    <td className="p-4 text-sm font-mono text-slate-600 bg-slate-50 w-fit rounded">{user.login}</td>
+components/SystemUsersManagement.tsx:                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold ${user.role === 'ADMIN' ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-700'}`}>
+components/SystemUsersManagement.tsx:                                            {user.role === 'ADMIN' ? <ShieldCheck className="w-3 h-3" /> : <User className="w-3 h-3" />}
+components/SystemUsersManagement.tsx:                                            {user.role}
+components/SystemUsersManagement.tsx:                                    {userRole === 'ADMIN' && (
+components/SystemUsersManagement.tsx:                                                onClick={(e) => confirmDelete(e, user)}
+components/SystemUsersManagement.tsx:       {/* Delete Confirmation Modal */}
+components/SystemUsersManagement.tsx:        {isDeleteModalOpen && (
+components/SystemUsersManagement.tsx:                            Tem certeza que deseja revogar o acesso do usuário <strong>{userToDelete?.nome}</strong> (Login: {userToDelete?.login})?
+components/SystemUsersManagement.tsx:                                onClick={() => setIsDeleteModalOpen(false)}
+components/SystemUsersManagement.tsx:                                onClick={handleExecuteDelete}
+components/Select.tsx:interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+components/Select.tsx:export const Select: React.FC<SelectProps> = ({ label, options, error, ...props }) => {
+components/Select.tsx:        {label}
+components/Select.tsx:          className={`
+components/Select.tsx:            ${error ? 'border-red-500' : 'border-slate-300'}
+components/Select.tsx:          {...props}
+components/Select.tsx:          {options.map((opt) => (
+components/Select.tsx:            <option key={opt} value={opt}>
+components/Select.tsx:              {opt}
+components/Select.tsx:      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+components/Dashboard.tsx:import React, { useState, useEffect, useMemo } from 'react';
+components/Dashboard.tsx:import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
+components/Dashboard.tsx:import { dbService } from '../services/dbService.ts';
+components/Dashboard.tsx:import { User } from '../types.ts';
+components/Dashboard.tsx:import { Users, Building2, Filter, BarChart3, PieChart as PieIcon, Activity, ArrowUpRight, Sparkles } from 'lucide-react';
+components/Dashboard.tsx:import { Spinner } from './Spinner.tsx';
+components/Dashboard.tsx:const CustomTooltip = ({ active, payload, label }: any) => {
+components/Dashboard.tsx:  if (active && payload && payload.length) {
+components/Dashboard.tsx:        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2">{label}</p>
+components/Dashboard.tsx:            {payload[0].value}
+components/Dashboard.tsx:export const Dashboard: React.FC = () => {
+components/Dashboard.tsx:  useEffect(() => {
+components/Dashboard.tsx:    const loadData = async () => {
+components/Dashboard.tsx:  const filteredUsers = useMemo(() => {
+components/Dashboard.tsx:  const departmentData = useMemo(() => {
+components/Dashboard.tsx:    const counts: Record<string, number> = {};
+components/Dashboard.tsx:    filteredUsers.forEach(u => {
+components/Dashboard.tsx:        .map(([name, value]) => ({ name, value }))
+components/Dashboard.tsx:  const sectorData = useMemo(() => {
+components/Dashboard.tsx:    const counts: Record<string, number> = {};
+components/Dashboard.tsx:    filteredUsers.forEach(u => {
+components/Dashboard.tsx:        .map(([name, value]) => ({ name, value }))
+components/Dashboard.tsx:  if (isLoading) {
+components/Dashboard.tsx:      {/* Top Section: KPIs and Controls */}
+components/Dashboard.tsx:        {/* Filter Card */}
+components/Dashboard.tsx:            {/* Background Decoration */}
+components/Dashboard.tsx:                        value={selectedFilial}
+components/Dashboard.tsx:                        onChange={(e) => setSelectedFilial(e.target.value)}
+components/Dashboard.tsx:                        {filialOptions.map(f => (
+components/Dashboard.tsx:                            <option key={f} value={f}>{f}</option>
+components/Dashboard.tsx:        {/* KPI Card */}
+components/Dashboard.tsx:             {/* Dynamic Background Elements */}
+components/Dashboard.tsx:                    <h2 className="text-6xl font-bold tracking-tighter mb-1 drop-shadow-sm">{filteredUsers.length}</h2>
+components/Dashboard.tsx:      {/* Charts Section */}
+components/Dashboard.tsx:        {/* Bar Chart Card */}
+components/Dashboard.tsx:                <BarChart data={departmentData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+components/Dashboard.tsx:                            <stop offset="0%" stopColor="#4f46e5" stopOpacity={1}/>
+components/Dashboard.tsx:                            <stop offset="100%" stopColor="#818cf8" stopOpacity={0.5}/>
+components/Dashboard.tsx:                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+components/Dashboard.tsx:                        axisLine={false} 
+components/Dashboard.tsx:                        tickLine={false} 
+components/Dashboard.tsx:                        tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 600, fontFamily: 'Inter'}} 
+components/Dashboard.tsx:                        interval={0} 
+components/Dashboard.tsx:                        angle={-15}
+components/Dashboard.tsx:                        height={60}
+components/Dashboard.tsx:                    <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11, fontWeight: 500, fontFamily: 'Inter'}} />
+components/Dashboard.tsx:                    <Tooltip content={<CustomTooltip />} cursor={{fill: '#f8fafc', opacity: 0.8}} />
+components/Dashboard.tsx:                    <Bar dataKey="value" fill="url(#colorBar)" radius={[6, 6, 0, 0]} barSize={48} animationDuration={1500} />
+components/Dashboard.tsx:        {/* Pie Chart Card */}
+components/Dashboard.tsx:                    data={sectorData}
+components/Dashboard.tsx:                    innerRadius={90}
+components/Dashboard.tsx:                    outerRadius={145}
+components/Dashboard.tsx:                    paddingAngle={4}
+components/Dashboard.tsx:                    cornerRadius={8}
+components/Dashboard.tsx:                    {sectorData.map((entry, index) => (
+components/Dashboard.tsx:                        key={`cell-${index}`} 
+components/Dashboard.tsx:                        fill={COLORS[index % COLORS.length]} 
+components/Dashboard.tsx:                <Tooltip content={<CustomTooltip />} />
+components/Dashboard.tsx:            {/* Center Text for Donut */}
+components/Dashboard.tsx:                 <p className="text-4xl font-bold text-slate-800 tracking-tight">{sectorData.length}</p>
+components/Logo.tsx:interface LogoProps {
+components/Logo.tsx:export const Logo: React.FC<LogoProps> = ({ className = "w-10 h-10", variant = 'primary' }) => {
+components/Logo.tsx:      className={className} 
+components/Logo.tsx:      {/* Hexagon Background */}
+components/Logo.tsx:        fill={fill} 
+components/Logo.tsx:        stroke={color} 
+components/Logo.tsx:      {/* "K" Letter Shape */}
+components/Logo.tsx:        stroke={color} 
+components/Logo.tsx:        stroke={color} 
+components/Logo.tsx:      {/* Optional decorative dot */}
+components/Logo.tsx:      <circle cx="50" cy="50" r="3" fill={color} />
+components/DatabaseSettings.tsx:import React, { useState, useEffect } from 'react';
+components/DatabaseSettings.tsx:import { Input } from './Input.tsx';
+components/DatabaseSettings.tsx:import { Select } from './Select.tsx';
+components/DatabaseSettings.tsx:import { Database, Server, Save, Activity, CheckCircle2, XCircle, Lock } from 'lucide-react';
+components/DatabaseSettings.tsx:import { Spinner } from './Spinner.tsx';
+components/DatabaseSettings.tsx:interface DatabaseSettingsProps {
+components/DatabaseSettings.tsx:export const DatabaseSettings: React.FC<DatabaseSettingsProps> = ({ userRole }) => {
+components/DatabaseSettings.tsx:  const [config, setConfig] = useState({
+components/DatabaseSettings.tsx:  useEffect(() => {
+components/DatabaseSettings.tsx:    if (saved) {
+components/DatabaseSettings.tsx:  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+components/DatabaseSettings.tsx:    setConfig({ ...config, [e.target.name]: e.target.value });
+components/DatabaseSettings.tsx:    if (status === 'CONNECTED' || status === 'ERROR') {
+components/DatabaseSettings.tsx:  const handleTestConnection = (e: React.FormEvent) => {
+components/DatabaseSettings.tsx:    if (!config.type || !config.host || !config.user) {
+components/DatabaseSettings.tsx:    setTimeout(() => {
+components/DatabaseSettings.tsx:        if (config.host.includes('.') || config.host === 'localhost') {
+components/DatabaseSettings.tsx:        } else {
+components/DatabaseSettings.tsx:                        <p className={`text-sm font-bold flex items-center justify-end gap-1.5 ${
+components/DatabaseSettings.tsx:                            {status === 'CONNECTED' && <CheckCircle2 className="w-4 h-4" />}
+components/DatabaseSettings.tsx:                            {status === 'ERROR' && <XCircle className="w-4 h-4" />}
+components/DatabaseSettings.tsx:                            {status === 'CONNECTING' && <Spinner size="sm" variant="white" />}
+components/DatabaseSettings.tsx:                            {status === 'DISCONNECTED' && <Activity className="w-4 h-4" />}
+components/DatabaseSettings.tsx:                            {status === 'CONNECTED' ? 'CONECTADO' : 
+components/DatabaseSettings.tsx:                {isDisabled && (
+components/DatabaseSettings.tsx:                <form onSubmit={handleTestConnection}>
+components/DatabaseSettings.tsx:                                options={['MySQL', 'PostgreSQL', 'Oracle', 'SQL Server', 'MariaDB']}
+components/DatabaseSettings.tsx:                                value={config.type}
+components/DatabaseSettings.tsx:                                onChange={handleChange}
+components/DatabaseSettings.tsx:                                disabled={isDisabled}
+components/DatabaseSettings.tsx:                                value={config.database}
+components/DatabaseSettings.tsx:                                onChange={handleChange}
+components/DatabaseSettings.tsx:                                disabled={isDisabled}
+components/DatabaseSettings.tsx:                                value={config.host}
+components/DatabaseSettings.tsx:                                onChange={handleChange}
+components/DatabaseSettings.tsx:                                disabled={isDisabled}
+components/DatabaseSettings.tsx:                                value={config.port}
+components/DatabaseSettings.tsx:                                onChange={handleChange}
+components/DatabaseSettings.tsx:                                disabled={isDisabled}
+components/DatabaseSettings.tsx:                                value={config.user}
+components/DatabaseSettings.tsx:                                onChange={handleChange}
+components/DatabaseSettings.tsx:                                disabled={isDisabled}
+components/DatabaseSettings.tsx:                                value={config.password}
+components/DatabaseSettings.tsx:                                onChange={handleChange}
+components/DatabaseSettings.tsx:                                disabled={isDisabled}
+components/DatabaseSettings.tsx:                            {lastCheck && <span>Última verificação: {lastCheck}</span>}
+components/DatabaseSettings.tsx:                        {userRole === 'ADMIN' && (
+components/DatabaseSettings.tsx:                                    onClick={() => {
+components/DatabaseSettings.tsx:                                        setConfig({ type: '', host: '', port: '', database: '', user: '', password: '' });
+components/DatabaseSettings.tsx:                                    disabled={status === 'CONNECTING'}
+components/DatabaseSettings.tsx:                                    className={`
+components/DatabaseSettings.tsx:                                        ${status === 'CONNECTING' ? 'opacity-70 cursor-not-allowed' : ''}
+components/DatabaseSettings.tsx:                                    {status === 'CONNECTING' ? (
+components/DatabaseSettings.tsx:        {/* Info Card */}
+components/Login.tsx:import React, { useState } from 'react';
+components/Login.tsx:import { dbService } from '../services/dbService.ts';
+components/Login.tsx:import { SystemUser } from '../types.ts';
+components/Login.tsx:import { User, Lock, ArrowRight } from 'lucide-react';
+components/Login.tsx:import { Spinner } from './Spinner.tsx';
+components/Login.tsx:import { Logo } from './Logo.tsx';
+components/Login.tsx:interface LoginProps {
+components/Login.tsx:export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+components/Login.tsx:  const handleSubmit = (e: React.FormEvent) => {
+components/Login.tsx:    setTimeout(() => {
+components/Login.tsx:      if (user) {
+components/Login.tsx:      } else {
+components/Login.tsx:        if (userExists) {
+components/Login.tsx:        } else {
+components/Login.tsx:      {/* Background ambient blobs */}
+components/Login.tsx:      {/* Main Container Card */}
+components/Login.tsx:        {/* Left Panel (Colored - Enterprise Theme) */}
+components/Login.tsx:            {/* Mesh Gradient Effect */}
+components/Login.tsx:            {/* Content */}
+components/Login.tsx:        {/* Right Panel (White) - Form */}
+components/Login.tsx:                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+components/Login.tsx:                    {/* Input User */}
+components/Login.tsx:                                value={login}
+components/Login.tsx:                                onChange={(e) => setLogin(e.target.value.toUpperCase())}
+components/Login.tsx:                                disabled={loading}
+components/Login.tsx:                    {/* Input Password */}
+components/Login.tsx:                                value={password}
+components/Login.tsx:                                onChange={(e) => setPassword(e.target.value)}
+components/Login.tsx:                                disabled={loading}
+components/Login.tsx:                    {error && (
+components/Login.tsx:                            {error}
+components/Login.tsx:                        disabled={loading}
+components/Login.tsx:                        {loading ? (
+components/Login.tsx:               K-System &copy; {new Date().getFullYear()}
+components/UsersList.tsx:import React, { useState, useEffect, useMemo } from 'react';
+components/UsersList.tsx:import { dbService } from '../services/dbService.ts';
+components/UsersList.tsx:import { User } from '../types.ts';
+components/UsersList.tsx:import { Search, Database, ShieldAlert, Plus, X, CheckCircle2, Eraser, AlertTriangle, Edit2, Trash2, Save, Eye } from 'lucide-react';
+components/UsersList.tsx:import { Spinner } from './Spinner.tsx';
+components/UsersList.tsx:import { Input } from './Input.tsx';
+components/UsersList.tsx:import { Select } from './Select.tsx';
+components/UsersList.tsx:interface UsersListProps {
+components/UsersList.tsx:export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, userRole }) => {
+components/UsersList.tsx:  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+components/UsersList.tsx:  const [editForm, setEditForm] = useState({
+components/UsersList.tsx:  const [options, setOptions] = useState({
+components/UsersList.tsx:  useEffect(() => {
+components/UsersList.tsx:    setOptions({
+components/UsersList.tsx:  const loadUsers = () => {
+components/UsersList.tsx:    setTimeout(() => {
+components/UsersList.tsx:  const requestDeleteAll = () => {
+components/UsersList.tsx:  const requestDeleteSingle = (user: User) => {
+components/UsersList.tsx:  const handleExecuteDelete = () => {
+components/UsersList.tsx:    setTimeout(() => {
+components/UsersList.tsx:        if (deleteMode === 'ALL') {
+components/UsersList.tsx:        } else {
+components/UsersList.tsx:            if (userToDelete) {
+components/UsersList.tsx:            } else {
+components/UsersList.tsx:                result = { success: false, message: "Erro ao identificar usuário." };
+components/UsersList.tsx:        if (result.success) {
+components/UsersList.tsx:            setFeedback({ type: 'success', message: result.message });
+components/UsersList.tsx:        } else {
+components/UsersList.tsx:            setFeedback({ type: 'error', message: result.message });
+components/UsersList.tsx:  const handleViewClick = (user: User) => {
+components/UsersList.tsx:      setEditForm({
+components/UsersList.tsx:  const handleSaveEdit = (e: React.FormEvent) => {
+components/UsersList.tsx:      const updatedUser: User = {
+components/UsersList.tsx:      setTimeout(() => {
+components/UsersList.tsx:          if (result.success) {
+components/UsersList.tsx:              setFeedback({ type: 'success', message: result.message });
+components/UsersList.tsx:          } else {
+components/UsersList.tsx:              setFeedback({ type: 'error', message: result.message }); // Likely login duplicate
+components/UsersList.tsx:  const filteredUsers = useMemo(() => {
+components/UsersList.tsx:        {feedback && !isDeleteModalOpen && !isDetailsModalOpen && (
+components/UsersList.tsx:            <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
+components/UsersList.tsx:                {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <ShieldAlert className="w-5 h-5 text-red-500"/>}
+components/UsersList.tsx:                <span className="font-medium">{feedback.message}</span>
+components/UsersList.tsx:                <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
+components/UsersList.tsx:        {/* Print Header */}
+components/UsersList.tsx:                    <p className="text-slate-900 font-mono">{new Date().toLocaleString()}</p>
+components/UsersList.tsx:            {searchTerm && (
+components/UsersList.tsx:                    Filtro aplicado: <span className="font-semibold">"{searchTerm}"</span>
+components/UsersList.tsx:                            value={searchTerm}
+components/UsersList.tsx:                            onChange={(e) => setSearchTerm(e.target.value)}
+components/UsersList.tsx:                            disabled={isLoading}
+components/UsersList.tsx:                        {searchTerm && (
+components/UsersList.tsx:                                onClick={() => setSearchTerm('')}
+components/UsersList.tsx:                    {userRole === 'ADMIN' && users.length > 0 && (
+components/UsersList.tsx:                            onClick={requestDeleteAll}
+components/UsersList.tsx:                            disabled={isLoading}
+components/UsersList.tsx:                    {userRole === 'ADMIN' && onNavigateToRegister && (
+components/UsersList.tsx:                            onClick={onNavigateToRegister}
+components/UsersList.tsx:                            disabled={isLoading}
+components/UsersList.tsx:                        {isLoading ? (
+components/UsersList.tsx:                                <td colSpan={6} className="p-12 text-center">
+components/UsersList.tsx:                                <tr key={user.id} className="hover:bg-slate-50/80 transition-colors group print:break-inside-avoid">
+components/UsersList.tsx:                                    <td className="p-4 text-sm text-slate-600 font-mono font-medium print:text-slate-800">{user.matricula}</td>
+components/UsersList.tsx:                                        <div className="font-semibold text-slate-800 text-sm print:text-black">{user.nomeCompleto}</div>
+components/UsersList.tsx:                                        <div className="text-xs text-slate-400">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
+components/UsersList.tsx:                                        {/* Changed from Red to Indigo/Slate to look less like an error */}
+components/UsersList.tsx:                                            {user.filial}
+components/UsersList.tsx:                                        <div className="text-sm text-slate-700 print:text-slate-800">{user.departamento}</div>
+components/UsersList.tsx:                                        <div className="text-xs text-slate-500">{user.setor}</div>
+components/UsersList.tsx:                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.login}</td>
+components/UsersList.tsx:                                    {/* Action Column */}
+components/UsersList.tsx:                                                onClick={() => handleViewClick(user)}
+components/UsersList.tsx:                                                title={userRole === 'ADMIN' ? "Editar" : "Visualizar"}
+components/UsersList.tsx:                                                {userRole === 'ADMIN' ? <Edit2 className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+components/UsersList.tsx:                                            {userRole === 'ADMIN' && (
+components/UsersList.tsx:                                                    onClick={() => requestDeleteSingle(user)}
+components/UsersList.tsx:                                <td colSpan={6} className="p-12 text-center">
+components/UsersList.tsx:                                            {searchTerm ? `Nenhum resultado para "${searchTerm}"` : 'Nenhum registro encontrado'}
+components/UsersList.tsx:                                        {searchTerm && (
+components/UsersList.tsx:                                                onClick={() => setSearchTerm('')}
+components/UsersList.tsx:                <p>Mostrando {filteredUsers.length} de {users.length} registros</p>
+components/UsersList.tsx:             {/* Print Footer */}
+components/UsersList.tsx:                <p>Total: {filteredUsers.length}</p>
+components/UsersList.tsx:        {/* --- DETAILS / EDIT MODAL --- */}
+components/UsersList.tsx:        {isDetailsModalOpen && (
+components/UsersList.tsx:                            {userRole === 'ADMIN' ? <Edit2 className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+components/UsersList.tsx:                            {userRole === 'ADMIN' ? 'Editar Colaborador' : 'Detalhes do Colaborador'}
+components/UsersList.tsx:                        <button onClick={() => setIsDetailsModalOpen(false)} className="text-primary-200 hover:text-white transition-colors">
+components/UsersList.tsx:                    <form onSubmit={handleSaveEdit} className="p-8">
+components/UsersList.tsx:                        {feedback && (
+components/UsersList.tsx:                                {feedback.message}
+components/UsersList.tsx:                                    value={editForm.nomeCompleto} 
+components/UsersList.tsx:                                    onChange={e => setEditForm({...editForm, nomeCompleto: e.target.value.toUpperCase()})}
+components/UsersList.tsx:                                    disabled={userRole !== 'ADMIN'}
+components/UsersList.tsx:                                options={options.filiais}
+components/UsersList.tsx:                                value={editForm.filial}
+components/UsersList.tsx:                                onChange={e => setEditForm({...editForm, filial: e.target.value})}
+components/UsersList.tsx:                                disabled={userRole !== 'ADMIN'}
+components/UsersList.tsx:                                value={editForm.login}
+components/UsersList.tsx:                                onChange={e => setEditForm({...editForm, login: e.target.value.toUpperCase()})}
+components/UsersList.tsx:                                disabled={userRole !== 'ADMIN'}
+components/UsersList.tsx:                                options={options.departamentos}
+components/UsersList.tsx:                                value={editForm.departamento}
+components/UsersList.tsx:                                onChange={e => setEditForm({...editForm, departamento: e.target.value})}
+components/UsersList.tsx:                                disabled={userRole !== 'ADMIN'}
+components/UsersList.tsx:                                options={options.setores}
+components/UsersList.tsx:                                value={editForm.setor}
+components/UsersList.tsx:                                onChange={e => setEditForm({...editForm, setor: e.target.value})}
+components/UsersList.tsx:                                disabled={userRole !== 'ADMIN'}
+components/UsersList.tsx:                            {userRole === 'ADMIN' && (
+components/UsersList.tsx:                                        value={editForm.senha}
+components/UsersList.tsx:                                        onChange={e => setEditForm({...editForm, senha: e.target.value})}
+components/UsersList.tsx:                             {/* Left Side: Delete Button (Admin Only) */}
+components/UsersList.tsx:                                {userRole === 'ADMIN' && selectedUser && (
+components/UsersList.tsx:                                        onClick={() => requestDeleteSingle(selectedUser)}
+components/UsersList.tsx:                                        disabled={isProcessing}
+components/UsersList.tsx:                             {/* Right Side: Action Buttons */}
+components/UsersList.tsx:                                    onClick={() => setIsDetailsModalOpen(false)}
+components/UsersList.tsx:                                    disabled={isProcessing}
+components/UsersList.tsx:                                    {userRole === 'ADMIN' ? 'Cancelar' : 'Fechar'}
+components/UsersList.tsx:                                {userRole === 'ADMIN' && (
+components/UsersList.tsx:                                        disabled={isProcessing}
+components/UsersList.tsx:                                        {isProcessing ? <Spinner size="sm" variant="white" /> : <Save className="w-4 h-4" />}
+components/UsersList.tsx:                                        {isProcessing ? "Salvando..." : "Salvar Alterações"}
+components/UsersList.tsx:        {/* --- DELETE CONFIRMATION MODAL (Handles both Single and All) --- */}
+components/UsersList.tsx:        {isDeleteModalOpen && (
+components/UsersList.tsx:                            {deleteMode === 'ALL' 
+components/UsersList.tsx:                                : `Tem certeza que deseja excluir o usuário "${userToDelete?.nomeCompleto}"?`}
+components/UsersList.tsx:                                onClick={() => setIsDeleteModalOpen(false)}
+components/UsersList.tsx:                                disabled={isProcessing}
+components/UsersList.tsx:                                onClick={handleExecuteDelete}
+components/UsersList.tsx:                                disabled={isProcessing}
+components/UsersList.tsx:                                {isProcessing ? <Spinner size="sm" variant="white" /> : <Eraser className="w-4 h-4" />}
+components/UsersList.tsx:                                {isProcessing ? "Processando..." : (deleteMode === 'ALL' ? "Sim, Limpar Tudo" : "Sim, Excluir")}
+components/Reports.tsx:import React, { useState, useEffect, useMemo } from 'react';
+components/Reports.tsx:import { createPortal } from 'react-dom';
+components/Reports.tsx:import { dbService } from '../services/dbService.ts';
+components/Reports.tsx:import { User } from '../types.ts';
+components/Reports.tsx:import { FileBarChart2, Users, Building2, MapPin, ArrowUpDown, ArrowUp, ArrowDown, FileDown, Eye, X, Printer } from 'lucide-react';
+components/Reports.tsx:import { Logo } from './Logo.tsx';
+components/Reports.tsx:import { Spinner } from './Spinner.tsx';
+components/Reports.tsx:export const Reports: React.FC = () => {
+components/Reports.tsx:  const [sortConfig, setSortConfig] = useState<{ key: SortKeys; direction: 'asc' | 'desc' } | null>(null);
+components/Reports.tsx:  useEffect(() => {
+components/Reports.tsx:  useEffect(() => {
+components/Reports.tsx:    if (selectedFilial === 'TODAS') {
+components/Reports.tsx:    } else if (selectedFilial) {
+components/Reports.tsx:    } else {
+components/Reports.tsx:  const handleExportPDF = () => {
+components/Reports.tsx:    setTimeout(() => {
+components/Reports.tsx:      if (!element) {
+components/Reports.tsx:      const opt = {
+components/Reports.tsx:        filename: `Relatorio_${selectedFilial.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+components/Reports.tsx:        image: { type: 'jpeg', quality: 0.98 },
+components/Reports.tsx:        html2canvas: { scale: 2, useCORS: true, logging: false },
+components/Reports.tsx:        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+components/Reports.tsx:      if (html2pdf) {
+components/Reports.tsx:        html2pdf().set(opt).from(element).save().then(() => {
+components/Reports.tsx:        }).catch((err: any) => {
+components/Reports.tsx:      } else {
+components/Reports.tsx:  const handlePrint = () => {
+components/Reports.tsx:      setTimeout(() => {
+components/Reports.tsx:  const handleSort = (key: SortKeys) => {
+components/Reports.tsx:    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+components/Reports.tsx:    setSortConfig({ key, direction });
+components/Reports.tsx:  const sortedUsers = useMemo(() => {
+components/Reports.tsx:    if (sortConfig !== null) {
+components/Reports.tsx:      sortableItems.sort((a, b) => {
+components/Reports.tsx:        if (sortConfig.key === 'matricula') {
+components/Reports.tsx:        if (aValue < bValue) {
+components/Reports.tsx:        if (aValue > bValue) {
+components/Reports.tsx:  const SortIcon = ({ columnKey }: { columnKey: SortKeys }) => {
+components/Reports.tsx:  const ThSortable = ({ label, columnKey, align = 'left' }: { label: string, columnKey: SortKeys, align?: string }) => (
+components/Reports.tsx:      onClick={() => handleSort(columnKey)}
+components/Reports.tsx:      className={`p-3 font-bold text-slate-700 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors select-none text-${align} print:text-black print:border-black print:text-xs print:uppercase print:p-2`}
+components/Reports.tsx:      <div className={`flex items-center ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
+components/Reports.tsx:        {label}
+components/Reports.tsx:        <SortIcon columnKey={columnKey} />
+components/Reports.tsx:      {/* 
+components/Reports.tsx:      <style>{`
+components/Reports.tsx:        @media print {
+components/Reports.tsx:          @page { size: auto; margin: 0mm; }
+components/Reports.tsx:          body { 
+components/Reports.tsx:          nav, aside, header, .print\\:hidden { display: none !important; }
+components/Reports.tsx:          ${showPreview ? `
+components/Reports.tsx:              #root { display: none !important; }
+components/Reports.tsx:              #preview-modal-container {
+components/Reports.tsx:              #preview-paper {
+components/Reports.tsx:              #preview-toolbar {
+components/Reports.tsx:              #reports-main-ui { display: block !important; }
+components/Reports.tsx:      {/* Main Screen Content Wrapper */}
+components/Reports.tsx:        {/* Screen Header - Hides on Print */}
+components/Reports.tsx:                onClick={handlePrint}
+components/Reports.tsx:                disabled={!selectedFilial || users.length === 0}
+components/Reports.tsx:                onClick={() => setShowPreview(true)}
+components/Reports.tsx:                disabled={!selectedFilial || users.length === 0}
+components/Reports.tsx:        {/* Screen Filters - Hides on Print */}
+components/Reports.tsx:                    value={selectedFilial}
+components/Reports.tsx:                    onChange={(e) => setSelectedFilial(e.target.value)}
+components/Reports.tsx:                    {filialOptions.map((f) => (
+components/Reports.tsx:                        <option key={f} value={f}>{f}</option>
+components/Reports.tsx:        {selectedFilial && (
+components/Reports.tsx:            {/* PRINT HEADER - Shows ONLY on Print (Main Mode) OR when Exporting PDF */}
+components/Reports.tsx:            <div className={`${isExporting ? 'flex' : 'hidden'} print:flex flex-row justify-between items-start mb-8 border-b-2 border-black pb-4`}>
+components/Reports.tsx:                     <p className="text-sm font-mono text-black mb-2">{new Date().toLocaleString()}</p>
+components/Reports.tsx:                     <p className="text-sm font-bold text-black">{selectedFilial === 'TODAS' ? 'TODAS AS FILIAIS' : selectedFilial}</p>
+components/Reports.tsx:            {/* Content Stats */}
+components/Reports.tsx:                <div className={`${isExporting ? 'hidden' : 'block'} print:hidden`}>
+components/Reports.tsx:                        {selectedFilial === 'TODAS' ? 'Quadro Geral' : selectedFilial}
+components/Reports.tsx:                        {users.length} <span className="text-sm text-slate-400 font-normal print:hidden">colaboradores</span>
+components/Reports.tsx:            {users.length > 0 ? (
+components/Reports.tsx:                                {selectedFilial === 'TODAS' && (
+components/Reports.tsx:                            {sortedUsers.map((user, index) => (
+components/Reports.tsx:                                <tr key={user.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} print:bg-transparent`}>
+components/Reports.tsx:                                    <td className="p-3 font-mono font-bold text-slate-600 print:text-black print:border-b print:border-gray-200">{user.matricula}</td>
+components/Reports.tsx:                                         <div className="font-semibold text-slate-800 print:text-black">{user.nomeCompleto}</div>
+components/Reports.tsx:                                         <div className="text-xs text-slate-400 print:hidden">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
+components/Reports.tsx:                                    {selectedFilial === 'TODAS' && (
+components/Reports.tsx:                                            {/* Changed from Red to Indigo/Slate */}
+components/Reports.tsx:                                                {user.filial}
+components/Reports.tsx:                                            {/* Print Style: Text */}
+components/Reports.tsx:                                            <span className="hidden print:inline font-bold text-xs">{user.filial}</span>
+components/Reports.tsx:                                         <div className="text-sm text-slate-700 font-medium print:text-black">{user.departamento}</div>
+components/Reports.tsx:                                         <div className="text-xs text-slate-500 uppercase tracking-wide print:text-gray-600">{user.setor}</div>
+components/Reports.tsx:                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.login}</span>
+components/Reports.tsx:            {/* Print Footer */}
+components/Reports.tsx:            <div className={`${isExporting ? 'flex' : 'hidden'} print:flex mt-8 pt-4 border-t border-black text-xs text-gray-500 justify-between items-center`}>
+components/Reports.tsx:                <p>{new Date().toLocaleString()}</p>
+components/Reports.tsx:      {/* PREVIEW MODAL (Rendered via Portal to ensure correct print layout) */}
+components/Reports.tsx:      {showPreview && createPortal(
+components/Reports.tsx:                  {/* Floating Toolbar */}
+components/Reports.tsx:                      {/* PDF Button */}
+components/Reports.tsx:                            onClick={handleExportPDF} 
+components/Reports.tsx:                            disabled={isExporting}
+components/Reports.tsx:                             {isExporting ? <Spinner size="sm" variant="white" /> : <FileDown className="w-4 h-4" />}
+components/Reports.tsx:                      {/* Print Button */}
+components/Reports.tsx:                            onClick={handlePrint}
+components/Reports.tsx:                      <button onClick={() => setShowPreview(false)} className="bg-slate-700 hover:bg-red-600 rounded-full p-1.5 transition-colors">
+components/Reports.tsx:                  {/* A4 Paper Simulation */}
+components/Reports.tsx:                      {/* Header */}
+components/Reports.tsx:                            <p className="text-sm font-mono text-black mb-2">{new Date().toLocaleString()}</p>
+components/Reports.tsx:                            <p className="text-sm font-bold text-black">{selectedFilial === 'TODAS' ? 'TODAS AS FILIAIS' : selectedFilial}</p>
+components/Reports.tsx:                    {/* Stats */}
+components/Reports.tsx:                                {users.length}
+components/Reports.tsx:                    {/* Table */}
+components/Reports.tsx:                                {selectedFilial === 'TODAS' && (
+components/Reports.tsx:                            {sortedUsers.map((user) => (
+components/Reports.tsx:                                <tr key={user.id} className="bg-transparent">
+components/Reports.tsx:                                    <td className="p-2 text-black border-b border-gray-200 font-mono">{user.matricula}</td>
+components/Reports.tsx:                                        <div className="font-bold">{user.nomeCompleto}</div>
+components/Reports.tsx:                                        <div className="text-xs text-gray-500">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
+components/Reports.tsx:                                    {selectedFilial === 'TODAS' && (
+components/Reports.tsx:                                         <td className="p-2 text-black border-b border-gray-200 font-bold text-xs">{user.filial}</td>
+components/Reports.tsx:                                        <div className="text-xs font-bold">{user.departamento}</div>
+components/Reports.tsx:                                        <div className="text-[10px] text-gray-500">{user.setor}</div>
+components/Reports.tsx:                                    <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.login}</td>
+components/Reports.tsx:                    {/* Footer */}
+components/Spinner.tsx:import { Loader2 } from 'lucide-react';
+components/Spinner.tsx:interface SpinnerProps {
+components/Spinner.tsx:export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', className = '', variant = 'primary' }) => {
+components/Spinner.tsx:  const sizeClasses = {
+components/Spinner.tsx:  const colorClasses = {
+components/Spinner.tsx:      className={`animate-spin ${sizeClasses[size]} ${colorClasses[variant]} ${className}`} 

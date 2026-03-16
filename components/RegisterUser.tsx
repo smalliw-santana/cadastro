@@ -1,43 +1,46 @@
 
 import React, { useState, useEffect } from 'react';
+import { SystemUser, User } from '../types.ts';
 import { dbService } from '../services/dbService.ts';
 import { Input } from './Input.tsx';
 import { Select } from './Select.tsx';
-import { Save, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Save, AlertCircle, CheckCircle2, ShieldAlert, User as UserIcon } from 'lucide-react';
 import { Spinner } from './Spinner.tsx';
 
 interface RegisterUserProps {
-  userRole?: 'ADMIN' | 'CONVIDADO';
+  currentUser?: SystemUser;
 }
 
-export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDADO' }) => {
+export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
+  const userRole = currentUser?.role || 'CONVIDADO';
   const [formData, setFormData] = useState({
     matricula: '',
     nomeCompleto: '',
     filial: '',
     login: '',
     senha: '',
-    departamento: '',
+    funcao: '',
     setor: ''
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [existingUser, setExistingUser] = useState<User | null>(null);
 
   // Dynamic Options States
   const [options, setOptions] = useState({
       filiais: [] as string[],
-      departamentos: [] as string[],
+      funcoes: [] as string[],
       setores: [] as string[]
   });
 
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<{ login?: string }>({});
+  const [fieldErrors, setFieldErrors] = useState<{ login?: string, matricula?: string }>({});
 
   useEffect(() => {
     // Load dynamic options from DB
     setOptions({
         filiais: dbService.getFiliais(),
-        departamentos: dbService.getDepartamentos(),
+        funcoes: dbService.getFuncoes(),
         setores: dbService.getSetores()
     });
   }, []);
@@ -57,6 +60,10 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
     if (name === 'login') {
         setFieldErrors(prev => ({ ...prev, login: undefined }));
     }
+    if (name === 'matricula') {
+        setFieldErrors(prev => ({ ...prev, matricula: undefined }));
+        setExistingUser(null);
+    }
 
     if (feedback) setFeedback(null);
   };
@@ -69,6 +76,13 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
               setFieldErrors(prev => ({ ...prev, login: `O login ${value} já está em uso.` }));
           }
       }
+      if (name === 'matricula' && value) {
+          const user = dbService.checkMatriculaExists(value);
+          if (user) {
+              setExistingUser(user);
+              setFieldErrors(prev => ({ ...prev, matricula: `A matrícula ${value} já está cadastrada.` }));
+          }
+      }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -79,7 +93,22 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
         return;
     }
 
-    if (fieldErrors.login) {
+    const matriculaExists = dbService.checkMatriculaExists(formData.matricula);
+    if (matriculaExists) {
+        setExistingUser(matriculaExists);
+        setFieldErrors(prev => ({ ...prev, matricula: `A matrícula ${formData.matricula} já está cadastrada.` }));
+        setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
+        return;
+    }
+
+    const loginExists = dbService.checkLoginExists(formData.login);
+    if (loginExists) {
+        setFieldErrors(prev => ({ ...prev, login: `O login ${formData.login} já está em uso.` }));
+        setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
+        return;
+    }
+
+    if (fieldErrors.login || fieldErrors.matricula) {
         setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
         return;
     }
@@ -92,14 +121,23 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
         });
 
         if (result.success) {
+            if (currentUser) {
+                dbService.addLog({
+                    userName: currentUser.nome,
+                    action: 'CREATE',
+                    resource: 'Usuário (Colaborador)',
+                    details: `Usuário ${formData.login} cadastrado.`
+                });
+            }
             setFeedback({ type: 'success', message: result.message });
+            setExistingUser(null);
             setFormData({
                 matricula: '',
                 nomeCompleto: '',
                 filial: '',
                 login: '',
                 senha: '',
-                departamento: '',
+                funcao: '',
                 setor: ''
             });
         } else {
@@ -140,6 +178,24 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
         </div>
 
         <form onSubmit={handleSubmit} className="p-8">
+            {existingUser && (
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-4 animate-[fadeIn_0.3s_ease-out]">
+                    <div className="p-2 bg-amber-100 rounded-lg text-amber-600 shrink-0">
+                        <UserIcon className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h3 className="text-amber-800 font-bold text-sm mb-1">Matrícula já cadastrada</h3>
+                        <p className="text-amber-700 text-sm mb-2">Os dados abaixo pertencem ao colaborador que já utiliza esta matrícula:</p>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-amber-900/80">
+                            <p><span className="font-semibold">Nome:</span> {existingUser.nomeCompleto}</p>
+                            <p><span className="font-semibold">Login:</span> {existingUser.login}</p>
+                            <p><span className="font-semibold">Filial:</span> {existingUser.filial}</p>
+                            <p><span className="font-semibold">Setor:</span> {existingUser.setor}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 {/* ID and Branch Row */}
@@ -147,12 +203,15 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
                     <Input 
                         label="Matrícula"
                         name="matricula"
-                        type="number"
-                        placeholder="Ex: 1005"
+                        type="text"
+                        placeholder="1001"
                         value={formData.matricula}
                         onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={fieldErrors.matricula}
                         required
                         disabled={isSaving}
+                        autoFocus
                     />
                 </div>
                 <div className="col-span-1">
@@ -170,7 +229,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
                 {/* Name Row */}
                 <div className="col-span-1 md:col-span-2">
                     <Input 
-                        label="Nome Completo (Automático Caixa Alta)"
+                        label="Nome Completo"
                         name="nomeCompleto"
                         type="text"
                         placeholder="NOME DO FUNCIONÁRIO"
@@ -184,10 +243,10 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
                 {/* Login Info */}
                 <div className="col-span-1">
                     <Input 
-                        label="Login (Automático Caixa Alta)"
+                        label="Login"
                         name="login"
                         type="text"
-                        placeholder="USUARIO.LOGIN"
+                        placeholder="USUARIO"
                         value={formData.login}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -200,8 +259,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
                     <Input 
                         label="Senha"
                         name="senha"
-                        type="password"
-                        placeholder="••••••••"
+                        type="text"
+                        placeholder="********"
                         value={formData.senha}
                         onChange={handleChange}
                         required
@@ -212,11 +271,11 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ userRole = 'CONVIDAD
                 {/* Job Info */}
                 <div className="col-span-1">
                     <Select
-                        label="Departamento"
-                        name="departamento"
-                        value={formData.departamento}
+                        label="Função"
+                        name="funcao"
+                        value={formData.funcao}
                         onChange={handleChange}
-                        options={options.departamentos}
+                        options={options.funcoes}
                         required
                         disabled={isSaving}
                     />

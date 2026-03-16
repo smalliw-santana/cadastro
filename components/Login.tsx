@@ -27,6 +27,12 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       const user = dbService.authenticateSystemUser(login, password);
 
       if (user) {
+        dbService.addLog({
+            userName: user.nome,
+            action: 'LOGIN',
+            resource: 'Sistema',
+            details: 'Login realizado com sucesso.'
+        });
         onLoginSuccess(user);
       } else {
         // Detailed feedback logic

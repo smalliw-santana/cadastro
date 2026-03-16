@@ -26,10 +26,14 @@ export const DatabaseSettings: React.FC<DatabaseSettingsProps> = ({ userRole }) 
   useEffect(() => {
     const saved = localStorage.getItem('k_system_db_config');
     if (saved) {
-      setConfig(JSON.parse(saved));
-      // Optionally simulate that we are already connected if config exists
-      setStatus('CONNECTED');
-      setLastCheck(new Date().toLocaleTimeString());
+      try {
+        setConfig(JSON.parse(saved));
+        // Optionally simulate that we are already connected if config exists
+        setStatus('CONNECTED');
+        setLastCheck(new Date().toLocaleTimeString());
+      } catch (e) {
+        localStorage.removeItem('k_system_db_config');
+      }
     }
   }, []);
 

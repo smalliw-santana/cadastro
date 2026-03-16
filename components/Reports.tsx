@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { dbService } from '../services/dbService.ts';
 import { User } from '../types.ts';
 import { FileBarChart2, Users, Building2, MapPin, ArrowUpDown, ArrowUp, ArrowDown, FileDown, Eye, X, Printer } from 'lucide-react';
@@ -136,8 +137,7 @@ export const Reports: React.FC = () => {
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out] print:p-0 print:space-y-0 print:w-full print:bg-white">
       {/* 
-        ROBUST PRINT STYLES 
-        This logic ensures we target the correct element regardless of DOM structure depth.
+        ROBUST PRINT STYLES WITH PORTAL SUPPORT
       */}
       <style>{`
         @media print {
@@ -147,6 +147,7 @@ export const Reports: React.FC = () => {
               background-color: white !important;
               -webkit-print-color-adjust: exact !important; 
               print-color-adjust: exact !important; 
+              overflow: visible !important;
           }
 
           /* Global Hides */
@@ -154,30 +155,21 @@ export const Reports: React.FC = () => {
 
           ${showPreview ? `
               /* 
-                 PRINT PREVIEW MODE:
-                 We use visibility: hidden on body to hide everything,
-                 then visibility: visible on the modal container to show it.
-                 This is more robust than display: none for deeply nested React components.
+                 PREVIEW MODE (Portal):
+                 Hide the root app completely. 
+                 The Portal (#preview-modal-container) is a direct child of body, so it remains visible.
               */
-              body * {
-                  visibility: hidden;
-              }
-
-              #preview-modal-container,
-              #preview-modal-container * {
-                  visibility: visible;
-              }
+              #root { display: none !important; }
 
               #preview-modal-container {
+                  display: block !important;
                   position: absolute !important;
                   left: 0 !important;
                   top: 0 !important;
                   width: 100% !important;
-                  height: auto !important;
                   margin: 0 !important;
                   padding: 0 !important;
                   background: white !important;
-                  overflow: visible !important; /* Critical for multi-page */
                   z-index: 9999 !important;
               }
 
@@ -185,18 +177,17 @@ export const Reports: React.FC = () => {
                   box-shadow: none !important;
                   margin: 0 auto !important;
                   width: 100% !important;
-                  padding: 10mm !important; /* Keep internal padding */
+                  padding: 10mm !important;
                   max-width: none !important;
               }
 
-              /* Explicitly hide toolbar even if it's inside the visible container */
+              /* Hide toolbar in print */
               #preview-toolbar {
                   display: none !important;
               }
 
           ` : `
-              /* NORMAL MODE (Printing the list view directly) */
-              #preview-modal-container { display: none !important; }
+              /* NORMAL MODE (Direct Print): Just print the dashboard content area */
               #reports-main-ui { display: block !important; }
           `}
         }
@@ -306,7 +297,7 @@ export const Reports: React.FC = () => {
                                     <ThSortable label="Filial" columnKey="filial" />
                                 )}
                                 <th className="p-3 font-bold text-slate-700 border-b border-slate-200 text-left print:text-black print:border-black print:text-xs print:uppercase print:p-2">
-                                    Departamento / Setor
+                                    Função / Setor
                                 </th>
                                 <ThSortable label="Login" columnKey="login" />
                             </tr>
@@ -323,8 +314,8 @@ export const Reports: React.FC = () => {
                                     
                                     {selectedFilial === 'TODAS' && (
                                         <td className="p-3 text-slate-600 print:text-black print:border-b print:border-gray-200">
-                                            {/* Screen Style: Red Pill */}
-                                            <span className="print:hidden inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100">
+                                            {/* Changed from Red to Indigo/Slate */}
+                                            <span className="print:hidden inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
                                                 {user.filial}
                                             </span>
                                             {/* Print Style: Text */}
@@ -333,7 +324,7 @@ export const Reports: React.FC = () => {
                                     )}
                                     
                                     <td className="p-3 print:text-black print:border-b print:border-gray-200">
-                                         <div className="text-sm text-slate-700 font-medium print:text-black">{user.departamento}</div>
+                                         <div className="text-sm text-slate-700 font-medium print:text-black">{user.funcao}</div>
                                          <div className="text-xs text-slate-500 uppercase tracking-wide print:text-gray-600">{user.setor}</div>
                                     </td>
 
@@ -366,8 +357,8 @@ export const Reports: React.FC = () => {
         )}
       </div>
 
-      {/* PREVIEW MODAL */}
-      {showPreview && (
+      {/* PREVIEW MODAL (Rendered via Portal to ensure correct print layout) */}
+      {showPreview && createPortal(
           <div id="preview-modal-container" className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex justify-center overflow-y-auto animate-[fadeIn_0.2s]">
               <div className="relative w-full flex justify-center py-8 px-4">
                   
@@ -385,10 +376,6 @@ export const Reports: React.FC = () => {
                              {isExporting ? <Spinner size="sm" variant="white" /> : <FileDown className="w-4 h-4" />}
                              <span className="hidden sm:inline">PDF</span>
                           </button>
-                          <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 border border-slate-700">
-                                Baixar em PDF
-                                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 border-t border-l border-slate-700 rotate-45"></div>
-                          </div>
                       </div>
 
                       {/* Print Button */}
@@ -400,10 +387,6 @@ export const Reports: React.FC = () => {
                              <Printer className="w-4 h-4" />
                              <span className="hidden sm:inline">Imprimir</span>
                           </button>
-                          <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 border border-slate-700">
-                                Imprimir Relatório
-                                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 border-t border-l border-slate-700 rotate-45"></div>
-                          </div>
                       </div>
 
                       <div className="w-px h-6 bg-slate-600 mx-1"></div>
@@ -452,7 +435,7 @@ export const Reports: React.FC = () => {
                                 {selectedFilial === 'TODAS' && (
                                      <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Filial</th>
                                 )}
-                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Departamento / Setor</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Função / Setor</th>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Login</th>
                             </tr>
                         </thead>
@@ -471,7 +454,7 @@ export const Reports: React.FC = () => {
                                     )}
                                     
                                     <td className="p-2 text-black border-b border-gray-200">
-                                        <div className="text-xs font-bold">{user.departamento}</div>
+                                        <div className="text-xs font-bold">{user.funcao}</div>
                                         <div className="text-[10px] text-gray-500">{user.setor}</div>
                                     </td>
                                     
@@ -489,7 +472,8 @@ export const Reports: React.FC = () => {
 
                   </div>
               </div>
-          </div>
+          </div>,
+          document.body // PORTAL TARGET
       )}
     </div>
   );

@@ -6,7 +6,7 @@ export interface User {
   filial: string; // Changed from Enum to string to support dynamic entries
   login: string;
   senha?: string;
-  departamento: string; // Changed from Enum to string
+  funcao: string; // Changed from Enum to string
   setor: string; // Changed from Enum to string
   dataCadastro: string;
 }
@@ -20,6 +20,15 @@ export interface SystemUser {
   createdAt: string;
 }
 
+export interface SystemLog {
+  id: string;
+  timestamp: string;
+  userName: string;
+  action: 'CREATE' | 'UPDATE' | 'DELETE' | 'LOGIN' | 'LOGOUT' | 'SYSTEM';
+  resource: string;
+  details: string;
+}
+
 export type ViewState = 
   | 'LOGIN' 
   | 'DASHBOARD' 
@@ -28,6 +37,7 @@ export type ViewState =
   | 'REPORTS' 
   | 'DB_SETTINGS'
   | 'REGISTER_FILIAL'
-  | 'REGISTER_DEPARTAMENTO'
+  | 'REGISTER_FUNCAO'
   | 'REGISTER_SETOR'
-  | 'MANAGE_ACCESS';
+  | 'MANAGE_ACCESS'
+  | 'SYSTEM_LOGS';

@@ -8,9 +8,10 @@ import { Spinner } from './Spinner.tsx';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    const displayLabel = typeof label === 'string' || typeof label === 'number' ? label : payload[0].name;
     return (
       <div className="bg-white/90 backdrop-blur-xl p-5 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/50 min-w-[180px] animate-in fade-in zoom-in-95 duration-200">
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2">{label}</p>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2">{displayLabel}</p>
         <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-primary-600 ring-4 ring-primary-50"></span>
@@ -48,10 +49,10 @@ export const Dashboard: React.FC = () => {
     return users.filter(u => u.filial === selectedFilial);
   }, [selectedFilial, users]);
 
-  const departmentData = useMemo(() => {
+  const funcaoData = useMemo(() => {
     const counts: Record<string, number> = {};
     filteredUsers.forEach(u => {
-      counts[u.departamento] = (counts[u.departamento] || 0) + 1;
+      counts[u.funcao] = (counts[u.funcao] || 0) + 1;
     });
     // Sort by value desc
     return Object.entries(counts)
@@ -71,15 +72,15 @@ export const Dashboard: React.FC = () => {
         .slice(0, 6); // Top 6
   }, [filteredUsers]);
 
-  // Enhanced Modern Palette
+  // Enhanced Professional Harmonic Palette (Indigo -> Blue -> Cyan -> Teal)
   const COLORS = [
-      '#4f46e5', // Primary 600 (Deep Indigo)
-      '#818cf8', // Primary 400 (Soft Indigo)
+      '#3730a3', // Indigo 800 (Deepest)
+      '#4f46e5', // Indigo 600 (Primary)
+      '#6366f1', // Indigo 500
+      '#3b82f6', // Blue 500
+      '#0ea5e9', // Sky 500
       '#06b6d4', // Cyan 500
-      '#10b981', // Emerald 500
-      '#f59e0b', // Amber 500
-      '#ec4899', // Pink 500
-      '#6366f1'  // Indigo 500
+      '#14b8a6', // Teal 500
   ];
 
   if (isLoading) {
@@ -174,9 +175,9 @@ export const Dashboard: React.FC = () => {
            <div className="flex justify-between items-start mb-10 relative z-10">
               <div>
                   <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                    Distribuição por Departamento
+                    Distribuição por Função
                   </h3>
-                  <p className="text-slate-400 text-sm mt-1 font-medium">Quantidade de colaboradores por área</p>
+                  <p className="text-slate-400 text-sm mt-1 font-medium">Quantidade de colaboradores por função</p>
               </div>
               <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <BarChart3 className="w-5 h-5" />
@@ -185,11 +186,11 @@ export const Dashboard: React.FC = () => {
            
            <div className="flex-1 w-full min-h-0 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={departmentData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={funcaoData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#6366f1" stopOpacity={1}/>
-                            <stop offset="100%" stopColor="#4f46e5" stopOpacity={0.6}/>
+                            <stop offset="0%" stopColor="#4f46e5" stopOpacity={1}/>
+                            <stop offset="100%" stopColor="#818cf8" stopOpacity={0.5}/>
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -220,7 +221,7 @@ export const Dashboard: React.FC = () => {
                   </h3>
                   <p className="text-slate-400 text-sm mt-1 font-medium">Top 6 setores com mais colaboradores</p>
               </div>
-              <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-sky-50 text-sky-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <PieIcon className="w-5 h-5" />
               </div>
            </div>

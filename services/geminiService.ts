@@ -18,7 +18,7 @@ export const generateFilialReport = async (filialName: string, users: User[]): P
   if (!client) return "Erro: Chave API não configurada.";
 
   const userDataSummary = users.map(u => 
-    `- Nome: ${u.nomeCompleto}, Dept: ${u.departamento}, Setor: ${u.setor}, Data: ${new Date(u.dataCadastro).toLocaleDateString()}`
+    `- Nome: ${u.nomeCompleto}, Função: ${u.funcao}, Setor: ${u.setor}, Data: ${new Date(u.dataCadastro).toLocaleDateString()}`
   ).join('\n');
 
   const prompt = `
@@ -28,7 +28,7 @@ export const generateFilialReport = async (filialName: string, users: User[]): P
     ${userDataSummary}
 
     O relatório deve conter:
-    1. Um resumo da distribuição de departamentos.
+    1. Um resumo da distribuição de funções.
     2. Uma observação sobre o crescimento recente (baseado nas datas).
     3. Sugestões de ação baseadas na distribuição dos setores.
     
