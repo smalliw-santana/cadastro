@@ -20,7 +20,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
     login: '',
     senha: '',
     funcao: '',
-    setor: ''
+    setor: '',
+    codigoVenda: ''
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -34,7 +35,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
   });
 
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<{ login?: string, matricula?: string }>({});
+  const [fieldErrors, setFieldErrors] = useState<{ matricula?: string }>({});
 
   useEffect(() => {
     // Load dynamic options from DB
@@ -56,10 +57,6 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
     setFormData(prev => ({ ...prev, [name]: finalValue }));
     
-    // Clear field specific error when user starts typing again
-    if (name === 'login') {
-        setFieldErrors(prev => ({ ...prev, login: undefined }));
-    }
     if (name === 'matricula') {
         setFieldErrors(prev => ({ ...prev, matricula: undefined }));
         setExistingUser(null);
@@ -70,12 +67,6 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      if (name === 'login' && value) {
-          const exists = dbService.checkLoginExists(value);
-          if (exists) {
-              setFieldErrors(prev => ({ ...prev, login: `O login ${value} já está em uso.` }));
-          }
-      }
       if (name === 'matricula' && value) {
           const user = dbService.checkMatriculaExists(value);
           if (user) {
@@ -88,8 +79,9 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (Object.values(formData).some(x => x === '')) {
-        setFeedback({ type: 'error', message: 'Por favor, preencha todos os campos.' });
+    const requiredFields = ['matricula', 'nomeCompleto', 'filial', 'login', 'senha', 'funcao', 'setor'];
+    if (requiredFields.some(field => !formData[field as keyof typeof formData])) {
+        setFeedback({ type: 'error', message: 'Por favor, preencha todos os campos obrigatórios.' });
         return;
     }
 
@@ -101,14 +93,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
         return;
     }
 
-    const loginExists = dbService.checkLoginExists(formData.login);
-    if (loginExists) {
-        setFieldErrors(prev => ({ ...prev, login: `O login ${formData.login} já está em uso.` }));
-        setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
-        return;
-    }
-
-    if (fieldErrors.login || fieldErrors.matricula) {
+    if (fieldErrors.matricula) {
         setFeedback({ type: 'error', message: 'Corrija os erros do formulário antes de salvar.' });
         return;
     }
@@ -138,7 +123,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                 login: '',
                 senha: '',
                 funcao: '',
-                setor: ''
+                setor: '',
+                codigoVenda: ''
             });
         } else {
             setFeedback({ type: 'error', message: result.message });
@@ -188,9 +174,9 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         <p className="text-amber-700 text-sm mb-2">Os dados abaixo pertencem ao colaborador que já utiliza esta matrícula:</p>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-amber-900/80">
                             <p><span className="font-semibold">Nome:</span> {existingUser.nomeCompleto}</p>
-                            <p><span className="font-semibold">Login:</span> {existingUser.login}</p>
                             <p><span className="font-semibold">Filial:</span> {existingUser.filial}</p>
                             <p><span className="font-semibold">Setor:</span> {existingUser.setor}</p>
+                            <p><span className="font-semibold">Função:</span> {existingUser.funcao}</p>
                         </div>
                     </div>
                 </div>
@@ -249,8 +235,6 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         placeholder="USUARIO"
                         value={formData.login}
                         onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={fieldErrors.login}
                         required
                         disabled={isSaving}
                     />
@@ -270,6 +254,17 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
                 {/* Job Info */}
                 <div className="col-span-1">
+                     <Select
+                        label="Setor"
+                        name="setor"
+                        value={formData.setor}
+                        onChange={handleChange}
+                        options={options.setores}
+                        required
+                        disabled={isSaving}
+                    />
+                </div>
+                <div className="col-span-1">
                     <Select
                         label="Função"
                         name="funcao"
@@ -280,14 +275,16 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         disabled={isSaving}
                     />
                 </div>
-                <div className="col-span-1">
-                     <Select
-                        label="Setor"
-                        name="setor"
-                        value={formData.setor}
+
+                {/* Sales Info */}
+                <div className="col-span-1 md:col-span-2">
+                    <Input 
+                        label="Código de Venda"
+                        name="codigoVenda"
+                        type="text"
+                        placeholder="Ex: 00000-1"
+                        value={formData.codigoVenda}
                         onChange={handleChange}
-                        options={options.setores}
-                        required
                         disabled={isSaving}
                     />
                 </div>

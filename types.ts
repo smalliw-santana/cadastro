@@ -9,6 +9,7 @@ export interface User {
   funcao: string; // Changed from Enum to string
   setor: string; // Changed from Enum to string
   dataCadastro: string;
+  codigoVenda?: string;
 }
 
 export interface SystemUser {

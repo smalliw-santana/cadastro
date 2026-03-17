@@ -76,7 +76,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                  
                  <h2 className="text-3xl font-bold tracking-tight mb-2">Bem-vindo</h2>
                  <p className="text-slate-300 text-sm max-w-[240px] leading-relaxed">
-                    Acesse o painel de controle corporativo.
+                    Acesse o painel corporativo.
                  </p>
             </div>
 
@@ -162,7 +162,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             </div>
 
             <div className="absolute bottom-6 text-slate-300 text-xs font-medium">
-               K-System &copy; {new Date().getFullYear()}
+               Gestão de Acessos &copy; {new Date().getFullYear()}
             </div>
 
         </div>

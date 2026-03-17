@@ -70,7 +70,10 @@ const App: React.FC = () => {
   // -------------------------
 
   if (!currentUser) {
-    return <Login onLoginSuccess={(user) => setCurrentUser(user)} />;
+    return <Login onLoginSuccess={(user) => {
+      setCurrentUser(user);
+      setCurrentView('DASHBOARD');
+    }} />;
   }
 
   const NavItem = ({ view, icon: Icon, label }: { view: ViewState, icon: any, label: string }) => (
@@ -109,7 +112,7 @@ const App: React.FC = () => {
           </div>
           {isSidebarOpen && (
             <div className="flex flex-col animate-[fadeIn_0.3s]">
-                <span className="font-bold text-lg tracking-tight leading-none">K-System</span>
+                <span className="font-bold text-lg tracking-tight leading-none">Gestão de Acessos</span>
             </div>
           )}
         </div>
@@ -143,7 +146,6 @@ const App: React.FC = () => {
             <div className="pt-4 mt-2 border-t border-slate-800">
                <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ${!isSidebarOpen ? 'hidden' : ''}`}>Sistema</p>
                <NavItem view="MANAGE_ACCESS" icon={ShieldCheck} label="Usuários de Acesso" />
-               <NavItem view="DB_SETTINGS" icon={Settings} label="Configuração BD" />
                <NavItem view="SYSTEM_LOGS" icon={ScrollText} label="Logs do Sistema" />
             </div>
           )}

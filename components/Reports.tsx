@@ -259,7 +259,7 @@ export const Reports: React.FC = () => {
                 <div className="flex items-center gap-4">
                     <Logo className="w-12 h-12" variant="primary" />
                     <div>
-                        <h1 className="text-2xl font-bold text-black uppercase tracking-tight">K-System</h1>
+                        <h1 className="text-2xl font-bold text-black uppercase tracking-tight">Gestão de Acessos</h1>
                         <p className="text-sm text-gray-600">Relatório de Controle de Acessos e Colaboradores</p>
                     </div>
                 </div>
@@ -297,7 +297,7 @@ export const Reports: React.FC = () => {
                                     <ThSortable label="Filial" columnKey="filial" />
                                 )}
                                 <th className="p-3 font-bold text-slate-700 border-b border-slate-200 text-left print:text-black print:border-black print:text-xs print:uppercase print:p-2">
-                                    Função / Setor
+                                    Setor / Função
                                 </th>
                                 <ThSortable label="Login" columnKey="login" />
                             </tr>
@@ -309,7 +309,6 @@ export const Reports: React.FC = () => {
                                     
                                     <td className="p-3 print:text-black print:border-b print:border-gray-200">
                                          <div className="font-semibold text-slate-800 print:text-black">{user.nomeCompleto}</div>
-                                         <div className="text-xs text-slate-400 print:hidden">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
                                     </td>
                                     
                                     {selectedFilial === 'TODAS' && (
@@ -324,8 +323,8 @@ export const Reports: React.FC = () => {
                                     )}
                                     
                                     <td className="p-3 print:text-black print:border-b print:border-gray-200">
-                                         <div className="text-sm text-slate-700 font-medium print:text-black">{user.funcao}</div>
-                                         <div className="text-xs text-slate-500 uppercase tracking-wide print:text-gray-600">{user.setor}</div>
+                                         <div className="text-sm text-slate-700 font-medium print:text-black">{user.setor}</div>
+                                         <div className="text-xs text-slate-500 uppercase tracking-wide print:text-gray-600">{user.funcao}</div>
                                     </td>
 
                                     <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
@@ -350,7 +349,7 @@ export const Reports: React.FC = () => {
             </div>
             
             <div className="mt-8 pt-4 border-t border-slate-100 text-xs text-slate-400 flex justify-between print:hidden">
-                <p>Gerado pelo K-System</p>
+                <p>Gerado pelo Gestão de Acessos</p>
                 <p>{new Date().toLocaleString()}</p>
             </div>
           </div>
@@ -404,7 +403,7 @@ export const Reports: React.FC = () => {
                         <div className="flex items-center gap-4">
                             <Logo className="w-12 h-12" variant="primary" />
                             <div>
-                                <h1 className="text-2xl font-bold text-black uppercase tracking-tight">K-System</h1>
+                                <h1 className="text-2xl font-bold text-black uppercase tracking-tight">Gestão de Acessos</h1>
                                 <p className="text-sm text-gray-600">Relatório de Controle de Acessos e Colaboradores</p>
                             </div>
                         </div>
@@ -435,7 +434,7 @@ export const Reports: React.FC = () => {
                                 {selectedFilial === 'TODAS' && (
                                      <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Filial</th>
                                 )}
-                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Função / Setor</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Setor / Função</th>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Login</th>
                             </tr>
                         </thead>
@@ -446,7 +445,6 @@ export const Reports: React.FC = () => {
                                     
                                     <td className="p-2 text-black border-b border-gray-200">
                                         <div className="font-bold">{user.nomeCompleto}</div>
-                                        <div className="text-xs text-gray-500">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
                                     </td>
                                     
                                     {selectedFilial === 'TODAS' && (
@@ -454,8 +452,8 @@ export const Reports: React.FC = () => {
                                     )}
                                     
                                     <td className="p-2 text-black border-b border-gray-200">
-                                        <div className="text-xs font-bold">{user.funcao}</div>
-                                        <div className="text-[10px] text-gray-500">{user.setor}</div>
+                                        <div className="text-xs font-bold">{user.setor}</div>
+                                        <div className="text-[10px] text-gray-500">{user.funcao}</div>
                                     </td>
                                     
                                     <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.login}</td>
