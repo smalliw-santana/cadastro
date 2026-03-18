@@ -37,6 +37,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'TECNOLOGIA DA INFORMAÇÃO',
     setor: 'INFRAESTRUTURA',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -49,6 +50,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'CPD',
     setor: 'DESENVOLVIMENTO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -61,6 +63,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'ESTOQUE',
     setor: 'ALMOXARIFADO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -73,6 +76,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'GERENCIA',
     setor: 'CONTABILIDADE',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -85,6 +89,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'CM',
     setor: 'VENDAS',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -97,6 +102,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'DEP.TROCA',
     setor: 'DESENVOLVIMENTO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -109,6 +115,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'CPD',
     setor: 'ALMOXARIFADO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -121,6 +128,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'GERENCIA',
     setor: 'CONTABILIDADE',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -133,6 +141,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'TECNOLOGIA DA INFORMAÇÃO',
     setor: 'INFRAESTRUTURA',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -145,6 +154,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'CPD',
     setor: 'DESENVOLVIMENTO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -157,6 +167,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'ESTOQUE',
     setor: 'ALMOXARIFADO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -169,6 +180,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'GERENCIA',
     setor: 'CONTABILIDADE',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -181,6 +193,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'CM',
     setor: 'VENDAS',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -193,6 +206,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'DEP.TROCA',
     setor: 'DESENVOLVIMENTO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -205,6 +219,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'CPD',
     setor: 'ALMOXARIFADO',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   },
 
@@ -217,6 +232,7 @@ const INITIAL_USERS: User[] = [
     senha: '123',
     funcao: 'GERENCIA',
     setor: 'CONTABILIDADE',
+    segmento: 'SUPERMERCADO',
     dataCadastro: new Date().toISOString()
   }
 ];

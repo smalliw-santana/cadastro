@@ -45,7 +45,8 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
       setor: '',
       login: '',
       senha: '', // Optional in edit
-      codigoVenda: '' // Optional
+      codigoVenda: '', // Optional
+      segmento: ''
   });
   
   // Options for Edit Form
@@ -136,7 +137,8 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           setor: user.setor,
           login: user.login,
           senha: '', // Initialize empty to show placeholder
-          codigoVenda: user.codigoVenda || ''
+          codigoVenda: user.codigoVenda || '',
+          segmento: user.segmento || 'SUPERMERCADO'
       });
       
       // Ensure current values are in the options list so the select doesn't break
@@ -164,7 +166,8 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           setor: editForm.setor,
           login: editForm.login.toUpperCase(),
           senha: editForm.senha ? editForm.senha : selectedUser.senha,
-          codigoVenda: editForm.codigoVenda
+          codigoVenda: editForm.codigoVenda,
+          segmento: editForm.segmento
       };
 
       setTimeout(() => {
@@ -293,6 +296,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Nome Completo</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Filial</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Setor / Função</th>
+                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Segmento</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Login</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Senha</th>
                             {userRole === 'ADMIN' && (
@@ -328,6 +332,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                         <div className="text-sm text-slate-700 print:text-slate-800">{user.setor}</div>
                                         <div className="text-xs text-slate-500">{user.funcao}</div>
                                     </td>
+                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.segmento || 'SUPERMERCADO'}</td>
                                     <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.login}</td>
                                     <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">
                                         <div className="flex items-center gap-2">
@@ -476,6 +481,15 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                 label="Código de Venda (Opcional)" 
                                 value={editForm.codigoVenda}
                                 onChange={e => setEditForm({...editForm, codigoVenda: e.target.value})}
+                                disabled={userRole !== 'ADMIN'}
+                            />
+
+                            <Select 
+                                label="Segmento" 
+                                options={['SUPERMERCADO', 'MAGAZAN']}
+                                value={editForm.segmento}
+                                onChange={e => setEditForm({...editForm, segmento: e.target.value})}
+                                required
                                 disabled={userRole !== 'ADMIN'}
                             />
                             

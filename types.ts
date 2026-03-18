@@ -10,6 +10,7 @@ export interface User {
   setor: string; // Changed from Enum to string
   dataCadastro: string;
   codigoVenda?: string;
+  segmento: string;
 }
 
 export interface SystemUser {

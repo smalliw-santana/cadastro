@@ -21,7 +21,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
     senha: '',
     funcao: '',
     setor: '',
-    codigoVenda: ''
+    codigoVenda: '',
+    segmento: ''
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -124,7 +125,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                 senha: '',
                 funcao: '',
                 setor: '',
-                codigoVenda: ''
+                codigoVenda: '',
+                segmento: ''
             });
         } else {
             setFeedback({ type: 'error', message: result.message });
@@ -177,6 +179,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                             <p><span className="font-semibold">Filial:</span> {existingUser.filial}</p>
                             <p><span className="font-semibold">Setor:</span> {existingUser.setor}</p>
                             <p><span className="font-semibold">Função:</span> {existingUser.funcao}</p>
+                            <p><span className="font-semibold">Segmento:</span> {existingUser.segmento || 'SUPERMERCADO'}</p>
                         </div>
                     </div>
                 </div>
@@ -190,7 +193,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         label="Matrícula"
                         name="matricula"
                         type="text"
-                        placeholder="1001"
+                       /* placeholder="1001"*/
                         value={formData.matricula}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -218,7 +221,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         label="Nome Completo"
                         name="nomeCompleto"
                         type="text"
-                        placeholder="NOME DO FUNCIONÁRIO"
+                        /*placeholder="NOME DO FUNCIONÁRIO"*/
                         value={formData.nomeCompleto}
                         onChange={handleChange}
                         required
@@ -232,7 +235,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         label="Login"
                         name="login"
                         type="text"
-                        placeholder="USUARIO"
+                        /*placeholder="USUARIO"*/
                         value={formData.login}
                         onChange={handleChange}
                         required
@@ -244,7 +247,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         label="Senha"
                         name="senha"
                         type="text"
-                        placeholder="********"
+                        /*placeholder="********"*/
                         value={formData.senha}
                         onChange={handleChange}
                         required
@@ -275,19 +278,29 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         disabled={isSaving}
                     />
                 </div>
-
+<div className="col-span-1">
+                    <Select
+                        label="Segmento"
+                        name="segmento"
+                        value={formData.segmento}
+                        onChange={handleChange}
+                        options={['SUPERMERCADO', 'MAGAZAN']}
+                        required
+                        disabled={isSaving}
+                    />
+                </div>
                 {/* Sales Info */}
-                <div className="col-span-1 md:col-span-2">
+                <div className="col-span-1">
                     <Input 
                         label="Código de Venda"
                         name="codigoVenda"
                         type="text"
-                        placeholder="Ex: 00000-1"
+                        /*placeholder="Ex: 00000-1"*/
                         value={formData.codigoVenda}
                         onChange={handleChange}
                         disabled={isSaving}
                     />
-                </div>
+                </div>                
             </div>
 
             {/* Feedback Message */}

@@ -299,6 +299,7 @@ export const Reports: React.FC = () => {
                                 <th className="p-3 font-bold text-slate-700 border-b border-slate-200 text-left print:text-black print:border-black print:text-xs print:uppercase print:p-2">
                                     Setor / Função
                                 </th>
+                                <ThSortable label="Segmento" columnKey="segmento" />
                                 <ThSortable label="Login" columnKey="login" />
                             </tr>
                         </thead>
@@ -325,6 +326,10 @@ export const Reports: React.FC = () => {
                                     <td className="p-3 print:text-black print:border-b print:border-gray-200">
                                          <div className="text-sm text-slate-700 font-medium print:text-black">{user.setor}</div>
                                          <div className="text-xs text-slate-500 uppercase tracking-wide print:text-gray-600">{user.funcao}</div>
+                                    </td>
+
+                                    <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.segmento || 'SUPERMERCADO'}</span>
                                     </td>
 
                                     <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
@@ -435,6 +440,7 @@ export const Reports: React.FC = () => {
                                      <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Filial</th>
                                 )}
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Setor / Função</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Segmento</th>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Login</th>
                             </tr>
                         </thead>
@@ -455,6 +461,8 @@ export const Reports: React.FC = () => {
                                         <div className="text-xs font-bold">{user.setor}</div>
                                         <div className="text-[10px] text-gray-500">{user.funcao}</div>
                                     </td>
+                                    
+                                    <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.segmento || 'SUPERMERCADO'}</td>
                                     
                                     <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.login}</td>
                                 </tr>
