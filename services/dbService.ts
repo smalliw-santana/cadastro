@@ -250,7 +250,7 @@ const INITIAL_SYSTEM_USERS: SystemUser[] = [
 
     {
         id: 'admin-02',
-        nome: 'WILLAMS',
+        nome: 'WILLAMS SILVA',
         login: 'WILLAMS',
         senha: '1235',
         role: 'ADMIN',
@@ -259,6 +259,15 @@ const INITIAL_SYSTEM_USERS: SystemUser[] = [
 
     {
         id: 'admin-03',
+        nome: 'YURI PINHEIRO',
+        login: 'YURI',
+        senha: '123',
+        role: 'ADMIN',
+        createdAt: new Date().toISOString()
+    },
+
+    {
+        id: 'admin-04',
         nome: 'TESTE',
         login: 'TESTE',
         senha: '123',

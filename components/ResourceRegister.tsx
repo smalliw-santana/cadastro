@@ -36,7 +36,7 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
       title: 'Gerenciar Funções',
       label: 'Nova Função',
       icon: Layers,
-      description: 'Estruture as grandes áreas da organização.',
+      description: 'Cadastre as funções na empresa.',
       get: dbService.getFuncoes,
       add: dbService.addFuncao,
       remove: dbService.deleteFuncao
@@ -45,7 +45,7 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
       title: 'Gerenciar Setores',
       label: 'Novo Setor',
       icon: Briefcase,
-      description: 'Defina as divisões de trabalho dentro das funções.',
+      description: 'Defina os setores da empresa.',
       get: dbService.getSetores,
       add: dbService.addSetor,
       remove: dbService.deleteSetor
