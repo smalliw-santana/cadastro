@@ -30,18 +30,18 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
     loadUsers();
   }, []);
 
-  const loadUsers = () => {
-    setUsers(dbService.getSystemUsers());
+  const loadUsers = async () => {
+    setUsers(await dbService.getSystemUsers());
   };
 
-  const handleAddUser = (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent) => {
       e.preventDefault();
       if (!newUser.nome || !newUser.login || !newUser.senha) {
           setFeedback({ type: 'error', message: 'Preencha todos os campos obrigatórios.' });
           return;
       }
 
-      const result = dbService.addSystemUser({
+      const result = await dbService.addSystemUser({
           nome: newUser.nome.toUpperCase(),
           login: newUser.login.toUpperCase(),
           senha: newUser.senha,
@@ -50,7 +50,7 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
 
       if (result.success) {
           if (currentUser) {
-              dbService.addLog({
+              await dbService.addLog({
                   userName: currentUser.nome,
                   action: 'CREATE',
                   resource: 'Usuário de Sistema',
@@ -73,13 +73,13 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
       setIsDeleteModalOpen(true);
   };
 
-  const handleExecuteDelete = () => {
+  const handleExecuteDelete = async () => {
       if (!userToDelete) return;
 
-      const result = dbService.deleteSystemUser(userToDelete.id);
+      const result = await dbService.deleteSystemUser(userToDelete.id);
       if (result.success) {
           if (currentUser) {
-              dbService.addLog({
+              await dbService.addLog({
                   userName: currentUser.nome,
                   action: 'DELETE',
                   resource: 'Usuário de Sistema',

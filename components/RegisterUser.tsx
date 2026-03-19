@@ -40,11 +40,14 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
     useEffect(() => {
         // Load dynamic options from DB
-        setOptions({
-            filiais: dbService.getFiliais(),
-            funcoes: dbService.getFuncoes(),
-            setores: dbService.getSetores()
-        });
+        const loadOptions = async () => {
+            setOptions({
+                filiais: await dbService.getFiliais(),
+                funcoes: await dbService.getFuncoes(),
+                setores: await dbService.getSetores()
+            });
+        };
+        loadOptions();
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -66,10 +69,10 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
         if (feedback) setFeedback(null);
     };
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         if (name === 'matricula' && value) {
-            const user = dbService.checkMatriculaExists(value);
+            const user = await dbService.checkMatriculaExists(value);
             if (user) {
                 setExistingUser(user);
                 setFieldErrors(prev => ({ ...prev, matricula: `A matrícula ${value} já está cadastrada.` }));
@@ -77,7 +80,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const requiredFields = ['matricula', 'nomeCompleto', 'filial', 'login', 'senha', 'funcao', 'setor'];
@@ -86,7 +89,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
             return;
         }
 
-        const matriculaExists = dbService.checkMatriculaExists(formData.matricula);
+        const matriculaExists = await dbService.checkMatriculaExists(formData.matricula);
         if (matriculaExists) {
             setExistingUser(matriculaExists);
             setFieldErrors(prev => ({ ...prev, matricula: `A matrícula ${formData.matricula} já está cadastrada.` }));
@@ -101,14 +104,14 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
         setIsSaving(true);
         // Simulate API delay
-        setTimeout(() => {
-            const result = dbService.addUser({
+        setTimeout(async () => {
+            const result = await dbService.addUser({
                 ...formData
             });
 
             if (result.success) {
                 if (currentUser) {
-                    dbService.addLog({
+                    await dbService.addLog({
                         userName: currentUser.nome,
                         action: 'CREATE',
                         resource: 'Usuário (Colaborador)',

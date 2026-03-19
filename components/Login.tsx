@@ -16,18 +16,18 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     // Simulate network delay for realism
-    setTimeout(() => {
+    setTimeout(async () => {
       // Use the new Authentication method against System Users DB
-      const user = dbService.authenticateSystemUser(login, password);
+      const user = await dbService.authenticateSystemUser(login, password);
 
       if (user) {
-        dbService.addLog({
+        await dbService.addLog({
             userName: user.nome,
             action: 'LOGIN',
             resource: 'Sistema',
@@ -36,7 +36,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         onLoginSuccess(user);
       } else {
         // Detailed feedback logic
-        const systemUsers = dbService.getSystemUsers();
+        const systemUsers = await dbService.getSystemUsers();
         const userExists = systemUsers.some(u => u.login.toUpperCase() === login);
 
         if (userExists) {

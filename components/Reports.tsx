@@ -21,9 +21,12 @@ export const Reports: React.FC = () => {
   const [sortConfig, setSortConfig] = useState<{ key: SortKeys; direction: 'asc' | 'desc' } | null>(null);
 
   useEffect(() => {
-    const data = dbService.getAllUsers();
-    setAllUsers(data);
-    setFilialOptions(dbService.getFiliais());
+    const loadData = async () => {
+      const data = await dbService.getAllUsers();
+      setAllUsers(data);
+      setFilialOptions(await dbService.getFiliais());
+    };
+    loadData();
   }, []);
 
   useEffect(() => {

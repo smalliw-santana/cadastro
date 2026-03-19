@@ -37,8 +37,10 @@ export const Dashboard: React.FC = () => {
     // Simulate Data Fetching
     const loadData = async () => {
         await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
-        setUsers(dbService.getAllUsers());
-        setFilialOptions(dbService.getFiliais());
+        const usersData = await dbService.getAllUsers();
+        const filiaisData = await dbService.getFiliais();
+        setUsers(usersData);
+        setFilialOptions(filiaisData);
         setIsLoading(false);
     };
     loadData();

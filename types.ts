@@ -8,6 +8,7 @@ export interface User {
   senha?: string;
   funcao: string; // Changed from Enum to string
   setor: string; // Changed from Enum to string
+  departamento?: string;
   dataCadastro: string;
   codigoVenda?: string;
   segmento: string;
@@ -25,9 +26,10 @@ export interface SystemUser {
 export interface SystemLog {
   id: string;
   timestamp: string;
+  userId?: string;
   userName: string;
   action: 'CREATE' | 'UPDATE' | 'DELETE' | 'LOGIN' | 'LOGOUT' | 'SYSTEM';
-  resource: string;
+  resource?: string;
   details: string;
 }
 

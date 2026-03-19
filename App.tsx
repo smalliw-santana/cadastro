@@ -29,11 +29,11 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const handleLogout = () => {
-      dbService.addLog({
+    const handleLogout = async () => {
+      await dbService.addLog({
+          userId: currentUser.id,
           userName: currentUser.nome,
           action: 'LOGOUT',
-          resource: 'Sistema',
           details: 'Logout automático por inatividade.'
       });
       setCurrentUser(null);
@@ -183,11 +183,11 @@ const App: React.FC = () => {
           </div>
 
           <button 
-             onClick={() => {
-                 dbService.addLog({
+             onClick={async () => {
+                 await dbService.addLog({
+                     userId: currentUser.id,
                      userName: currentUser.nome,
                      action: 'LOGOUT',
-                     resource: 'Sistema',
                      details: 'Logout manual.'
                  });
                  setCurrentUser(null);

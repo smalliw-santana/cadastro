@@ -60,18 +60,18 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
     setItemToDelete(null);
   }, [type]);
 
-  const loadItems = () => {
-    setItems(config.get());
+  const loadItems = async () => {
+    setItems(await config.get());
   };
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newItem.trim()) return;
 
-    const success = config.add(newItem);
+    const success = await config.add(newItem);
     if (success) {
       if (currentUser) {
-          dbService.addLog({
+          await dbService.addLog({
               userName: currentUser.nome,
               action: 'CREATE',
               resource: type,
@@ -96,18 +96,18 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
   };
 
   // Execute the deletion
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!itemToDelete) return;
     
     setIsProcessing(true);
     
     // Simulate a small delay for better UX
-    setTimeout(() => {
-        const success = config.remove(itemToDelete);
+    setTimeout(async () => {
+        const success = await config.remove(itemToDelete);
         
         if (success) {
             if (currentUser) {
-                dbService.addLog({
+                await dbService.addLog({
                     userName: currentUser.nome,
                     action: 'DELETE',
                     resource: type,

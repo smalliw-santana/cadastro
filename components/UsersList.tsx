@@ -59,17 +59,20 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
   useEffect(() => {
     loadUsers();
     // Load options for the edit modal
-    setOptions({
-        filiais: dbService.getFiliais(),
-        funcoes: dbService.getFuncoes(),
-        setores: dbService.getSetores()
-    });
+    const loadOptions = async () => {
+      setOptions({
+          filiais: await dbService.getFiliais(),
+          funcoes: await dbService.getFuncoes(),
+          setores: await dbService.getSetores()
+      });
+    };
+    loadOptions();
   }, []);
 
   const loadUsers = () => {
     setIsLoading(true);
-    setTimeout(() => {
-        setUsers(dbService.getAllUsers());
+    setTimeout(async () => {
+        setUsers(await dbService.getAllUsers());
         setIsLoading(false);
     }, 600);
   };
@@ -91,14 +94,14 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
 
   const handleExecuteDelete = () => {
     setIsProcessing(true);
-    setTimeout(() => {
+    setTimeout(async () => {
         let result;
         
         if (deleteMode === 'ALL') {
-            result = dbService.deleteAllUsers();
+            result = await dbService.deleteAllUsers();
         } else {
             if (userToDelete) {
-                result = dbService.deleteUser(userToDelete.id);
+                result = await dbService.deleteUser(userToDelete.id);
             } else {
                 result = { success: false, message: "Erro ao identificar usuário." };
             }
@@ -106,7 +109,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
 
         if (result.success) {
             if (currentUser) {
-                dbService.addLog({
+                await dbService.addLog({
                     userName: currentUser.nome,
                     action: 'DELETE',
                     resource: 'Usuário (Colaborador)',
@@ -170,12 +173,12 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           segmento: editForm.segmento
       };
 
-      setTimeout(() => {
-          const result = dbService.updateUser(updatedUser);
+      setTimeout(async () => {
+          const result = await dbService.updateUser(updatedUser);
           
           if (result.success) {
               if (currentUser) {
-                  dbService.addLog({
+                  await dbService.addLog({
                       userName: currentUser.nome,
                       action: 'UPDATE',
                       resource: 'Usuário (Colaborador)',

@@ -9,7 +9,10 @@ export const SystemLogs: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    setLogs(dbService.getLogs());
+    const loadLogs = async () => {
+      setLogs(await dbService.getLogs());
+    };
+    loadLogs();
   }, []);
 
   const filteredLogs = logs.filter(log => 
