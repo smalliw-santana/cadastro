@@ -299,9 +299,9 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Nome Completo</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Filial</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Setor / Função</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Segmento</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Login</th>
                             <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Senha</th>
+                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Segmento</th>
                             {userRole === 'ADMIN' && (
                                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider text-right print:hidden">Ações</th>
                             )}
@@ -327,7 +327,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                     </td>
                                     <td className="p-4">
                                         {/* Changed from Red to Indigo/Slate to look less like an error */}
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 print:bg-transparent print:border-none print:p-0 print:text-slate-800">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100 print:bg-transparent print:border-none print:p-0 print:text-slate-800">
                                             {user.filial}
                                         </span>
                                     </td>
@@ -335,7 +335,6 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                         <div className="text-sm text-slate-700 print:text-slate-800">{user.setor}</div>
                                         <div className="text-xs text-slate-500">{user.funcao}</div>
                                     </td>
-                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.segmento || 'SUPERMERCADO'}</td>
                                     <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.login}</td>
                                     <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">
                                         <div className="flex items-center gap-2">
@@ -351,6 +350,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                             )}
                                         </div>
                                     </td>
+                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.segmento || 'SUPERMERCADO'}</td>
                                     
                                     {/* Action Column */}
                                     {userRole === 'ADMIN' && (
@@ -489,7 +489,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
 
                             <Select 
                                 label="Segmento" 
-                                options={['SUPERMERCADO', 'MAGAZAN', 'OUTROS']}
+                                options={['SUPERMERCADO', 'MAGAZAN']}
                                 value={editForm.segmento}
                                 onChange={e => setEditForm({...editForm, segmento: e.target.value})}
                                 required

@@ -167,6 +167,7 @@ export const dbService = {
           funcao: user.funcao,
           setor: user.setor,
           departamento: user.departamento,
+          codigoVenda: user.codigo_venda,
           segmento: user.segmento,
           dataCadastro: user.data_cadastro
       }));
@@ -191,6 +192,7 @@ export const dbService = {
           funcao: data.funcao,
           setor: data.setor,
           departamento: data.departamento,
+          codigoVenda: data.codigo_venda,
           segmento: data.segmento,
           dataCadastro: data.data_cadastro
       };
@@ -218,6 +220,7 @@ export const dbService = {
               funcao: user.funcao,
               setor: user.setor,
               departamento: user.departamento,
+              codigo_venda: user.codigoVenda,
               segmento: user.segmento
           }]);
           
@@ -252,6 +255,7 @@ export const dbService = {
               funcao: updatedUser.funcao,
               setor: updatedUser.setor,
               departamento: updatedUser.departamento,
+              codigo_venda: updatedUser.codigoVenda,
               segmento: updatedUser.segmento
           })
           .eq('id', updatedUser.id);

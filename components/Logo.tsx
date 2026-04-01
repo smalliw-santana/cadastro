@@ -7,7 +7,7 @@ interface LogoProps {
 }
 
 export const Logo: React.FC<LogoProps> = ({ className = "w-10 h-10", variant = 'primary' }) => {
-  // Use new Indigo 600 color (#4f46e5) instead of Red
+  // Use Indigo 600 color (#4f46e5)
   const color = variant === 'white' ? '#ffffff' : '#4f46e5';
   const fill = variant === 'white' ? '#ffffff' : '#4f46e5';
   

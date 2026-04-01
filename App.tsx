@@ -83,7 +83,7 @@ const App: React.FC = () => {
         w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 relative overflow-hidden group
         ${currentView === view 
           ? 'bg-primary-600/10 text-primary-200 shadow-inner' 
-          : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+          : 'text-indigo-200 hover:bg-indigo-800 hover:text-white'
         }
       `}
     >
@@ -98,15 +98,15 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden print:block print:h-auto print:overflow-visible">
-      {/* Sidebar - Changed to Dark Slate for a more premium enterprise look */}
+    <div className="flex h-screen bg-white overflow-hidden print:block print:h-auto print:overflow-visible">
+      {/* Sidebar - Changed to Red for a more premium enterprise look */}
       <aside 
         className={`
-          bg-slate-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar print:hidden shadow-2xl
+          bg-indigo-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar print:hidden shadow-2xl
           ${isSidebarOpen ? 'w-72' : 'w-20'}
         `}
       >
-        <div className="p-6 flex items-center gap-3 shrink-0 bg-slate-950/30">
+        <div className="p-6 flex items-center gap-3 shrink-0 bg-indigo-950/30">
           <div className="w-10 h-10 flex items-center justify-center shrink-0 bg-gradient-to-tr from-primary-600 to-primary-400 rounded-xl shadow-lg shadow-primary-900/20">
             <Logo className="w-6 h-6" variant="white" />
           </div>
@@ -119,7 +119,7 @@ const App: React.FC = () => {
 
         <nav className="flex-1 px-4 py-6 space-y-2">
           <div className="pb-2">
-             <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 mt-1 ${!isSidebarOpen ? 'hidden' : ''}`}>Principal</p>
+             <p className={`px-4 text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 mt-1 ${!isSidebarOpen ? 'hidden' : ''}`}>Principal</p>
              <NavItem view="DASHBOARD" icon={LayoutDashboard} label="Dashboard Geral" />
              
              {/* REGISTER is visible in menu ONLY for ADMIN, but we secure the component too */}
@@ -133,8 +133,8 @@ const App: React.FC = () => {
 
           {/* Auxiliary Registers - Visible in menu ONLY for ADMIN, but we secure components too */}
           {currentUser.role === 'ADMIN' && (
-            <div className="pt-4 mt-2 border-t border-slate-800">
-                <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ${!isSidebarOpen ? 'hidden' : ''}`}>Cadastros Auxiliares</p>
+            <div className="pt-4 mt-2 border-t border-indigo-800">
+                <p className={`px-4 text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 ${!isSidebarOpen ? 'hidden' : ''}`}>Cadastros Auxiliares</p>
                 <NavItem view="REGISTER_FILIAL" icon={Building} label="Cadastrar Filial" />
                 <NavItem view="REGISTER_FUNCAO" icon={Layers} label="Cadastrar Função" />
                 <NavItem view="REGISTER_SETOR" icon={Briefcase} label="Cadastrar Setor" />
@@ -143,25 +143,25 @@ const App: React.FC = () => {
 
           {/* System Settings - Visible in menu ONLY for ADMIN, but we secure components too */}
           {currentUser.role === 'ADMIN' && (
-            <div className="pt-4 mt-2 border-t border-slate-800">
-               <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ${!isSidebarOpen ? 'hidden' : ''}`}>Sistema</p>
+            <div className="pt-4 mt-2 border-t border-indigo-800">
+               <p className={`px-4 text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 ${!isSidebarOpen ? 'hidden' : ''}`}>Sistema</p>
                <NavItem view="MANAGE_ACCESS" icon={ShieldCheck} label="Usuários de Acesso" />
                <NavItem view="SYSTEM_LOGS" icon={ScrollText} label="Logs do Sistema" />
             </div>
           )}
         </nav>
 
-        <div className="p-4 border-t border-slate-800 shrink-0 bg-slate-950/20">
+        <div className="p-4 border-t border-indigo-800 shrink-0 bg-indigo-950/20">
           {/* User Profile Section in Sidebar */}
           <div className={`flex items-center gap-3 mb-5 ${!isSidebarOpen ? 'justify-center' : 'px-2'}`}>
               <div className="relative shrink-0">
                   {/* Harmonic Icon Replacement */}
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 flex items-center justify-center shadow-md group">
-                      <User className="w-5 h-5 text-slate-300 group-hover:text-white transition-colors" />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-700 to-indigo-800 border border-indigo-600 flex items-center justify-center shadow-md group">
+                      <User className="w-5 h-5 text-indigo-100 group-hover:text-white transition-colors" />
                   </div>
                   
                   {/* Status Dot on Avatar (Visible when collapsed too) */}
-                  <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 border-2 border-slate-900 rounded-full ${currentUser.role === 'ADMIN' ? 'bg-green-500' : 'bg-slate-500'}`}></div>
+                  <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 border-2 border-indigo-900 rounded-full ${currentUser.role === 'ADMIN' ? 'bg-green-500' : 'bg-slate-500'}`}></div>
               </div>
               
               {isSidebarOpen && (
@@ -172,9 +172,9 @@ const App: React.FC = () => {
                           {currentUser.role === 'ADMIN' ? (
                               <ShieldCheck className="w-3 h-3 text-green-500" />
                           ) : (
-                              <User className="w-3 h-3 text-slate-400" />
+                              <User className="w-3 h-3 text-indigo-200" />
                           )}
-                          <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+                          <span className="text-[10px] text-indigo-200 font-medium uppercase tracking-wider">
                               {currentUser.role}
                           </span>
                       </div>
@@ -193,7 +193,7 @@ const App: React.FC = () => {
                  setCurrentUser(null);
              }}
              className={`
-               w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 group
+               w-full flex items-center gap-3 px-4 py-3 rounded-xl text-indigo-400 hover:bg-indigo-500/10 hover:text-indigo-300 transition-all duration-300 group
                ${!isSidebarOpen ? 'justify-center' : ''}
              `}
           >
@@ -204,7 +204,7 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative print:block print:h-auto print:overflow-visible print:w-full print:static bg-slate-50/50">
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative print:block print:h-auto print:overflow-visible print:w-full print:static bg-white">
         {/* Top Header with Glassmorphism */}
         <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between px-8 z-10 shrink-0 print:hidden sticky top-0 transition-all">
            <button 
@@ -218,7 +218,7 @@ const App: React.FC = () => {
         </header>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-auto bg-slate-50 print:overflow-visible print:bg-white print:h-auto print:block scroll-smooth">
+        <div className="flex-1 overflow-auto bg-white print:overflow-visible print:bg-white print:h-auto print:block scroll-smooth">
           <div className="max-w-7xl mx-auto w-full min-h-full flex flex-col">
             {currentView === 'DASHBOARD' && <Dashboard />}
             {currentView === 'REGISTER' && <RegisterUser currentUser={currentUser} />}

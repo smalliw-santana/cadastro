@@ -302,8 +302,8 @@ export const Reports: React.FC = () => {
                                 <th className="p-3 font-bold text-slate-700 border-b border-slate-200 text-left print:text-black print:border-black print:text-xs print:uppercase print:p-2">
                                     Setor / Função
                                 </th>
-                                <ThSortable label="Segmento" columnKey="segmento" />
                                 <ThSortable label="Login" columnKey="login" />
+                                <ThSortable label="Segmento" columnKey="segmento" />
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 print:divide-slate-200">
@@ -318,7 +318,7 @@ export const Reports: React.FC = () => {
                                     {selectedFilial === 'TODAS' && (
                                         <td className="p-3 text-slate-600 print:text-black print:border-b print:border-gray-200">
                                             {/* Changed from Red to Indigo/Slate */}
-                                            <span className="print:hidden inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                            <span className="print:hidden inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100">
                                                 {user.filial}
                                             </span>
                                             {/* Print Style: Text */}
@@ -332,11 +332,11 @@ export const Reports: React.FC = () => {
                                     </td>
 
                                     <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
-                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.segmento || 'SUPERMERCADO'}</span>
+                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.login}</span>
                                     </td>
 
                                     <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
-                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.login}</span>
+                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.segmento || 'SUPERMERCADO'}</span>
                                     </td>
                                 </tr>
                             ))}
@@ -443,8 +443,8 @@ export const Reports: React.FC = () => {
                                      <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Filial</th>
                                 )}
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Setor / Função</th>
-                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Segmento</th>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Login</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Segmento</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
@@ -465,9 +465,9 @@ export const Reports: React.FC = () => {
                                         <div className="text-[10px] text-gray-500">{user.funcao}</div>
                                     </td>
                                     
-                                    <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.segmento || 'SUPERMERCADO'}</td>
-                                    
                                     <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.login}</td>
+                                    
+                                    <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.segmento || 'SUPERMERCADO'}</td>
                                 </tr>
                             ))}
                         </tbody>

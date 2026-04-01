@@ -19,7 +19,7 @@ export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', className = '', v
     primary: 'text-primary-600',
     white: 'text-white',
     slate: 'text-slate-400',
-    indigo: 'text-red-600' // Mapping indigo to red for backward compatibility with theme change
+    indigo: 'text-indigo-600'
   };
 
   return (

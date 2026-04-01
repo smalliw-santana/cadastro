@@ -74,15 +74,15 @@ export const Dashboard: React.FC = () => {
         .slice(0, 6); // Top 6
   }, [filteredUsers]);
 
-  // Enhanced Professional Harmonic Palette (Indigo -> Blue -> Cyan -> Teal)
+  // Indigo Palette
   const COLORS = [
-      '#3730a3', // Indigo 800 (Deepest)
-      '#4f46e5', // Indigo 600 (Primary)
+      '#312e81', // Indigo 900
+      '#3730a3', // Indigo 800
+      '#4338ca', // Indigo 700
+      '#4f46e5', // Indigo 600
       '#6366f1', // Indigo 500
-      '#3b82f6', // Blue 500
-      '#0ea5e9', // Sky 500
-      '#06b6d4', // Cyan 500
-      '#14b8a6', // Teal 500
+      '#818cf8', // Indigo 400
+      '#a5b4fc', // Indigo 300
   ];
 
   if (isLoading) {
@@ -223,7 +223,7 @@ export const Dashboard: React.FC = () => {
                   </h3>
                   <p className="text-slate-400 text-sm mt-1 font-medium">Top 6 setores com mais colaboradores</p>
               </div>
-              <div className="p-3 bg-sky-50 text-sky-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <PieIcon className="w-5 h-5" />
               </div>
            </div>
