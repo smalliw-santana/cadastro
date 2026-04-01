@@ -14,60 +14,11 @@ import { SystemLogs } from './components/SystemLogs.tsx';
 import { Logo } from './components/Logo.tsx';
 import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck, User, ScrollText } from 'lucide-react';
 
-// 15 Minutes in milliseconds
-const INACTIVITY_TIMEOUT = 15 * 60 * 1000; 
-
 const App: React.FC = () => {
   // Now storing the full user object instead of just boolean
   const [currentUser, setCurrentUser] = useState<SystemUser | null>(null);
   const [currentView, setCurrentView] = useState<ViewState>('DASHBOARD');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  // --- AUTO LOGOUT LOGIC ---
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (!currentUser) return;
-
-    const handleLogout = async () => {
-      await dbService.addLog({
-          userId: currentUser.id,
-          userName: currentUser.nome,
-          action: 'LOGOUT',
-          details: 'Logout automático por inatividade.'
-      });
-      setCurrentUser(null);
-    };
-
-    const resetTimer = () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-      timerRef.current = setTimeout(handleLogout, INACTIVITY_TIMEOUT);
-    };
-
-    // Events to track user activity
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-
-    // Attach listeners
-    events.forEach(event => {
-      document.addEventListener(event, resetTimer);
-    });
-
-    // Start initial timer
-    resetTimer();
-
-    // Cleanup listeners and timer on unmount or logout
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-      events.forEach(event => {
-        document.removeEventListener(event, resetTimer);
-      });
-    };
-  }, [currentUser]);
-  // -------------------------
 
   if (!currentUser) {
     return <Login onLoginSuccess={(user) => {
