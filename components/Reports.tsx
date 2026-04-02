@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { dbService } from '../services/dbService.ts';
 import { User } from '../types.ts';
-import { FileBarChart2, Users, Building2, ArrowUpDown, ArrowUp, ArrowDown, FileDown, Eye, X, Printer } from 'lucide-react';
+import { FileBarChart2, Users, Building2, MapPin, ArrowUpDown, ArrowUp, ArrowDown, FileDown, Eye, X, Printer } from 'lucide-react';
 import { Logo } from './Logo.tsx';
 import { Spinner } from './Spinner.tsx';
 
@@ -77,23 +77,11 @@ export const Reports: React.FC = () => {
     }, 200);
   };
 
-  const [showPrintWarning, setShowPrintWarning] = useState(false);
-
   const handlePrint = () => {
-      // Check if running inside an iframe
-      if (window !== window.parent) {
-          setShowPrintWarning(true);
-          return;
-      }
-      
-      window.focus();
-      try {
-          if (!document.execCommand('print', false, undefined)) {
-              window.print();
-          }
-      } catch (e) {
+      // Small timeout to ensure DOM is ready if state just changed
+      setTimeout(() => {
           window.print();
-      }
+      }, 100);
   };
 
   // Sorting Logic
@@ -178,23 +166,22 @@ export const Reports: React.FC = () => {
 
               #preview-modal-container {
                   display: block !important;
-                  position: static !important;
+                  position: absolute !important;
+                  left: 0 !important;
+                  top: 0 !important;
                   width: 100% !important;
-                  height: auto !important;
                   margin: 0 !important;
                   padding: 0 !important;
                   background: white !important;
-                  overflow: visible !important;
+                  z-index: 9999 !important;
               }
 
               #preview-paper {
                   box-shadow: none !important;
                   margin: 0 auto !important;
                   width: 100% !important;
-                  height: auto !important;
                   padding: 10mm !important;
                   max-width: none !important;
-                  overflow: visible !important;
               }
 
               /* Hide toolbar in print */
@@ -217,30 +204,28 @@ export const Reports: React.FC = () => {
           <div>
             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
               <FileBarChart2 className="w-6 h-6 text-primary-500" />
-              Relatório de Colaboradores
+              Relatório de Usuários
             </h2>
-            <p className="text-slate-500 text-sm mt-1">Selecione uma filial para visualizar o quadro de funcionários.</p>
+            <p className="text-slate-500 text-sm mt-1">Selecione uma filial para visualizar o quadro de usuários.</p>
           </div>
           
           <div className="flex gap-2">
              <button 
-                type="button"
                 onClick={handlePrint}
                 disabled={!selectedFilial || users.length === 0}
-                className="flex items-center gap-2 px-5 py-3 bg-[#2c3e50] text-white rounded-xl hover:bg-[#1a252f] transition-all font-bold uppercase tracking-wider text-xs shadow-sm"
+                className="flex items-center gap-2 px-5 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-all font-bold uppercase tracking-wider text-xs shadow-lg shadow-slate-900/10"
               >
                 <Printer className="w-4 h-4" />
-                IMPRIMIR
+                Imprimir
               </button>
 
              <button 
-                type="button"
                 onClick={() => setShowPreview(true)}
                 disabled={!selectedFilial || users.length === 0}
-                className="flex items-center gap-2 px-5 py-3 bg-slate-100 text-[#2c3e50] rounded-xl hover:bg-slate-200 transition-all font-bold uppercase tracking-wider text-xs shadow-sm"
+                className="flex items-center gap-2 px-5 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-all font-bold uppercase tracking-wider text-xs"
               >
                 <Eye className="w-4 h-4" />
-                VISUALIZAR
+                Visualizar
               </button>
           </div>
         </div>
@@ -278,7 +263,7 @@ export const Reports: React.FC = () => {
                     <Logo className="w-12 h-12" variant="primary" />
                     <div>
                         <h1 className="text-2xl font-bold text-black uppercase tracking-tight">Gestão de Acessos</h1>
-                        <p className="text-sm text-gray-600">Relatório de Controle de Acessos e Colaboradores</p>
+                        <p className="text-sm text-gray-600">Relatório de Controle de Acessos de usuários</p>
                     </div>
                 </div>
                 <div className="text-right">
@@ -391,7 +376,6 @@ export const Reports: React.FC = () => {
                       {/* PDF Button */}
                       <div className="relative group">
                           <button 
-                            type="button"
                             onClick={handleExportPDF} 
                             disabled={isExporting}
                             className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-full transition-colors text-sm font-medium disabled:opacity-50"
@@ -404,7 +388,6 @@ export const Reports: React.FC = () => {
                       {/* Print Button */}
                       <div className="relative group">
                           <button 
-                            type="button"
                             onClick={handlePrint}
                             className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-full transition-colors text-sm font-medium"
                           >
@@ -415,7 +398,7 @@ export const Reports: React.FC = () => {
 
                       <div className="w-px h-6 bg-slate-600 mx-1"></div>
 
-                      <button type="button" onClick={() => setShowPreview(false)} className="bg-slate-700 hover:bg-red-600 rounded-full p-1.5 transition-colors">
+                      <button onClick={() => setShowPreview(false)} className="bg-slate-700 hover:bg-red-600 rounded-full p-1.5 transition-colors">
                           <X className="w-4 h-4" />
                       </button>
                   </div>
