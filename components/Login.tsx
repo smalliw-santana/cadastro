@@ -112,7 +112,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                         </div>
                     )}
                     <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">
-                        {matchedUser ? `Olá, ${matchedUser.nome.split(' ')[0]}!` : 'Login Seguro'}
+                        {matchedUser ? `Olá, ${matchedUser.nome.split(' ')[0]}` : 'Login Seguro'}
                     </h1>
                     <p className="text-slate-500 text-sm">
                         {matchedUser ? 'Digite sua senha para continuar.' : 'Entre com suas credenciais de administrador ou Convidado.'}
