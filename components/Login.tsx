@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService.ts';
 import { SystemUser } from '../types.ts';
 import { User, Lock, ArrowRight } from 'lucide-react';
@@ -15,6 +15,13 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [systemUsers, setSystemUsers] = useState<SystemUser[]>([]);
+
+  useEffect(() => {
+    dbService.getSystemUsers().then(setSystemUsers);
+  }, []);
+
+  const matchedUser = systemUsers.find(u => u.login.toUpperCase() === login.toUpperCase());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,9 +96,27 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         <div className="w-full md:w-7/12 bg-white flex flex-col items-center justify-center p-8 md:p-16 relative">
             
             <div className="w-full max-w-sm">
-                <div className="mb-10 text-center md:text-left">
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">Login Seguro</h1>
-                    <p className="text-slate-500 text-sm">Entre com suas credenciais de administrador ou Convidado.</p>
+                <div className="mb-10 text-center md:text-left flex flex-col items-center md:items-start">
+                    {matchedUser && (
+                        <div className="w-24 h-24 mb-6 rounded-full border-4 border-white shadow-xl overflow-hidden bg-slate-50 flex items-center justify-center transition-all duration-500 ease-out animate-[scaleIn_0.3s_ease-out]">
+                            {matchedUser.avatarUrl ? (
+                                <img 
+                                    src={matchedUser.avatarUrl} 
+                                    alt="Avatar do Usuário" 
+                                    className="w-full h-full object-cover animate-[fadeIn_0.3s_ease-out]"
+                                    referrerPolicy="no-referrer"
+                                />
+                            ) : (
+                                <User className="w-10 h-10 text-slate-300" />
+                            )}
+                        </div>
+                    )}
+                    <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+                        {matchedUser ? `Olá, ${matchedUser.nome.split(' ')[0]}!` : 'Login Seguro'}
+                    </h1>
+                    <p className="text-slate-500 text-sm">
+                        {matchedUser ? 'Digite sua senha para continuar.' : 'Entre com suas credenciais de administrador ou Convidado.'}
+                    </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">

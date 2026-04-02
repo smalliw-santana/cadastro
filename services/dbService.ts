@@ -66,7 +66,8 @@ export const dbService = {
           login: user.login,
           senha: user.senha,
           role: user.role as any,
-          createdAt: user.created_at
+          createdAt: user.created_at,
+          avatarUrl: user.avatar_url
       }));
   },
 
@@ -88,11 +89,15 @@ export const dbService = {
               nome: user.nome,
               login: user.login,
               senha: user.senha,
-              role: user.role
+              role: user.role,
+              avatar_url: user.avatarUrl
           }]);
           
       if (error) {
           console.error('Error adding system user:', error);
+          if (error.message.includes('avatar_url')) {
+              return { success: false, message: 'Erro: A coluna avatar_url não existe no banco de dados. Execute o comando SQL no Supabase.' };
+          }
           return { success: false, message: 'Erro ao criar usuário de sistema.' };
       }
       
@@ -120,6 +125,40 @@ export const dbService = {
       }
       
       return { success: true, message: 'Acesso revogado com sucesso.' };
+  },
+
+  updateSystemUser: async (id: string, user: Partial<Omit<SystemUser, 'id' | 'createdAt'>>): Promise<{ success: boolean; message: string }> => {
+      const updateData: any = {
+          nome: user.nome,
+          login: user.login,
+          role: user.role
+      };
+      
+      if (user.senha) {
+          updateData.senha = user.senha;
+      }
+      
+      if (user.avatarUrl !== undefined) {
+          updateData.avatar_url = user.avatarUrl;
+      }
+
+      const { error } = await supabase
+          .from('system_users')
+          .update(updateData)
+          .eq('id', id);
+
+      if (error) {
+          console.error('Error updating system user:', error);
+          if (error.code === '23505') {
+              return { success: false, message: 'Já existe um usuário com este login.' };
+          }
+          if (error.message.includes('avatar_url')) {
+              return { success: false, message: 'Erro: A coluna avatar_url não existe no banco de dados. Execute o comando SQL no Supabase.' };
+          }
+          return { success: false, message: `Erro ao atualizar usuário: ${error.message}` };
+      }
+
+      return { success: true, message: 'Usuário atualizado com sucesso.' };
   },
 
   authenticateSystemUser: async (login: string, password: string): Promise<SystemUser | null> => {

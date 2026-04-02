@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { dbService } from '../services/dbService.ts';
 import { SystemUser } from '../types.ts';
-import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X, AlertTriangle, User } from 'lucide-react';
+import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X, AlertTriangle, User, Pencil } from 'lucide-react';
 import { Input } from './Input.tsx';
 import { Select } from './Select.tsx';
 
@@ -19,12 +19,28 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
       nome: '',
       login: '',
       senha: '',
-      role: 'ADMIN' as 'ADMIN' | 'CONVIDADO'
+      role: 'ADMIN' as 'ADMIN' | 'CONVIDADO',
+      avatarUrl: ''
   });
+
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
   // Delete Modal State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<SystemUser | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+              setNewUser(prev => ({ ...prev, avatarUrl: reader.result as string }));
+          };
+          reader.readAsDataURL(file);
+      }
+  };
 
   useEffect(() => {
     loadUsers();
@@ -36,34 +52,65 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
 
   const handleAddUser = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!newUser.nome || !newUser.login || !newUser.senha) {
+      if (!newUser.nome || !newUser.login || (!newUser.senha && !editingUserId)) {
           setFeedback({ type: 'error', message: 'Preencha todos os campos obrigatórios.' });
           return;
       }
 
-      const result = await dbService.addSystemUser({
-          nome: newUser.nome.toUpperCase(),
-          login: newUser.login.toUpperCase(),
-          senha: newUser.senha,
-          role: newUser.role
-      });
+      let result;
+      if (editingUserId) {
+          result = await dbService.updateSystemUser(editingUserId, {
+              nome: newUser.nome.toUpperCase(),
+              login: newUser.login.toUpperCase(),
+              senha: newUser.senha || undefined, // Only update if provided
+              role: newUser.role,
+              avatarUrl: newUser.avatarUrl
+          });
+      } else {
+          result = await dbService.addSystemUser({
+              nome: newUser.nome.toUpperCase(),
+              login: newUser.login.toUpperCase(),
+              senha: newUser.senha,
+              role: newUser.role,
+              avatarUrl: newUser.avatarUrl
+          });
+      }
 
       if (result.success) {
           if (currentUser) {
               await dbService.addLog({
                   userName: currentUser.nome,
-                  action: 'CREATE',
+                  action: editingUserId ? 'UPDATE' : 'CREATE',
                   resource: 'Usuário de Sistema',
-                  details: `Cadastrou usuário de sistema: ${newUser.login.toUpperCase()} (${newUser.role})`
+                  details: editingUserId 
+                      ? `Atualizou usuário de sistema: ${newUser.login.toUpperCase()}`
+                      : `Cadastrou usuário de sistema: ${newUser.login.toUpperCase()} (${newUser.role})`
               });
           }
           setFeedback({ type: 'success', message: result.message });
-          setNewUser({ nome: '', login: '', senha: '', role: 'ADMIN' });
+          setNewUser({ nome: '', login: '', senha: '', role: 'ADMIN', avatarUrl: '' });
+          setEditingUserId(null);
           loadUsers();
           setTimeout(() => setFeedback(null), 3000);
       } else {
           setFeedback({ type: 'error', message: result.message });
       }
+  };
+
+  const handleEditClick = (user: SystemUser) => {
+      setNewUser({
+          nome: user.nome,
+          login: user.login,
+          senha: '', // Don't populate password
+          role: user.role,
+          avatarUrl: user.avatarUrl || ''
+      });
+      setEditingUserId(user.id);
+  };
+
+  const cancelEdit = () => {
+      setNewUser({ nome: '', login: '', senha: '', role: 'ADMIN', avatarUrl: '' });
+      setEditingUserId(null);
   };
 
   const confirmDelete = (e: React.MouseEvent, user: SystemUser) => {
@@ -96,6 +143,14 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
       setUserToDelete(null);
       setTimeout(() => setFeedback(null), 3000);
   };
+
+  const PREDEFINED_AVATARS = [
+      'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&backgroundColor=f8fafc',
+      'https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&backgroundColor=f8fafc',
+      'https://api.dicebear.com/7.x/adventurer/svg?seed=Leo&backgroundColor=f8fafc',
+      'https://api.dicebear.com/7.x/adventurer/svg?seed=Max&backgroundColor=f8fafc',
+      'https://api.dicebear.com/7.x/adventurer/svg?seed=Sam&backgroundColor=f8fafc'
+  ];
 
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
@@ -130,12 +185,60 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                 <div className="lg:col-span-1 space-y-6">
                     <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2">
                         <UserPlus className="w-5 h-5 text-primary-500" />
-                        Novo Usuário de Sistema
+                        {editingUserId ? 'Editar Usuário' : 'Novo Usuário de Sistema'}
                     </h3>
                     
-                    <form onSubmit={handleAddUser} className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
-                        <Input 
-                            label="Nome do Usuário"
+                    <form onSubmit={handleAddUser} className="space-y-6">
+                        {/* Avatar Card */}
+                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <div className="flex flex-col items-center space-y-4">
+                                <div className="w-24 h-24 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden shadow-inner">
+                                    {newUser.avatarUrl ? (
+                                        <img src={newUser.avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                    ) : (
+                                        <User className="w-10 h-10 text-slate-400" />
+                                    )}
+                                </div>
+                                
+                                <div className="text-center space-y-1 w-full">
+                                    <input 
+                                        type="file" 
+                                        ref={fileInputRef} 
+                                        onChange={handleFileChange} 
+                                        accept="image/*" 
+                                        className="hidden" 
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                                    >
+                                        Foto (Opcional)
+                                    </button>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-2 mb-2">
+                                        Ou escolha um modelo
+                                    </p>
+                                    
+                                    <div className="flex items-center justify-center gap-3 flex-nowrap overflow-x-auto pb-2">
+                                        {PREDEFINED_AVATARS.map((url, i) => (
+                                            <button
+                                                key={i}
+                                                type="button"
+                                                onClick={() => setNewUser({...newUser, avatarUrl: url})}
+                                                className={`shrink-0 w-12 h-12 rounded-full overflow-hidden border-2 transition-all ${newUser.avatarUrl === url ? 'border-primary-500 scale-110 shadow-md' : 'border-transparent hover:scale-105 hover:shadow'}`}
+                                            >
+                                                <img src={url} alt={`Modelo ${i+1}`} className="w-full h-full object-cover bg-slate-100" referrerPolicy="no-referrer" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Form Fields Card */}
+                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
+                            <Input 
+                                label="Nome do Usuário"
                             value={newUser.nome}
                             onChange={e => setNewUser({...newUser, nome: e.target.value.toUpperCase()})}
                             placeholder="Ex: JOÃO SILVA"
@@ -149,12 +252,12 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                             required
                         />
                         <Input 
-                            label="Senha"
+                            label={editingUserId ? "Nova Senha (deixe em branco para manter)" : "Senha"}
                             type="password"
                             value={newUser.senha}
                             onChange={e => setNewUser({...newUser, senha: e.target.value})}
                             placeholder="••••••"
-                            required
+                            required={!editingUserId}
                         />
                         <Select 
                             label="Nível de Permissão"
@@ -163,13 +266,25 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                             options={['ADMIN', 'CONVIDADO']}
                         />
 
-                        <button 
-                            type="submit"
-                            className="w-full flex items-center justify-center gap-2 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition-all font-semibold shadow-lg shadow-primary-500/20 mt-4"
-                        >
-                            <Save className="w-4 h-4" />
-                            Criar Acesso
-                        </button>
+                        <div className="flex gap-2 mt-4">
+                            {editingUserId && (
+                                <button 
+                                    type="button"
+                                    onClick={cancelEdit}
+                                    className="flex-1 flex items-center justify-center gap-2 bg-slate-100 text-slate-600 py-3 rounded-lg hover:bg-slate-200 transition-all font-semibold"
+                                >
+                                    Cancelar
+                                </button>
+                            )}
+                            <button 
+                                type="submit"
+                                className="flex-1 flex items-center justify-center gap-2 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition-all font-semibold shadow-lg shadow-primary-500/20"
+                            >
+                                <Save className="w-4 h-4" />
+                                {editingUserId ? 'Salvar' : 'Criar Acesso'}
+                            </button>
+                        </div>
+                        </div>
                     </form>
                 </div>
             )}
@@ -195,8 +310,19 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                             {users.map(user => (
                                 <tr key={user.id} className="hover:bg-slate-50 transition-colors">
                                     <td className="p-4">
-                                        <div className="font-bold text-slate-700">{user.nome}</div>
-                                        <div className="text-xs text-slate-400">Criado em: {new Date(user.createdAt).toLocaleDateString()}</div>
+                                        <div className="flex items-center gap-3">
+                                            {user.avatarUrl ? (
+                                                <img src={user.avatarUrl} alt={user.nome} className="w-8 h-8 rounded-full object-cover border border-slate-200" referrerPolicy="no-referrer" />
+                                            ) : (
+                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                                                    <User className="w-4 h-4 text-slate-400" />
+                                                </div>
+                                            )}
+                                            <div>
+                                                <div className="font-bold text-slate-700">{user.nome}</div>
+                                                <div className="text-xs text-slate-400">Criado em: {new Date(user.createdAt).toLocaleDateString()}</div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td className="p-4 text-sm font-mono text-slate-600 bg-slate-50 w-fit rounded">{user.login}</td>
                                     <td className="p-4">
@@ -207,13 +333,22 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                                     </td>
                                     {userRole === 'ADMIN' && (
                                         <td className="p-4 text-right">
-                                            <button 
-                                                onClick={(e) => confirmDelete(e, user)}
-                                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                                title="Revogar Acesso"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button 
+                                                    onClick={() => handleEditClick(user)}
+                                                    className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
+                                                    title="Editar Usuário"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </button>
+                                                <button 
+                                                    onClick={(e) => confirmDelete(e, user)}
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                    title="Revogar Acesso"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         </td>
                                     )}
                                 </tr>

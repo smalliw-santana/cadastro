@@ -107,9 +107,13 @@ const App: React.FC = () => {
           <div className={`flex items-center gap-3 mb-5 ${!isSidebarOpen ? 'justify-center' : 'px-2'}`}>
               <div className="relative shrink-0">
                   {/* Harmonic Icon Replacement */}
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-700 to-red-800 border border-red-600 flex items-center justify-center shadow-md group">
-                      <User className="w-5 h-5 text-red-100 group-hover:text-white transition-colors" />
-                  </div>
+                  {currentUser.avatarUrl ? (
+                      <img src={currentUser.avatarUrl} alt={currentUser.nome} className="w-10 h-10 rounded-xl object-cover border border-red-600 shadow-md group-hover:opacity-90 transition-opacity" referrerPolicy="no-referrer" />
+                  ) : (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-700 to-red-800 border border-red-600 flex items-center justify-center shadow-md group">
+                          <User className="w-5 h-5 text-red-100 group-hover:text-white transition-colors" />
+                      </div>
+                  )}
                   
                   {/* Status Dot on Avatar (Visible when collapsed too) */}
                   <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 border-2 border-red-900 rounded-full ${currentUser.role === 'ADMIN' ? 'bg-green-500' : 'bg-slate-500'}`}></div>

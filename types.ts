@@ -21,6 +21,7 @@ export interface SystemUser {
   senha?: string; // Optional for display, required for creation
   role: 'ADMIN' | 'CONVIDADO';
   createdAt: string;
+  avatarUrl?: string;
 }
 
 export interface SystemLog {
