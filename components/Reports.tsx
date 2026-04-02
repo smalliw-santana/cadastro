@@ -412,7 +412,7 @@ export const Reports: React.FC = () => {
                             <Logo className="w-12 h-12" variant="primary" />
                             <div>
                                 <h1 className="text-2xl font-bold text-black uppercase tracking-tight">Gestão de Acessos</h1>
-                                <p className="text-sm text-gray-600">Relatório de Controle de Acessos e Colaboradores</p>
+                                <p className="text-sm text-gray-600">Relatório de Controle de Acessos de usuários</p>
                             </div>
                         </div>
                         <div className="text-right">
