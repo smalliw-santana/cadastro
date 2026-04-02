@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react';
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
-  variant?: 'primary' | 'white' | 'slate' | 'indigo';
+  variant?: 'primary' | 'white' | 'slate' | 'red';
 }
 
 export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', className = '', variant = 'primary' }) => {
@@ -19,7 +19,7 @@ export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', className = '', v
     primary: 'text-primary-600',
     white: 'text-white',
     slate: 'text-slate-400',
-    indigo: 'text-indigo-600'
+    red: 'text-red-600'
   };
 
   return (

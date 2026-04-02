@@ -74,15 +74,15 @@ export const Dashboard: React.FC = () => {
         .slice(0, 6); // Top 6
   }, [filteredUsers]);
 
-  // Indigo Palette
+  // Red Palette
   const COLORS = [
-      '#312e81', // Indigo 900
-      '#3730a3', // Indigo 800
-      '#4338ca', // Indigo 700
-      '#4f46e5', // Indigo 600
-      '#6366f1', // Indigo 500
-      '#818cf8', // Indigo 400
-      '#a5b4fc', // Indigo 300
+      '#7f1d1d', // Red 900
+      '#991b1b', // Red 800
+      '#b91c1c', // Red 700
+      '#dc2626', // Red 600
+      '#ef4444', // Red 500
+      '#f87171', // Red 400
+      '#fca5a5', // Red 300
   ];
 
   if (isLoading) {
@@ -141,10 +141,10 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* KPI Card */}
-        <div className="md:col-span-4 bg-gradient-to-br from-primary-600 via-indigo-700 to-indigo-900 rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(79,70,229,0.35)] p-8 text-white relative overflow-hidden flex flex-col justify-between group">
+        <div className="md:col-span-4 bg-gradient-to-br from-primary-600 via-red-700 to-red-900 rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(220,38,38,0.35)] p-8 text-white relative overflow-hidden flex flex-col justify-between group">
              {/* Dynamic Background Elements */}
             <div className="absolute top-0 right-0 w-56 h-56 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-white/10 transition-colors duration-700"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/30 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-red-500/30 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none"></div>
             
             <div className="relative z-10">
                 <div className="flex justify-between items-start mb-8">
@@ -159,7 +159,7 @@ export const Dashboard: React.FC = () => {
                 <div className="mt-auto">
                     <h2 className="text-6xl font-bold tracking-tighter mb-1 drop-shadow-sm">{filteredUsers.length}</h2>
                     <div className="flex items-center justify-between">
-                        <p className="text-indigo-100 font-medium text-sm tracking-wide opacity-90">Total de Colaboradores</p>
+                        <p className="text-red-100 font-medium text-sm tracking-wide opacity-90">Total de Colaboradores</p>
                         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0">
                             <ArrowUpRight className="w-4 h-4 text-white" />
                         </div>
@@ -181,7 +181,7 @@ export const Dashboard: React.FC = () => {
                   </h3>
                   <p className="text-slate-400 text-sm mt-1 font-medium">Quantidade de colaboradores por função</p>
               </div>
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-red-50 text-red-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <BarChart3 className="w-5 h-5" />
               </div>
            </div>
@@ -191,8 +191,8 @@ export const Dashboard: React.FC = () => {
                 <BarChart data={funcaoData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#4f46e5" stopOpacity={1}/>
-                            <stop offset="100%" stopColor="#818cf8" stopOpacity={0.5}/>
+                            <stop offset="0%" stopColor="#dc2626" stopOpacity={1}/>
+                            <stop offset="100%" stopColor="#f87171" stopOpacity={0.5}/>
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -223,7 +223,7 @@ export const Dashboard: React.FC = () => {
                   </h3>
                   <p className="text-slate-400 text-sm mt-1 font-medium">Top 6 setores com mais colaboradores</p>
               </div>
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-red-50 text-red-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <PieIcon className="w-5 h-5" />
               </div>
            </div>

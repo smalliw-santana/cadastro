@@ -60,12 +60,12 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       <div className="relative bg-white rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden w-full max-w-[1000px] h-auto min-h-[600px] flex flex-col md:flex-row border border-white/50 backdrop-blur-xl">
         
         {/* Left Panel (Colored - Enterprise Theme) */}
-        <div className="w-full md:w-5/12 bg-gradient-to-br from-indigo-900 to-indigo-800 text-white flex flex-col items-center justify-center p-12 text-center relative overflow-hidden">
+        <div className="w-full md:w-5/12 bg-gradient-to-br from-red-900 to-red-800 text-white flex flex-col items-center justify-center p-12 text-center relative overflow-hidden">
             
             {/* Mesh Gradient Effect */}
             <div className="absolute inset-0 opacity-30 mix-blend-overlay">
                 <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-primary-500 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-tr from-indigo-500 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-tr from-red-500 to-transparent"></div>
             </div>
 
             {/* Content */}
