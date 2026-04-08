@@ -287,7 +287,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                                 name="segmento"
                                 value={formData.segmento}
                                 onChange={handleChange}
-                                options={['SUPERMERCADO', 'MAGAZAN']}
+                                options={['SUPERMERCADO', 'MAGAZAN', 'OUTROS']}
                                 required
                                 disabled={isSaving}
                             />
