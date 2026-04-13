@@ -489,7 +489,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
 
                             <Select 
                                 label="Segmento" 
-                                options={['SUPERMERCADO', 'MAGAZAN', 'FARMACIA', 'HOME CENTER', 'PET SHOP', 'NUTRILIDER', 'OTICA', 'OUTROS']}
+                                options={['SUPERMERCADO', 'MAGAZAN']}
                                 value={editForm.segmento}
                                 onChange={e => setEditForm({...editForm, segmento: e.target.value})}
                                 required

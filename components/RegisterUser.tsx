@@ -37,6 +37,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [fieldErrors, setFieldErrors] = useState<{ matricula?: string }>({});
+    const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
     useEffect(() => {
         // Load dynamic options from DB
@@ -118,19 +119,24 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         details: `Usuário ${formData.login} cadastrado.`
                     });
                 }
-                setFeedback({ type: 'success', message: result.message });
-                setExistingUser(null);
-                setFormData({
-                    matricula: '',
-                    nomeCompleto: '',
-                    filial: '',
-                    login: '',
-                    senha: '',
-                    funcao: '',
-                    setor: '',
-                    codigoVenda: '',
-                    segmento: ''
-                });
+                
+                setShowSuccessAnimation(true);
+                setTimeout(() => {
+                    setShowSuccessAnimation(false);
+                    setFeedback({ type: 'success', message: result.message });
+                    setExistingUser(null);
+                    setFormData({
+                        matricula: '',
+                        nomeCompleto: '',
+                        filial: '',
+                        login: '',
+                        senha: '',
+                        funcao: '',
+                        setor: '',
+                        codigoVenda: '',
+                        segmento: ''
+                    });
+                }, 2000);
             } else {
                 setFeedback({ type: 'error', message: result.message });
             }
@@ -155,7 +161,38 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out]">
+        <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out] relative">
+            <style>{`
+                @keyframes successPop {
+                    0% { transform: scale(0.8); opacity: 0; }
+                    50% { transform: scale(1.1); opacity: 1; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+                .animate-success-pop {
+                    animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                }
+                @keyframes overlayFade {
+                    0% { opacity: 0; backdrop-filter: blur(0px); }
+                    100% { opacity: 1; backdrop-filter: blur(4px); }
+                }
+                .animate-overlay-fade {
+                    animation: overlayFade 0.3s ease-out forwards;
+                }
+            `}</style>
+
+            {/* Success Animation Overlay */}
+            {showSuccessAnimation && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 rounded-2xl animate-overlay-fade">
+                    <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center animate-success-pop border border-green-100">
+                        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                            <CheckCircle2 className="w-12 h-12 text-green-500" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Cadastro Salvo!</h2>
+                        <p className="text-slate-500">O colaborador foi cadastrado com sucesso.</p>
+                    </div>
+                </div>
+            )}
+
             <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
                 <div className="bg-primary-900 p-6 flex items-center justify-between">
                     <div>
@@ -287,7 +324,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                                 name="segmento"
                                 value={formData.segmento}
                                 onChange={handleChange}
-                                options={['SUPERMERCADO', 'MAGAZAN', 'FARMACIA', 'HOME CENTER', 'PET SHOP', 'NUTRILIDER', 'OTICA', 'OUTROS']}
+                                options={['SUPERMERCADO', 'MAGAZAN']}
                                 required
                                 disabled={isSaving}
                             />
