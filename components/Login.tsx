@@ -15,6 +15,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const [systemUsers, setSystemUsers] = useState<SystemUser[]>([]);
 
   useEffect(() => {
@@ -40,7 +41,11 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             resource: 'Sistema',
             details: 'Login realizado com sucesso.'
         });
-        onLoginSuccess(user);
+        
+        setLoginSuccess(true);
+        setTimeout(() => {
+          onLoginSuccess(user);
+        }, 3500);
       } else {
         // Detailed feedback logic
         const systemUsers = await dbService.getSystemUsers();
@@ -59,6 +64,56 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-slate-100 p-4 font-sans relative overflow-hidden">
       
+      <style>{`
+        @keyframes welcomePop {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-welcome-pop {
+            animation: welcomePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes slideUpFade {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up-fade {
+            animation: slideUpFade 0.5s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+      `}</style>
+
+      {/* Success Animation Overlay */}
+      {loginSuccess && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-primary-900/90 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+            <div className="flex flex-col items-center text-center p-8 animate-welcome-pop">
+                <div className="w-32 h-32 mb-8 rounded-full border-4 border-white/30 p-1 shadow-2xl overflow-hidden bg-white/10 backdrop-blur-xl flex items-center justify-center">
+                    {matchedUser?.avatarUrl ? (
+                        <img 
+                            src={matchedUser.avatarUrl} 
+                            alt="Avatar" 
+                            className="w-full h-full object-cover rounded-full"
+                            referrerPolicy="no-referrer"
+                        />
+                    ) : (
+                        <User className="w-16 h-16 text-white" />
+                    )}
+                </div>
+                <h2 className="text-4xl font-bold text-white mb-3 tracking-tight">
+                    Acesso Autorizado
+                </h2>
+                <p className="text-primary-100 text-xl animate-slide-up-fade">
+                    Bem-vindo de volta, <span className="font-bold">{matchedUser?.nome.split(' ')[0]}</span>.
+                </p>
+                <div className="mt-8 flex gap-2">
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                </div>
+            </div>
+        </div>
+      )}
+
       {/* Background ambient blobs */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary-300/20 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-slate-400/20 rounded-full blur-[100px] pointer-events-none"></div>
