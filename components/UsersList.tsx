@@ -416,12 +416,12 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
         {isDetailsModalOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-[fadeIn_0.2s] print:hidden">
                 <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scaleIn_0.2s_ease-out]">
-                    <div className="p-6 bg-primary-900 flex justify-between items-center">
+                    <div className="p-6 bg-professional-red flex justify-between items-center">
                         <h3 className="text-xl font-bold text-white flex items-center gap-2">
                             {userRole === 'ADMIN' ? <Edit2 className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                             {userRole === 'ADMIN' ? 'Editar Colaborador' : 'Detalhes do Colaborador'}
                         </h3>
-                        <button onClick={() => setIsDetailsModalOpen(false)} className="text-primary-200 hover:text-white transition-colors">
+                        <button onClick={() => setIsDetailsModalOpen(false)} className="text-white/70 hover:text-white transition-colors">
                             <X className="w-6 h-6" />
                         </button>
                     </div>

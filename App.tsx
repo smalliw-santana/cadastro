@@ -53,11 +53,11 @@ const App: React.FC = () => {
       {/* Sidebar - Changed to Red for a more premium enterprise look */}
       <aside 
         className={`
-          bg-red-900 text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar print:hidden shadow-2xl
+          bg-professional-red text-white transition-all duration-300 flex flex-col z-20 overflow-y-auto custom-scrollbar print:hidden shadow-2xl
           ${isSidebarOpen ? 'w-72' : 'w-20'}
         `}
       >
-        <div className="p-6 flex items-center gap-3 shrink-0 bg-red-950/30">
+        <div className="p-6 flex items-center gap-3 shrink-0 bg-black/10">
           <div className="w-10 h-10 flex items-center justify-center shrink-0 bg-gradient-to-tr from-primary-600 to-primary-400 rounded-xl shadow-lg shadow-primary-900/20">
             <Logo className="w-6 h-6" variant="white" />
           </div>

@@ -39,8 +39,8 @@ export const SystemLogs: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100">
         <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shadow-inner">
-                <ScrollText className="w-8 h-8 text-slate-400" />
+            <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center shadow-inner">
+                <ScrollText className="w-8 h-8 text-red-400" />
             </div>
             <div>
                 <h1 className="text-2xl font-bold text-slate-800 tracking-tight mb-1">Logs do Sistema</h1>

@@ -166,13 +166,13 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
         )}
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="bg-primary-900 p-6 flex items-center gap-4">
+        <div className="bg-professional-red p-6 flex items-center gap-4">
           <div className="p-3 bg-white/20 rounded-lg">
              <ShieldCheck className="w-6 h-6 text-white" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">Controle de Acesso</h2>
-            <p className="text-primary-200 text-sm">
+            <p className="text-white/70 text-sm">
                 {userRole === 'ADMIN' ? 'Gerencie os usuários que podem fazer login no sistema.' : 'Visualização de usuários com acesso ao sistema.'}
             </p>
           </div>

@@ -194,13 +194,13 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
             )}
 
             <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-                <div className="bg-primary-900 p-6 flex items-center justify-between">
+                <div className="bg-professional-red p-6 flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold text-white">Novo Colaborador</h2>
-                        <p className="text-primary-100 text-sm mt-1">Preencha os dados abaixo para cadastrar um novo usuário no sistema.</p>
+                        <p className="text-white/70 text-sm mt-1">Preencha os dados abaixo para cadastrar um novo usuário no sistema.</p>
                     </div>
                     <div className="hidden sm:block text-right">
-                        <p className="text-primary-200 text-xs uppercase tracking-wider">Data do Cadastro</p>
+                        <p className="text-white/50 text-xs uppercase tracking-wider">Data do Cadastro</p>
                         <p className="text-white font-mono">{new Date().toLocaleDateString()}</p>
                     </div>
                 </div>

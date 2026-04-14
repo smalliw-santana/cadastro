@@ -152,10 +152,10 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* KPI Card */}
-        <div className="md:col-span-4 bg-gradient-to-br from-primary-600 via-red-700 to-red-900 rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(220,38,38,0.35)] p-8 text-white relative overflow-hidden flex flex-col justify-between group">
+        <div className="md:col-span-4 bg-professional-red rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(127,29,29,0.4)] p-8 text-white relative overflow-hidden flex flex-col justify-between group">
              {/* Dynamic Background Elements */}
             <div className="absolute top-0 right-0 w-56 h-56 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-white/10 transition-colors duration-700"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-red-500/30 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/20 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none"></div>
             
             <div className="relative z-10">
                 <div className="flex justify-between items-start mb-8">

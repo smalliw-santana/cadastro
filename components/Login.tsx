@@ -178,21 +178,21 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       )}
 
       {/* Background ambient blobs */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary-300/20 rounded-full blur-[100px] pointer-events-none animate-ambient-float opacity-40"></div>
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-slate-400/20 rounded-full blur-[100px] pointer-events-none animate-ambient-float [animation-delay:-5s] opacity-40"></div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/5 to-transparent pointer-events-none animate-shimmer"></div>
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-red-500/10 rounded-full blur-[100px] pointer-events-none animate-ambient-float opacity-40"></div>
+      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-red-900/10 rounded-full blur-[100px] pointer-events-none animate-ambient-float [animation-delay:-5s] opacity-40"></div>
+      <div className="absolute inset-0 bg-gradient-to-tr from-red-600/5 to-transparent pointer-events-none animate-shimmer"></div>
 
       {/* Main Container Card */}
       <div className="relative bg-white rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden w-full max-w-[1000px] h-auto min-h-[600px] flex flex-col md:flex-row border border-white/50 backdrop-blur-xl animate-card-entrance">
         <div className="absolute inset-0 pointer-events-none animate-subtle-float"></div>
         
         {/* Left Panel (Colored - Enterprise Theme) */}
-        <div className="w-full md:w-5/12 bg-gradient-to-br from-red-900 to-red-800 text-white flex flex-col items-center justify-center p-12 text-center relative overflow-hidden">
+        <div className="w-full md:w-5/12 bg-professional-red text-white flex flex-col items-center justify-center p-12 text-center relative overflow-hidden">
             
             {/* Mesh Gradient Effect */}
-            <div className="absolute inset-0 opacity-30 mix-blend-overlay animate-mesh-move">
-                <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-primary-500 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-tr from-red-500 to-transparent"></div>
+            <div className="absolute inset-0 opacity-20 mix-blend-overlay animate-mesh-move">
+                <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-white/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-tr from-black/20 to-transparent"></div>
             </div>
 
             {/* Content */}
