@@ -14,7 +14,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2">{displayLabel}</p>
         <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-primary-600 ring-4 ring-primary-50"></span>
+                <span 
+                    className="w-2.5 h-2.5 rounded-full" 
+                    style={{ 
+                        backgroundColor: payload[0].color || payload[0].fill,
+                        boxShadow: `0 0 0 4px ${(payload[0].color || payload[0].fill)}20`
+                    }}
+                ></span>
                 <span className="text-sm font-semibold text-slate-600">Total</span>
             </div>
             <p className="text-2xl font-bold text-slate-800 tracking-tight leading-none">
@@ -74,15 +80,20 @@ export const Dashboard: React.FC = () => {
         .slice(0, 6); // Top 6
   }, [filteredUsers]);
 
-  // Red Palette
-  const COLORS = [
-      '#7f1d1d', // Red 900
-      '#991b1b', // Red 800
-      '#b91c1c', // Red 700
-      '#dc2626', // Red 600
+  // Diverse Vibrant Palette for distinct items
+  const VIBRANT_COLORS = [
       '#ef4444', // Red 500
-      '#f87171', // Red 400
-      '#fca5a5', // Red 300
+      '#3b82f6', // Blue 500
+      '#10b981', // Emerald 500
+      '#f59e0b', // Amber 500
+      '#8b5cf6', // Violet 500
+      '#ec4899', // Pink 500
+      '#06b6d4', // Cyan 500
+      '#f97316', // Orange 500
+      '#84cc16', // Lime 500
+      '#6366f1', // Indigo 500
+      '#14b8a6', // Teal 500
+      '#d946ef', // Fuchsia 500
   ];
 
   if (isLoading) {
@@ -181,7 +192,7 @@ export const Dashboard: React.FC = () => {
                   </h3>
                   <p className="text-slate-400 text-sm mt-1 font-medium">Quantidade de colaboradores por função</p>
               </div>
-              <div className="p-3 bg-red-50 text-red-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <BarChart3 className="w-5 h-5" />
               </div>
            </div>
@@ -189,12 +200,6 @@ export const Dashboard: React.FC = () => {
            <div className="flex-1 w-full min-h-0 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={funcaoData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <defs>
-                        <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#dc2626" stopOpacity={1}/>
-                            <stop offset="100%" stopColor="#f87171" stopOpacity={0.5}/>
-                        </linearGradient>
-                    </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis 
                         dataKey="name" 
@@ -208,7 +213,11 @@ export const Dashboard: React.FC = () => {
                     />
                     <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11, fontWeight: 500, fontFamily: 'Inter'}} />
                     <Tooltip content={<CustomTooltip />} cursor={{fill: '#f8fafc', opacity: 0.8}} />
-                    <Bar dataKey="value" fill="url(#colorBar)" radius={[6, 6, 0, 0]} barSize={48} animationDuration={1500} />
+                    <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={48} animationDuration={1500}>
+                        {funcaoData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={VIBRANT_COLORS[index % VIBRANT_COLORS.length]} />
+                        ))}
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
           </div>
@@ -245,7 +254,7 @@ export const Dashboard: React.FC = () => {
                     {sectorData.map((entry, index) => (
                     <Cell 
                         key={`cell-${index}`} 
-                        fill={COLORS[index % COLORS.length]} 
+                        fill={VIBRANT_COLORS[(index + 4) % VIBRANT_COLORS.length]} 
                         className="hover:opacity-80 transition-opacity duration-300 cursor-pointer outline-none focus:outline-none"
                     />
                     ))}
