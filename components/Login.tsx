@@ -81,6 +81,69 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             animation: slideUpFade 0.5s ease-out 0.2s forwards;
             opacity: 0;
         }
+        @keyframes cardEntrance {
+            0% { transform: scale(0.95) translateY(30px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .animate-card-entrance {
+            animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes staggerIn {
+            0% { transform: translateY(10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-stagger-in {
+            animation: staggerIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes ambientFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        .animate-ambient-float {
+            animation: ambientFloat 15s ease-in-out infinite;
+        }
+        @keyframes meshMove {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        .animate-mesh-move {
+            animation: meshMove 10s ease-in-out infinite;
+        }
+        @keyframes subtleFloat {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        .animate-subtle-float {
+            animation: subtleFloat 6s ease-in-out infinite;
+        }
+        @keyframes slowRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-slow-rotate {
+            animation: slowRotate 20s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.3; }
+        }
+        .animate-shimmer {
+            animation: shimmer 4s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        .animate-glow-pulse {
+            animation: glowPulse 2s infinite;
+        }
       `}</style>
 
       {/* Success Animation Overlay */}
@@ -115,34 +178,36 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       )}
 
       {/* Background ambient blobs */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary-300/20 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-slate-400/20 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary-300/20 rounded-full blur-[100px] pointer-events-none animate-ambient-float opacity-40"></div>
+      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-slate-400/20 rounded-full blur-[100px] pointer-events-none animate-ambient-float [animation-delay:-5s] opacity-40"></div>
+      <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/5 to-transparent pointer-events-none animate-shimmer"></div>
 
       {/* Main Container Card */}
-      <div className="relative bg-white rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden w-full max-w-[1000px] h-auto min-h-[600px] flex flex-col md:flex-row border border-white/50 backdrop-blur-xl">
+      <div className="relative bg-white rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden w-full max-w-[1000px] h-auto min-h-[600px] flex flex-col md:flex-row border border-white/50 backdrop-blur-xl animate-card-entrance">
+        <div className="absolute inset-0 pointer-events-none animate-subtle-float"></div>
         
         {/* Left Panel (Colored - Enterprise Theme) */}
         <div className="w-full md:w-5/12 bg-gradient-to-br from-red-900 to-red-800 text-white flex flex-col items-center justify-center p-12 text-center relative overflow-hidden">
             
             {/* Mesh Gradient Effect */}
-            <div className="absolute inset-0 opacity-30 mix-blend-overlay">
+            <div className="absolute inset-0 opacity-30 mix-blend-overlay animate-mesh-move">
                 <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-primary-500 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-tr from-red-500 to-transparent"></div>
             </div>
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center">
-                 <div className="mb-10 p-8 bg-white/5 rounded-[30px] backdrop-blur-md border border-white/10 shadow-2xl shadow-black/20 group hover:scale-105 transition-transform duration-500 ease-out">
-                    <Logo className="w-20 h-20 drop-shadow-lg" variant="white" />
+                 <div className="mb-10 p-8 bg-white/5 rounded-[30px] backdrop-blur-md border border-white/10 shadow-2xl shadow-black/20 group hover:scale-105 transition-transform duration-500 ease-out animate-stagger-in [animation-delay:0.2s]">
+                    <Logo className="w-20 h-20 drop-shadow-lg animate-slow-rotate" variant="white" />
                  </div>
                  
-                 <h2 className="text-3xl font-bold tracking-tight mb-2">Bem-vindo</h2>
-                 <p className="text-slate-300 text-sm max-w-[240px] leading-relaxed">
+                 <h2 className="text-3xl font-bold tracking-tight mb-2 animate-stagger-in [animation-delay:0.3s]">Bem-vindo</h2>
+                 <p className="text-slate-300 text-sm max-w-[240px] leading-relaxed animate-stagger-in [animation-delay:0.4s]">
                     Acesse o painel corporativo.
                  </p>
             </div>
 
-            <div className="absolute bottom-8 text-[10px] text-slate-500 uppercase tracking-widest font-semibold">
+            <div className="absolute bottom-8 text-[10px] text-slate-500 uppercase tracking-widest font-semibold animate-stagger-in [animation-delay:0.5s]">
                 Versão 2.5.0
             </div>
         </div>
@@ -166,10 +231,10 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                             )}
                         </div>
                     )}
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+                    <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight animate-stagger-in [animation-delay:0.2s]">
                         {matchedUser ? `Olá, ${matchedUser.nome.split(' ')[0]}` : 'Login Seguro'}
                     </h1>
-                    <p className="text-slate-500 text-sm">
+                    <p className="text-slate-500 text-sm animate-stagger-in [animation-delay:0.3s]">
                         {matchedUser ? 'Digite sua senha para continuar.' : 'Entre com suas credenciais de administrador ou Convidado.'}
                     </p>
                 </div>
@@ -177,7 +242,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     
                     {/* Input User */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 animate-stagger-in [animation-delay:0.4s]">
                         <label className="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">identificação</label>
                         <div className="relative group">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
@@ -196,7 +261,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                     </div>
 
                     {/* Input Password */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 animate-stagger-in [animation-delay:0.5s]">
                         <label className="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Senha</label>
                         <div className="relative group">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
@@ -223,7 +288,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                     <button 
                         type="submit" 
                         disabled={loading}
-                        className="mt-4 bg-primary-600 text-white rounded-xl px-12 py-4 font-bold text-xs uppercase tracking-widest hover:bg-primary-700 hover:shadow-glow hover:-translate-y-0.5 transform active:translate-y-0 active:shadow-none transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed w-full flex justify-center items-center gap-2 group"
+                        className="mt-4 bg-primary-600 text-white rounded-xl px-12 py-4 font-bold text-xs uppercase tracking-widest hover:bg-primary-700 hover:shadow-glow hover:-translate-y-0.5 transform active:translate-y-0 active:shadow-none transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed w-full flex justify-center items-center gap-2 group animate-stagger-in [animation-delay:0.6s] animate-glow-pulse"
                     >
                         {loading ? (
                             <>
