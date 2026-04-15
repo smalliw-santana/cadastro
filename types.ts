@@ -45,4 +45,5 @@ export type ViewState =
   | 'REGISTER_FUNCAO'
   | 'REGISTER_SETOR'
   | 'MANAGE_ACCESS'
-  | 'SYSTEM_LOGS';
+  | 'SYSTEM_LOGS'
+  | 'PROFILE';

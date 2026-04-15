@@ -21,6 +21,9 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+  const [successItemName, setSuccessItemName] = useState('');
   
   const config = {
     FILIAL: {
@@ -70,6 +73,7 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
 
     const success = await config.add(newItem);
     if (success) {
+      setSuccessItemName(newItem.trim().toUpperCase());
       if (currentUser) {
           await dbService.addLog({
               userName: currentUser.nome,
@@ -79,9 +83,13 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
           });
       }
       setNewItem('');
+      setShowSaveSuccess(true);
       loadItems();
-      setFeedback({ type: 'success', message: 'Item cadastrado com sucesso!' });
-      setTimeout(() => setFeedback(null), 3000);
+      
+      setTimeout(() => {
+          setShowSaveSuccess(false);
+          setFeedback({ type: 'success', message: 'Item cadastrado com sucesso!' });
+      }, 5000);
     } else {
       setFeedback({ type: 'error', message: 'Este item já existe na lista.' });
     }
@@ -106,6 +114,7 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
         const success = await config.remove(itemToDelete);
         
         if (success) {
+            setSuccessItemName(itemToDelete);
             if (currentUser) {
                 await dbService.addLog({
                     userName: currentUser.nome,
@@ -114,17 +123,23 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
                     details: `Excluiu ${type.toLowerCase()}: ${itemToDelete}`
                 });
             }
+            
+            setIsDeleteModalOpen(false);
+            setShowDeleteSuccess(true);
             loadItems();
-            setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
+
+            setTimeout(() => {
+                setShowDeleteSuccess(false);
+                setFeedback({ type: 'success', message: 'Item removido com sucesso.' });
+                setItemToDelete(null);
+            }, 5000);
         } else {
             setFeedback({ type: 'error', message: 'Erro ao remover item. Tente recarregar a página.' });
+            setIsDeleteModalOpen(false);
+            setItemToDelete(null);
         }
         
         setIsProcessing(false);
-        setIsDeleteModalOpen(false);
-        setItemToDelete(null);
-        
-        setTimeout(() => setFeedback(null), 3000);
     }, 500);
   };
 
@@ -132,6 +147,68 @@ export const ResourceRegister: React.FC<ResourceRegisterProps> = ({ type, curren
 
   return (
     <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out]">
+        <style>{`
+            @keyframes popIn {
+                0% { transform: scale(0.9); opacity: 0; }
+                50% { transform: scale(1.05); opacity: 1; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            .animate-pop-in {
+                animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            }
+            @keyframes fadeSlideUp {
+                0% { transform: translateY(20px); opacity: 0; }
+                100% { transform: translateY(0); opacity: 1; }
+            }
+            .animate-fade-slide-up {
+                animation: fadeSlideUp 0.5s ease-out forwards;
+            }
+        `}</style>
+
+        {/* Deletion Success Animation Overlay */}
+        {showDeleteSuccess && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+                <div className="flex flex-col items-center text-center p-8 animate-pop-in">
+                    <div className="w-24 h-24 mb-6 rounded-full bg-red-600 flex items-center justify-center shadow-2xl shadow-red-600/40">
+                        <Trash2 className="w-12 h-12 text-white animate-bounce" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
+                        Registro Excluído
+                    </h2>
+                    <p className="text-red-100 text-lg animate-fade-slide-up [animation-delay:0.2s]">
+                        O item <span className="font-bold">{successItemName}</span> foi removido.
+                    </p>
+                    <div className="mt-8 flex gap-2">
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-ping [animation-delay:0.2s]"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-ping [animation-delay:0.4s]"></div>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {/* Save Success Animation Overlay */}
+        {showSaveSuccess && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+                <div className="flex flex-col items-center text-center p-8 animate-pop-in">
+                    <div className="w-24 h-24 mb-6 rounded-full bg-green-600 flex items-center justify-center shadow-2xl shadow-green-600/40">
+                        <CheckCircle2 className="w-12 h-12 text-white animate-bounce" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
+                        Cadastro Realizado
+                    </h2>
+                    <p className="text-green-100 text-lg animate-fade-slide-up [animation-delay:0.2s]">
+                        O item <span className="font-bold">{successItemName}</span> foi salvo com sucesso.
+                    </p>
+                    <div className="mt-8 flex gap-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-ping [animation-delay:0.2s]"></div>
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-ping [animation-delay:0.4s]"></div>
+                    </div>
+                </div>
+            </div>
+        )}
+
         {/* Feedback Toast */}
         {feedback && (
             <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${

@@ -135,7 +135,7 @@ export const Dashboard: React.FC = () => {
                 <div className="relative w-full md:w-auto md:min-w-[300px]">
                     <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500 pointer-events-none" />
                     <select
-                        className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-sm font-semibold rounded-2xl pl-12 pr-10 py-4 appearance-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all cursor-pointer shadow-sm"
+                        className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-sm font-semibold rounded-2xl pl-12 pr-10 py-4 appearance-none focus:ring-4 focus:ring-red-100 focus:border-red-500 outline-none transition-all cursor-pointer shadow-sm"
                         value={selectedFilial}
                         onChange={(e) => setSelectedFilial(e.target.value)}
                     >

@@ -255,7 +255,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                                 onChange={(e) => setLogin(e.target.value.toUpperCase())}
                                 required
                                 disabled={loading}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white focus:bg-white"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-100 focus:border-red-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white focus:bg-white"
                             />
                         </div>
                     </div>
@@ -274,7 +274,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 disabled={loading}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white focus:bg-white"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-100 focus:border-red-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white focus:bg-white"
                             />
                         </div>
                     </div>

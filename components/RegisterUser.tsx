@@ -4,7 +4,7 @@ import { SystemUser, User } from '../types.ts';
 import { dbService } from '../services/dbService.ts';
 import { Input } from './Input.tsx';
 import { Select } from './Select.tsx';
-import { Save, AlertCircle, CheckCircle2, ShieldAlert, User as UserIcon } from 'lucide-react';
+import { Save, AlertCircle, CheckCircle2, ShieldAlert, User as UserIcon, X } from 'lucide-react';
 import { Spinner } from './Spinner.tsx';
 
 interface RegisterUserProps {
@@ -136,7 +136,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         codigoVenda: '',
                         segmento: ''
                     });
-                }, 2000);
+                }, 5000);
             } else {
                 setFeedback({ type: 'error', message: result.message });
             }
@@ -162,33 +162,52 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
     return (
         <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out] relative">
+            {feedback && (
+                <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
+                    feedback.type === 'success' ? 'bg-white border-green-200 text-green-700' : 'bg-white border-red-200 text-red-700'
+                }`}>
+                    {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <AlertCircle className="w-5 h-5 text-red-500"/>}
+                    <span className="font-medium">{feedback.message}</span>
+                    <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
+                </div>
+            )}
+
             <style>{`
-                @keyframes successPop {
-                    0% { transform: scale(0.8); opacity: 0; }
-                    50% { transform: scale(1.1); opacity: 1; }
+                @keyframes popIn {
+                    0% { transform: scale(0.9); opacity: 0; }
+                    50% { transform: scale(1.05); opacity: 1; }
                     100% { transform: scale(1); opacity: 1; }
                 }
-                .animate-success-pop {
-                    animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                .animate-pop-in {
+                    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
                 }
-                @keyframes overlayFade {
-                    0% { opacity: 0; backdrop-filter: blur(0px); }
-                    100% { opacity: 1; backdrop-filter: blur(4px); }
+                @keyframes fadeSlideUp {
+                    0% { transform: translateY(20px); opacity: 0; }
+                    100% { transform: translateY(0); opacity: 1; }
                 }
-                .animate-overlay-fade {
-                    animation: overlayFade 0.3s ease-out forwards;
+                .animate-fade-slide-up {
+                    animation: fadeSlideUp 0.5s ease-out forwards;
                 }
             `}</style>
 
             {/* Success Animation Overlay */}
             {showSuccessAnimation && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 rounded-2xl animate-overlay-fade">
-                    <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center animate-success-pop border border-green-100">
-                        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                            <CheckCircle2 className="w-12 h-12 text-green-500" />
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+                    <div className="flex flex-col items-center text-center p-8 animate-pop-in">
+                        <div className="w-24 h-24 mb-6 rounded-full bg-green-600 flex items-center justify-center shadow-2xl shadow-green-600/40">
+                            <CheckCircle2 className="w-12 h-12 text-white animate-bounce" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Cadastro Salvo!</h2>
-                        <p className="text-slate-500">O colaborador foi cadastrado com sucesso.</p>
+                        <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
+                            Cadastro Realizado
+                        </h2>
+                        <p className="text-green-100 text-lg animate-fade-slide-up [animation-delay:0.2s]">
+                            O colaborador <span className="font-bold">{formData.nomeCompleto}</span> foi cadastrado com sucesso.
+                        </p>
+                        <div className="mt-8 flex gap-2">
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-ping [animation-delay:0.2s]"></div>
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-ping [animation-delay:0.4s]"></div>
+                        </div>
                     </div>
                 </div>
             )}
@@ -342,15 +361,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                             />
                         </div>
                     </div>
-
-                    {/* Feedback Message */}
-                    {feedback && (
-                        <div className={`mt-6 p-4 rounded-lg flex items-center gap-3 ${feedback.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-                            {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                            <span className="font-medium">{feedback.message}</span>
-                        </div>
-                    )}
-
+ 
                     <div className="mt-8 flex justify-end">
                         <button
                             type="submit"

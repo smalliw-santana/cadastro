@@ -11,6 +11,7 @@ import { DatabaseSettings } from './components/DatabaseSettings.tsx';
 import { ResourceRegister } from './components/ResourceRegister.tsx';
 import { SystemUsersManagement } from './components/SystemUsersManagement.tsx';
 import { SystemLogs } from './components/SystemLogs.tsx';
+import { UserProfile } from './components/UserProfile.tsx';
 import { Logo } from './components/Logo.tsx';
 import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck, User, ScrollText } from 'lucide-react';
 
@@ -104,13 +105,16 @@ const App: React.FC = () => {
 
         <div className="p-4 border-t border-red-800 shrink-0 bg-red-950/20">
           {/* User Profile Section in Sidebar */}
-          <div className={`flex items-center gap-3 mb-5 ${!isSidebarOpen ? 'justify-center' : 'px-2'}`}>
+          <div 
+            onClick={() => setCurrentView('PROFILE')}
+            className={`flex items-center gap-3 mb-5 cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all group ${!isSidebarOpen ? 'justify-center' : 'px-2'} ${currentView === 'PROFILE' ? 'bg-white/10 ring-1 ring-white/20 shadow-lg' : ''}`}
+          >
               <div className="relative shrink-0">
                   {/* Harmonic Icon Replacement */}
                   {currentUser.avatarUrl ? (
-                      <img src={currentUser.avatarUrl} alt={currentUser.nome} className="w-10 h-10 rounded-xl object-cover border border-red-600 shadow-md group-hover:opacity-90 transition-opacity" referrerPolicy="no-referrer" />
+                      <img src={currentUser.avatarUrl} alt={currentUser.nome} className={`w-10 h-10 rounded-xl object-cover border shadow-md group-hover:opacity-90 transition-all ${currentView === 'PROFILE' ? 'border-white scale-105' : 'border-red-600'}`} referrerPolicy="no-referrer" />
                   ) : (
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-700 to-red-800 border border-red-600 flex items-center justify-center shadow-md group">
+                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br from-red-700 to-red-800 border flex items-center justify-center shadow-md group transition-all ${currentView === 'PROFILE' ? 'border-white scale-105' : 'border-red-600'}`}>
                           <User className="w-5 h-5 text-red-100 group-hover:text-white transition-colors" />
                       </div>
                   )}
@@ -121,7 +125,7 @@ const App: React.FC = () => {
               
               {isSidebarOpen && (
                   <div className="flex flex-col overflow-hidden animate-[fadeIn_0.3s]">
-                      <span className="text-sm font-bold text-white truncate">{currentUser.nome}</span>
+                      <span className={`text-sm font-bold truncate transition-colors ${currentView === 'PROFILE' ? 'text-white' : 'text-white'}`}>{currentUser.nome}</span>
                       <div className="flex items-center gap-1.5 mt-0.5">
                           {/* Visual Icon Indicator next to Role Name */}
                           {currentUser.role === 'ADMIN' ? (
@@ -169,7 +173,27 @@ const App: React.FC = () => {
              <Menu className="w-6 h-6" />
            </button>
            
-           {/* User Profile Info Removed from Header */}
+           <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end hidden sm:flex">
+                  <span className="text-sm font-bold text-slate-800 leading-none">{currentUser.nome}</span>
+                  <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider mt-1">
+                      {currentUser.role === 'ADMIN' ? 'Administrador' : 'Convidado'}
+                  </span>
+              </div>
+              <div className="relative group">
+                  <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-slate-200 group-hover:ring-primary-500 transition-all cursor-pointer">
+                      {currentUser.avatarUrl ? (
+                          <img src={currentUser.avatarUrl} alt={currentUser.nome} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      ) : (
+                          <div className="w-full h-full bg-slate-50 flex items-center justify-center">
+                              <User className="w-5 h-5 text-slate-400" />
+                          </div>
+                      )}
+                  </div>
+                  {/* Status Indicator */}
+                  <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white rounded-full ${currentUser.role === 'ADMIN' ? 'bg-green-500' : 'bg-slate-500'}`}></div>
+              </div>
+           </div>
         </header>
 
         {/* Scrollable Content Area */}
@@ -185,6 +209,7 @@ const App: React.FC = () => {
             {currentView === 'REGISTER_SETOR' && <ResourceRegister type="SETOR" currentUser={currentUser} />}
             {currentView === 'MANAGE_ACCESS' && <SystemUsersManagement currentUser={currentUser} />}
             {currentView === 'SYSTEM_LOGS' && <SystemLogs />}
+            {currentView === 'PROFILE' && <UserProfile currentUser={currentUser} onUpdate={(updated) => setCurrentUser(updated)} />}
           </div>
         </div>
       </main>

@@ -18,6 +18,9 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+  const [successItemName, setSuccessItemName] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   // --- DELETE STATES ---
@@ -108,6 +111,9 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
         }
 
         if (result.success) {
+            const itemName = deleteMode === 'ALL' ? 'Todos os registros' : (userToDelete?.nomeCompleto || '');
+            setSuccessItemName(itemName);
+            
             if (currentUser) {
                 await dbService.addLog({
                     userName: currentUser.nome,
@@ -116,15 +122,23 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                     details: deleteMode === 'ALL' ? 'Todos os usuários foram excluídos.' : `Usuário ${userToDelete?.login} excluído.`
                 });
             }
-            setFeedback({ type: 'success', message: result.message });
+            
+            setIsDeleteModalOpen(false);
+            setShowDeleteSuccess(true);
             loadUsers();
+            
+            setTimeout(() => {
+                setShowDeleteSuccess(false);
+                setFeedback({ type: 'success', message: result.message });
+                setUserToDelete(null);
+            }, 5000);
         } else {
             setFeedback({ type: 'error', message: result.message });
+            setIsDeleteModalOpen(false);
+            setUserToDelete(null);
         }
         
         setIsProcessing(false);
-        setIsDeleteModalOpen(false);
-        setUserToDelete(null);
         setTimeout(() => setFeedback(null), 3000);
     }, 1000);
   };
@@ -177,6 +191,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           const result = await dbService.updateUser(updatedUser);
           
           if (result.success) {
+              setSuccessItemName(updatedUser.nomeCompleto);
               if (currentUser) {
                   await dbService.addLog({
                       userName: currentUser.nome,
@@ -185,10 +200,16 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                       details: `Usuário ${updatedUser.login} atualizado.`
                   });
               }
-              setFeedback({ type: 'success', message: result.message });
-              loadUsers();
+              
               setIsDetailsModalOpen(false);
+              setShowSaveSuccess(true);
+              loadUsers();
               setSelectedUser(null);
+
+              setTimeout(() => {
+                  setShowSaveSuccess(false);
+                  setFeedback({ type: 'success', message: result.message });
+              }, 5000);
           } else {
               setFeedback({ type: 'error', message: result.message });
           }
@@ -215,6 +236,68 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
 
   return (
     <div className="h-full p-6 flex flex-col gap-6 animate-[fadeIn_0.4s_ease-out] print:p-0 print:space-y-0">
+        
+        <style>{`
+            @keyframes popIn {
+                0% { transform: scale(0.9); opacity: 0; }
+                50% { transform: scale(1.05); opacity: 1; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            .animate-pop-in {
+                animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            }
+            @keyframes fadeSlideUp {
+                0% { transform: translateY(20px); opacity: 0; }
+                100% { transform: translateY(0); opacity: 1; }
+            }
+            .animate-fade-slide-up {
+                animation: fadeSlideUp 0.5s ease-out forwards;
+            }
+        `}</style>
+
+        {/* Deletion Success Animation Overlay */}
+        {showDeleteSuccess && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+                <div className="flex flex-col items-center text-center p-8 animate-pop-in">
+                    <div className="w-24 h-24 mb-6 rounded-full bg-red-500 flex items-center justify-center shadow-2xl shadow-red-500/40">
+                        <Trash2 className="w-12 h-12 text-white animate-bounce" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
+                        Exclusão Concluída
+                    </h2>
+                    <p className="text-red-100 text-lg animate-fade-slide-up [animation-delay:0.2s]">
+                        <span className="font-bold">{successItemName}</span> foi removido com sucesso.
+                    </p>
+                    <div className="mt-8 flex gap-2">
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-ping [animation-delay:0.2s]"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-ping [animation-delay:0.4s]"></div>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {/* Save Success Animation Overlay */}
+        {showSaveSuccess && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+                <div className="flex flex-col items-center text-center p-8 animate-pop-in">
+                    <div className="w-24 h-24 mb-6 rounded-full bg-green-600 flex items-center justify-center shadow-2xl shadow-green-600/40">
+                        <CheckCircle2 className="w-12 h-12 text-white animate-bounce" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
+                        Alterações Salvas
+                    </h2>
+                    <p className="text-green-100 text-lg animate-fade-slide-up [animation-delay:0.2s]">
+                        Os dados de <span className="font-bold">{successItemName}</span> foram atualizados.
+                    </p>
+                    <div className="mt-8 flex gap-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-ping [animation-delay:0.2s]"></div>
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-ping [animation-delay:0.4s]"></div>
+                    </div>
+                </div>
+            </div>
+        )}
         
         {feedback && !isDeleteModalOpen && !isDetailsModalOpen && (
             <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
@@ -261,7 +344,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                         <input
                             type="text"
                             placeholder="Buscar por matrícula, nome, filial, login..."
-                            className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm"
+                            className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             disabled={isLoading}
@@ -501,7 +584,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Nova Senha (Opcional)</label>
                                     <input 
                                         type="password"
-                                        className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none"
                                         placeholder="Deixe em branco para manter a atual"
                                         value={editForm.senha}
                                         onChange={e => setEditForm({...editForm, senha: e.target.value})}

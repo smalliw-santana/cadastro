@@ -240,7 +240,7 @@ export const Reports: React.FC = () => {
                 <select
                     value={selectedFilial}
                     onChange={(e) => setSelectedFilial(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white border border-slate-300 rounded-lg appearance-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all outline-none font-medium text-slate-700"
+                    className="w-full pl-10 pr-4 py-3 bg-white border border-slate-300 rounded-lg appearance-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all outline-none font-medium text-slate-700"
                 >
                     <option value="">-- Selecione uma opção --</option>
                     <option value="TODAS">TODAS AS FILIAIS</option>
