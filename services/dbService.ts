@@ -179,7 +179,8 @@ export const dbService = {
           login: data.login,
           senha: data.senha,
           role: data.role as any,
-          createdAt: data.created_at
+          createdAt: data.created_at,
+          avatarUrl: data.avatar_url
       };
   },
 
