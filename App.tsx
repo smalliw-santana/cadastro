@@ -19,7 +19,7 @@ const App: React.FC = () => {
   // Now storing the full user object instead of just boolean
   const [currentUser, setCurrentUser] = useState<SystemUser | null>(null);
   const [currentView, setCurrentView] = useState<ViewState>('DASHBOARD');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (!currentUser) {
     return <Login onLoginSuccess={(user) => {
