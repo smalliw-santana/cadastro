@@ -173,27 +173,7 @@ const App: React.FC = () => {
              <Menu className="w-6 h-6" />
            </button>
            
-           <div className="flex items-center gap-4">
-              <div className="flex flex-col items-end hidden sm:flex">
-                  <span className="text-sm font-bold text-slate-800 leading-none">{currentUser.nome}</span>
-                  <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider mt-1">
-                      {currentUser.role === 'ADMIN' ? 'Administrador' : 'Convidado'}
-                  </span>
-              </div>
-              <div className="relative group">
-                  <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-slate-200 group-hover:ring-primary-500 transition-all cursor-pointer">
-                      {currentUser.avatarUrl ? (
-                          <img src={currentUser.avatarUrl} alt={currentUser.nome} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      ) : (
-                          <div className="w-full h-full bg-slate-50 flex items-center justify-center">
-                              <User className="w-5 h-5 text-slate-400" />
-                          </div>
-                      )}
-                  </div>
-                  {/* Status Indicator */}
-                  <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white rounded-full ${currentUser.role === 'ADMIN' ? 'bg-green-500' : 'bg-slate-500'}`}></div>
-              </div>
-           </div>
+           {/* User Profile Info Removed from Header */}
         </header>
 
         {/* Scrollable Content Area */}
