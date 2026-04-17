@@ -60,7 +60,32 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
             finalValue = value.toUpperCase();
         }
 
-        setFormData(prev => ({ ...prev, [name]: finalValue }));
+        setFormData(prev => {
+            const newData = { ...prev, [name]: finalValue };
+            
+            if (name === 'matricula') {
+                newData.login = `M${finalValue}`.toUpperCase();
+            }
+            
+            // Generate password suggestion based on name and matricula
+            if (name === 'matricula' || name === 'nomeCompleto') {
+                const mat = newData.matricula || '';
+                const nome = newData.nomeCompleto || '';
+                
+                if (mat && nome.trim()) {
+                    const words = nome.trim().split(/\s+/).filter(Boolean);
+                    if (words.length > 0) {
+                        const firstChar = words[0][0]?.toUpperCase() || '';
+                        const lastChar = words.length > 1 ? words[words.length - 1][0]?.toUpperCase() || '' : '';
+                        const suffixOptions = mat.length >= 3 ? mat.slice(-3) : mat;
+                        
+                        newData.senha = `${firstChar}${suffixOptions}${lastChar}`;
+                    }
+                }
+            }
+            
+            return newData;
+        });
 
         if (name === 'matricula') {
             setFieldErrors(prev => ({ ...prev, matricula: undefined }));
