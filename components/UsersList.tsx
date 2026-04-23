@@ -155,7 +155,8 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           login: user.login,
           senha: '', // Initialize empty to show placeholder
           codigoVenda: user.codigoVenda || '',
-          segmento: user.segmento || 'SUPERMERCADO'
+          segmento: user.segmento || 'SUPERMERCADO',
+          usuarioColetor: user.usuarioColetor || ''
       });
       
       // Ensure current values are in the options list so the select doesn't break
@@ -184,7 +185,8 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           login: editForm.login.toUpperCase(),
           senha: editForm.senha ? editForm.senha : selectedUser.senha,
           codigoVenda: editForm.codigoVenda,
-          segmento: editForm.segmento
+          segmento: editForm.segmento,
+          usuarioColetor: editForm.usuarioColetor
       };
 
       setTimeout(async () => {
@@ -576,6 +578,14 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                 value={editForm.segmento}
                                 onChange={e => setEditForm({...editForm, segmento: e.target.value})}
                                 required
+                                disabled={userRole !== 'ADMIN'}
+                            />
+
+                            <Select 
+                                label="Usuário de Coletor" 
+                                options={['SIM', 'NÃO']}
+                                value={editForm.usuarioColetor || ''}
+                                onChange={e => setEditForm({...editForm, usuarioColetor: e.target.value})}
                                 disabled={userRole !== 'ADMIN'}
                             />
                             

@@ -12,6 +12,7 @@ export interface User {
   dataCadastro: string;
   codigoVenda?: string;
   segmento: string;
+  usuarioColetor?: string;
 }
 
 export interface SystemUser {

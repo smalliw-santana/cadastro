@@ -22,7 +22,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
         funcao: '',
         setor: '',
         codigoVenda: '',
-        segmento: ''
+        segmento: '',
+        usuarioColetor: ''
     });
 
     const [isSaving, setIsSaving] = useState(false);
@@ -159,7 +160,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         funcao: '',
                         setor: '',
                         codigoVenda: '',
-                        segmento: ''
+                        segmento: '',
+                        usuarioColetor: ''
                     });
                 }, 5000);
             } else {
@@ -370,6 +372,16 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                                 onChange={handleChange}
                                 options={['SUPERMERCADO', 'MAGAZAN', 'FARMACIA', 'HOME CENTER', 'PET SHOP', 'NUTRILIDER', 'OTICA', 'OUTROS']}
                                 required
+                                disabled={isSaving}
+                            />
+                        </div>
+                        <div className="col-span-1">
+                            <Select
+                                label="Usuário de Coletor"
+                                name="usuarioColetor"
+                                value={formData.usuarioColetor}
+                                onChange={handleChange}
+                                options={['SIM', 'NÃO']}
                                 disabled={isSaving}
                             />
                         </div>

@@ -209,7 +209,8 @@ export const dbService = {
           departamento: user.departamento,
           codigoVenda: user.codigo_venda,
           segmento: user.segmento,
-          dataCadastro: user.data_cadastro
+          dataCadastro: user.data_cadastro,
+          usuarioColetor: user.usuario_coletor
       }));
   },
 
@@ -234,7 +235,8 @@ export const dbService = {
           departamento: data.departamento,
           codigoVenda: data.codigo_venda,
           segmento: data.segmento,
-          dataCadastro: data.data_cadastro
+          dataCadastro: data.data_cadastro,
+          usuarioColetor: data.usuario_coletor
       };
   },
 
@@ -261,11 +263,15 @@ export const dbService = {
               setor: user.setor,
               departamento: user.departamento,
               codigo_venda: user.codigoVenda,
-              segmento: user.segmento
+              segmento: user.segmento,
+              usuario_coletor: user.usuarioColetor
           }]);
           
       if (error) {
           console.error('Error adding user:', error);
+          if (error.message.includes('usuario_coletor')) {
+              return { success: false, message: 'Erro: A coluna usuario_coletor não existe na tabela users no Supabase.' };
+          }
           return { success: false, message: 'Erro ao cadastrar usuário.' };
       }
       
@@ -296,7 +302,8 @@ export const dbService = {
               setor: updatedUser.setor,
               departamento: updatedUser.departamento,
               codigo_venda: updatedUser.codigoVenda,
-              segmento: updatedUser.segmento
+              segmento: updatedUser.segmento,
+              usuario_coletor: updatedUser.usuarioColetor
           })
           .eq('id', updatedUser.id);
           
