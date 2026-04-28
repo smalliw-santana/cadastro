@@ -285,23 +285,25 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                         </div>
                     )}
 
-                    <button 
-                        type="submit" 
-                        disabled={loading}
-                        className="mt-4 bg-primary-600 text-white rounded-xl px-12 py-4 font-bold text-xs uppercase tracking-widest hover:bg-primary-700 hover:shadow-glow hover:-translate-y-0.5 transform active:translate-y-0 active:shadow-none transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed w-full flex justify-center items-center gap-2 group animate-stagger-in [animation-delay:0.6s] animate-glow-pulse"
-                    >
-                        {loading ? (
-                            <>
-                                <Spinner size="sm" variant="white" />
-                                <span>Verificando...</span>
-                            </>
-                        ) : (
-                            <>
-                                <span>Acessar Painel</span>
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </>
-                        )}
-                    </button>
+                    <div className="w-full animate-stagger-in [animation-delay:0.6s] mt-8">
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="bg-primary-600 text-white rounded-xl px-12 py-4 font-bold text-xs uppercase tracking-widest hover:bg-primary-700 hover:-translate-y-0.5 transform active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed w-full flex justify-center items-center gap-2 group shadow-lg shadow-primary-500/30"
+                        >
+                            {loading ? (
+                                <>
+                                    <Spinner size="sm" variant="white" />
+                                    <span>Verificando...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Acessar Painel</span>
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </>
+                            )}
+                        </button>
+                    </div>
 
                 </form>
             </div>
