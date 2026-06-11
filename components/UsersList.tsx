@@ -49,7 +49,9 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
       login: '',
       senha: '', // Optional in edit
       codigoVenda: '', // Optional
-      segmento: ''
+      segmento: '',
+      usuarioColetor: '',
+      rhdoTi: ''
   });
   
   // Options for Edit Form
@@ -156,7 +158,8 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           senha: '', // Initialize empty to show placeholder
           codigoVenda: user.codigoVenda || '',
           segmento: user.segmento || 'SUPERMERCADO',
-          usuarioColetor: user.usuarioColetor || ''
+          usuarioColetor: user.usuarioColetor || '',
+          rhdoTi: user.rhdoTi || ''
       });
       
       // Ensure current values are in the options list so the select doesn't break
@@ -186,7 +189,8 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           senha: editForm.senha ? editForm.senha : selectedUser.senha,
           codigoVenda: editForm.codigoVenda,
           segmento: editForm.segmento,
-          usuarioColetor: editForm.usuarioColetor
+          usuarioColetor: editForm.usuarioColetor,
+          rhdoTi: editForm.rhdoTi
       };
 
       setTimeout(async () => {
@@ -376,19 +380,22 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto rounded-xl border border-slate-200 shadow-sm print:overflow-visible print:shadow-none print:border-none print:rounded-none">
-                <table className="w-full text-left border-collapse relative">
+            <div className="flex-1 overflow-hidden rounded-xl border border-slate-200 shadow-sm print:overflow-visible print:shadow-none print:border-none print:rounded-none">
+                <table className="w-full text-left border-collapse relative [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap">
                     <thead className="print:bg-slate-100 sticky top-0 z-10 bg-slate-50/95 backdrop-blur-sm border-b border-slate-200">
                         <tr>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Matrícula</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Nome Completo</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Filial</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Setor / Função</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Login</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Senha</th>
-                            <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Segmento</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Matrícula</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Nome Completo</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Filial</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Setor / Função</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Login</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Senha</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Segmento</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Usuário de Coletor</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">Código de Venda</th>
+                            <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider print:text-slate-900">RHDO-TI</th>
                             {userRole === 'ADMIN' && (
-                                <th className="p-4 font-semibold text-slate-600 text-xs uppercase tracking-wider text-right print:hidden">Ações</th>
+                                <th className="px-2 py-3 font-semibold text-slate-600 text-[10px] uppercase tracking-wider text-right print:hidden">Ações</th>
                             )}
                         </tr>
                     </thead>
@@ -405,24 +412,24 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                         ) : filteredUsers.length > 0 ? (
                             filteredUsers.map((user) => (
                                 <tr key={user.id} className="hover:bg-slate-50/80 transition-colors group print:break-inside-avoid">
-                                    <td className="p-4 text-sm text-slate-600 font-mono font-medium print:text-slate-800">{user.matricula}</td>
-                                    <td className="p-4">
-                                        <div className="font-semibold text-slate-800 text-sm print:text-black">{user.nomeCompleto}</div>
-                                        <div className="text-xs text-slate-400">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
+                                    <td className="px-2 py-3 text-[11px] text-slate-600 font-mono font-medium print:text-slate-800">{user.matricula}</td>
+                                    <td className="px-2 py-3 w-[250px] max-w-[250px] truncate">
+                                        <div className="font-semibold text-slate-800 text-[11px] truncate" title={user.nomeCompleto}>{user.nomeCompleto}</div>
+                                        <div className="text-[10px] text-slate-400">Cadastrado em {new Date(user.dataCadastro).toLocaleDateString()}</div>
                                     </td>
-                                    <td className="p-4">
+                                    <td className="px-2 py-3">
                                         {/* Changed from Red to Indigo/Slate to look less like an error */}
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100 print:bg-transparent print:border-none print:p-0 print:text-slate-800">
+                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-bold bg-red-50 text-red-700 border border-red-100 print:bg-transparent print:border-none print:p-0 print:text-slate-800 whitespace-nowrap">
                                             {user.filial}
                                         </span>
                                     </td>
-                                    <td className="p-4">
-                                        <div className="text-sm text-slate-700 print:text-slate-800">{user.setor}</div>
-                                        <div className="text-xs text-slate-500">{user.funcao}</div>
+                                    <td className="px-2 py-3 w-[150px] max-w-[150px] truncate">
+                                        <div className="text-[11px] text-slate-700 truncate" title={user.setor}>{user.setor}</div>
+                                        <div className="text-[10px] text-slate-500 truncate" title={user.funcao}>{user.funcao}</div>
                                     </td>
-                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.login}</td>
-                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">
-                                        <div className="flex items-center gap-2">
+                                    <td className="px-2 py-3 text-[11px] text-slate-600 font-mono bg-slate-50/50 rounded print:bg-transparent print:p-0 print:text-slate-800">{user.login}</td>
+                                    <td className="px-2 py-3 text-[11px] text-slate-600 font-mono bg-slate-50/50 rounded print:bg-transparent print:p-0 print:text-slate-800">
+                                        <div className="flex items-center gap-1">
                                             <span>{visiblePasswords[user.id] && userRole === 'ADMIN' ? user.senha : '••••••••'}</span>
                                             {userRole === 'ADMIN' && (
                                                 <button 
@@ -430,16 +437,19 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                                     className="text-slate-400 hover:text-primary-600 focus:outline-none print:hidden"
                                                     title={visiblePasswords[user.id] ? "Ocultar senha" : "Mostrar senha"}
                                                 >
-                                                    {visiblePasswords[user.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                    {visiblePasswords[user.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                                                 </button>
                                             )}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-sm text-slate-600 font-mono bg-slate-50/50 rounded w-fit px-2 print:bg-transparent print:p-0 print:text-slate-800">{user.segmento || 'SUPERMERCADO'}</td>
+                                    <td className="px-2 py-3 text-[11px] text-slate-600 font-mono bg-slate-50/50 rounded print:bg-transparent print:p-0 print:text-slate-800">{user.segmento || 'SUPERMERCADO'}</td>
+                                    <td className="px-2 py-3 text-[11px] text-slate-600 font-mono text-center print:text-slate-800">{user.usuarioColetor || '-'}</td>
+                                    <td className="px-2 py-3 text-[11px] text-slate-600 font-mono text-center print:text-slate-800">{user.codigoVenda || '-'}</td>
+                                    <td className="px-2 py-3 text-[11px] text-slate-600 font-mono print:text-slate-800">{user.rhdoTi || '-'}</td>
                                     
                                     {/* Action Column */}
                                     {userRole === 'ADMIN' && (
-                                        <td className="p-4 text-right print:hidden">
+                                        <td className="px-2 py-3 text-right print:hidden">
                                             <div className="flex items-center justify-end gap-1">
                                                 <button 
                                                     onClick={() => handleViewClick(user)}
@@ -586,6 +596,13 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                 options={['SIM', 'NÃO']}
                                 value={editForm.usuarioColetor || ''}
                                 onChange={e => setEditForm({...editForm, usuarioColetor: e.target.value})}
+                                disabled={userRole !== 'ADMIN'}
+                            />
+                            
+                            <Input 
+                                label="RHDO-TI" 
+                                value={editForm.rhdoTi || ''}
+                                onChange={e => setEditForm({...editForm, rhdoTi: e.target.value})}
                                 disabled={userRole !== 'ADMIN'}
                             />
                             

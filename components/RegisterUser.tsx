@@ -23,7 +23,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
         setor: '',
         codigoVenda: '',
         segmento: '',
-        usuarioColetor: ''
+        usuarioColetor: '',
+        rhdoTi: ''
     });
 
     const [isSaving, setIsSaving] = useState(false);
@@ -161,7 +162,8 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                         setor: '',
                         codigoVenda: '',
                         segmento: '',
-                        usuarioColetor: ''
+                        usuarioColetor: '',
+                        rhdoTi: ''
                     });
                 }, 5000);
             } else {
@@ -393,6 +395,17 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                                 type="text"
                                 /*placeholder="Ex: 00000-1"*/
                                 value={formData.codigoVenda}
+                                onChange={handleChange}
+                                disabled={isSaving}
+                            />
+                        </div>
+                        <div className="col-span-1">
+                            <Input
+                                label="RHDO-TI"
+                                name="rhdoTi"
+                                type="text"
+                                /*placeholder="Ex: 000001"*/
+                                value={formData.rhdoTi}
                                 onChange={handleChange}
                                 disabled={isSaving}
                             />

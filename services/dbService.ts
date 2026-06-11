@@ -210,7 +210,8 @@ export const dbService = {
           codigoVenda: user.codigo_venda,
           segmento: user.segmento,
           dataCadastro: user.data_cadastro,
-          usuarioColetor: user.usuario_coletor
+          usuarioColetor: user.usuario_coletor,
+          rhdoTi: user.rhdo_ti
       }));
   },
 
@@ -236,7 +237,8 @@ export const dbService = {
           codigoVenda: data.codigo_venda,
           segmento: data.segmento,
           dataCadastro: data.data_cadastro,
-          usuarioColetor: data.usuario_coletor
+          usuarioColetor: data.usuario_coletor,
+          rhdoTi: data.rhdo_ti
       };
   },
 
@@ -264,13 +266,23 @@ export const dbService = {
               departamento: user.departamento,
               codigo_venda: user.codigoVenda,
               segmento: user.segmento,
-              usuario_coletor: user.usuarioColetor
+              usuario_coletor: user.usuarioColetor,
+              rhdo_ti: user.rhdoTi
           }]);
           
       if (error) {
           console.error('Error adding user:', error);
+          if (error.message.includes('rhdo_ti')) {
+              return { success: false, message: 'Falta a coluna rhdo_ti. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN rhdo_ti text;' };
+          }
           if (error.message.includes('usuario_coletor')) {
-              return { success: false, message: 'Erro: A coluna usuario_coletor não existe na tabela users no Supabase.' };
+              return { success: false, message: 'Falta a coluna usuario_coletor. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN usuario_coletor text;' };
+          }
+          if (error.message.includes('codigo_venda')) {
+              return { success: false, message: 'Falta a coluna codigo_venda. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN codigo_venda text;' };
+          }
+          if (error.message.includes('segmento')) {
+              return { success: false, message: 'Falta a coluna segmento. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN segmento text;' };
           }
           return { success: false, message: 'Erro ao cadastrar usuário.' };
       }
@@ -303,12 +315,25 @@ export const dbService = {
               departamento: updatedUser.departamento,
               codigo_venda: updatedUser.codigoVenda,
               segmento: updatedUser.segmento,
-              usuario_coletor: updatedUser.usuarioColetor
+              usuario_coletor: updatedUser.usuarioColetor,
+              rhdo_ti: updatedUser.rhdoTi
           })
           .eq('id', updatedUser.id);
           
       if (error) {
           console.error('Error updating user:', error);
+          if (error.message.includes('rhdo_ti')) {
+              return { success: false, message: 'Falta a coluna rhdo_ti. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN rhdo_ti text;' };
+          }
+          if (error.message.includes('usuario_coletor')) {
+              return { success: false, message: 'Falta a coluna usuario_coletor. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN usuario_coletor text;' };
+          }
+          if (error.message.includes('codigo_venda')) {
+              return { success: false, message: 'Falta a coluna codigo_venda. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN codigo_venda text;' };
+          }
+          if (error.message.includes('segmento')) {
+              return { success: false, message: 'Falta a coluna segmento. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN segmento text;' };
+          }
           return { success: false, message: 'Erro ao atualizar usuário.' };
       }
       

@@ -13,6 +13,7 @@ export interface User {
   codigoVenda?: string;
   segmento: string;
   usuarioColetor?: string;
+  rhdoTi?: string;
 }
 
 export interface SystemUser {

@@ -178,7 +178,7 @@ const App: React.FC = () => {
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-auto bg-white print:overflow-visible print:bg-white print:h-auto print:block scroll-smooth">
-          <div className="max-w-7xl mx-auto w-full min-h-full flex flex-col">
+          <div className="w-full px-4 md:px-8 mx-auto min-h-full flex flex-col">
             {currentView === 'DASHBOARD' && <Dashboard />}
             {currentView === 'REGISTER' && <RegisterUser currentUser={currentUser} />}
             {currentView === 'USERS_LIST' && <UsersList onNavigateToRegister={() => setCurrentView('REGISTER')} currentUser={currentUser} />}

@@ -128,7 +128,7 @@ export const Reports: React.FC = () => {
   const ThSortable = ({ label, columnKey, align = 'left' }: { label: string, columnKey: SortKeys, align?: string }) => (
     <th 
       onClick={() => handleSort(columnKey)}
-      className={`p-3 font-bold text-slate-700 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors select-none text-${align} print:text-black print:border-black print:text-xs print:uppercase print:p-2`}
+      className={`px-2 py-3 font-bold text-slate-700 text-[10px] uppercase tracking-wider border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors select-none text-${align} print:text-black print:border-black print:text-xs print:p-2`}
     >
       <div className={`flex items-center ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
         {label}
@@ -291,7 +291,7 @@ export const Reports: React.FC = () => {
 
             {users.length > 0 ? (
                 <div className="overflow-hidden rounded-lg border border-slate-200 print:border-none print:overflow-visible print:rounded-none">
-                    <table className="w-full text-left border-collapse print:w-full print:text-sm">
+                    <table className="w-full text-left border-collapse print:w-full print:text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap">
                         <thead className="bg-slate-50 print:bg-white print:border-b-2 print:border-black">
                             <tr>
                                 <ThSortable label="Matrícula" columnKey="matricula" />
@@ -299,26 +299,29 @@ export const Reports: React.FC = () => {
                                 {selectedFilial === 'TODAS' && (
                                     <ThSortable label="Filial" columnKey="filial" />
                                 )}
-                                <th className="p-3 font-bold text-slate-700 border-b border-slate-200 text-left print:text-black print:border-black print:text-xs print:uppercase print:p-2">
+                                <th className="px-2 py-3 font-bold text-slate-700 border-b border-slate-200 text-left text-[10px] uppercase tracking-wider print:text-black print:border-black print:text-xs print:p-2">
                                     Setor / Função
                                 </th>
                                 <ThSortable label="Login" columnKey="login" />
                                 <ThSortable label="Segmento" columnKey="segmento" />
+                                <ThSortable label="Usuário de Coletor" columnKey="usuarioColetor" />
+                                <ThSortable label="Código de Venda" columnKey="codigoVenda" />
+                                <ThSortable label="RHDO-TI" columnKey="rhdoTi" />
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 print:divide-slate-200">
                             {sortedUsers.map((user, index) => (
                                 <tr key={user.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} print:bg-transparent`}>
-                                    <td className="p-3 font-mono font-bold text-slate-600 print:text-black print:border-b print:border-gray-200">{user.matricula}</td>
+                                    <td className="px-2 py-3 text-[11px] font-mono font-bold text-slate-600 print:text-black print:border-b print:border-gray-200">{user.matricula}</td>
                                     
-                                    <td className="p-3 print:text-black print:border-b print:border-gray-200">
-                                         <div className="font-semibold text-slate-800 print:text-black">{user.nomeCompleto}</div>
+                                    <td className="px-2 py-3 w-[200px] max-w-[200px] truncate print:text-black print:border-b print:border-gray-200">
+                                         <div className="font-semibold text-slate-800 text-[11px] truncate print:text-black" title={user.nomeCompleto}>{user.nomeCompleto}</div>
                                     </td>
                                     
                                     {selectedFilial === 'TODAS' && (
-                                        <td className="p-3 text-slate-600 print:text-black print:border-b print:border-gray-200">
+                                        <td className="px-2 py-3 text-slate-600 print:text-black print:border-b print:border-gray-200">
                                             {/* Changed from Red to Indigo/Slate */}
-                                            <span className="print:hidden inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100">
+                                            <span className="print:hidden inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-bold bg-red-50 text-red-700 border border-red-100">
                                                 {user.filial}
                                             </span>
                                             {/* Print Style: Text */}
@@ -326,17 +329,26 @@ export const Reports: React.FC = () => {
                                         </td>
                                     )}
                                     
-                                    <td className="p-3 print:text-black print:border-b print:border-gray-200">
-                                         <div className="text-sm text-slate-700 font-medium print:text-black">{user.setor}</div>
-                                         <div className="text-xs text-slate-500 uppercase tracking-wide print:text-gray-600">{user.funcao}</div>
+                                    <td className="px-2 py-3 w-[150px] max-w-[150px] truncate print:text-black print:border-b print:border-gray-200">
+                                         <div className="text-[11px] text-slate-700 font-medium truncate print:text-black" title={user.setor}>{user.setor}</div>
+                                         <div className="text-[10px] text-slate-500 uppercase tracking-wide truncate print:text-gray-600" title={user.funcao}>{user.funcao}</div>
                                     </td>
 
-                                    <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
+                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
                                         <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.login}</span>
                                     </td>
 
-                                    <td className="p-3 text-slate-600 print:text-black print:font-mono print:border-b print:border-gray-200">
+                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
                                         <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.segmento || 'SUPERMERCADO'}</span>
+                                    </td>
+                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.usuarioColetor || '-'}</span>
+                                    </td>
+                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.codigoVenda || '-'}</span>
+                                    </td>
+                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.rhdoTi || '-'}</span>
                                     </td>
                                 </tr>
                             ))}
@@ -434,7 +446,7 @@ export const Reports: React.FC = () => {
                     </div>
 
                     {/* Table */}
-                    <table className="w-full text-left border-collapse text-sm">
+                    <table className="w-full text-left border-collapse text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap">
                         <thead className="bg-white border-b-2 border-black">
                             <tr>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Matrícula</th>
@@ -445,6 +457,9 @@ export const Reports: React.FC = () => {
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Setor / Função</th>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Login</th>
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Segmento</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Usuário de Coletor</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">Código de Venda</th>
+                                <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">RHDO-TI</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
@@ -468,6 +483,11 @@ export const Reports: React.FC = () => {
                                     <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.login}</td>
                                     
                                     <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.segmento || 'SUPERMERCADO'}</td>
+                                    
+                                    <td className="p-2 text-black border-b border-gray-200 font-mono text-xs text-center">{user.usuarioColetor || '-'}</td>
+                                    <td className="p-2 text-black border-b border-gray-200 font-mono text-xs text-center">{user.codigoVenda || '-'}</td>
+                                    
+                                    <td className="p-2 text-black border-b border-gray-200 font-mono text-xs">{user.rhdoTi || '-'}</td>
                                 </tr>
                             ))}
                         </tbody>
