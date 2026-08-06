@@ -48,6 +48,14 @@ export const dbService = {
       if (error) console.error('Error adding log:', error);
   },
 
+  clearLogs: async (): Promise<void> => {
+      const { error } = await supabase
+          .from('system_logs')
+          .delete()
+          .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+      if (error) console.error('Error clearing logs:', error);
+  },
+
   // --- AUTHENTICATION & SYSTEM USERS (NEW) ---
   getSystemUsers: async (): Promise<SystemUser[]> => {
       const { data, error } = await supabase
@@ -211,7 +219,8 @@ export const dbService = {
           segmento: user.segmento,
           dataCadastro: user.data_cadastro,
           usuarioColetor: user.usuario_coletor,
-          rhdoTi: user.rhdo_ti
+          rhdoTi: user.rhdo_ti,
+          status: user.status || 'ATIVO'
       }));
   },
 
@@ -238,7 +247,8 @@ export const dbService = {
           segmento: data.segmento,
           dataCadastro: data.data_cadastro,
           usuarioColetor: data.usuario_coletor,
-          rhdoTi: data.rhdo_ti
+          rhdoTi: data.rhdo_ti,
+          status: data.status || 'ATIVO'
       };
   },
 
@@ -267,7 +277,8 @@ export const dbService = {
               codigo_venda: user.codigoVenda,
               segmento: user.segmento,
               usuario_coletor: user.usuarioColetor,
-              rhdo_ti: user.rhdoTi
+              rhdo_ti: user.rhdoTi,
+              status: user.status || 'ATIVO'
           }]);
           
       if (error) {
@@ -316,7 +327,8 @@ export const dbService = {
               codigo_venda: updatedUser.codigoVenda,
               segmento: updatedUser.segmento,
               usuario_coletor: updatedUser.usuarioColetor,
-              rhdo_ti: updatedUser.rhdoTi
+              rhdo_ti: updatedUser.rhdoTi,
+              status: updatedUser.status || 'ATIVO'
           })
           .eq('id', updatedUser.id);
           

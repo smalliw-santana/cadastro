@@ -3,15 +3,15 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { dbService } from '../services/dbService.ts';
 import { User } from '../types.ts';
-import { Users, Building2, Filter, BarChart3, PieChart as PieIcon, Activity, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Users, Building2, Filter, BarChart3, PieChart as PieIcon, Activity, ArrowUpRight, Sparkles, FileText } from 'lucide-react';
 import { Spinner } from './Spinner.tsx';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const displayLabel = typeof label === 'string' || typeof label === 'number' ? label : payload[0].name;
     return (
-      <div className="bg-white/90 backdrop-blur-xl p-5 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/50 min-w-[180px] animate-in fade-in zoom-in-95 duration-200">
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2">{displayLabel}</p>
+      <div className="bg-white/90 dark:bg-dark-800/90 backdrop-blur-xl p-5 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/50 dark:border-dark-700/50 min-w-[180px] animate-in fade-in zoom-in-95 duration-200">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-dark-700 pb-2">{displayLabel}</p>
         <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
                 <span 
@@ -21,9 +21,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                         boxShadow: `0 0 0 4px ${(payload[0].color || payload[0].fill)}20`
                     }}
                 ></span>
-                <span className="text-sm font-semibold text-slate-600">Total</span>
+                <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">Total</span>
             </div>
-            <p className="text-2xl font-bold text-slate-800 tracking-tight leading-none">
+            <p className="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight leading-none">
             {payload[0].value}
             </p>
         </div>
@@ -37,6 +37,7 @@ export const Dashboard: React.FC = () => {
   const [selectedFilial, setSelectedFilial] = useState<string>('TODAS');
   const [users, setUsers] = useState<User[]>([]);
   const [filialOptions, setFilialOptions] = useState<string[]>([]);
+  const [logsCount, setLogsCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,8 +46,10 @@ export const Dashboard: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
         const usersData = await dbService.getAllUsers();
         const filiaisData = await dbService.getFiliais();
+        const logsData = await dbService.getLogs();
         setUsers(usersData);
         setFilialOptions(filiaisData);
+        setLogsCount(logsData.length);
         setIsLoading(false);
     };
     loadData();
@@ -113,53 +116,53 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="p-6 md:p-8 space-y-8 animate-[fadeIn_0.6s_cubic-bezier(0.16,1,0.3,1)]">
       
-      {/* Top Section: KPIs and Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        
-        {/* Filter Card */}
-        <div className="md:col-span-8 bg-white p-8 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 flex flex-col justify-center relative overflow-hidden group hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500">
-            {/* Background Decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-slate-50 to-transparent rounded-full -mr-20 -mt-20 pointer-events-none transition-transform duration-700 group-hover:scale-110 opacity-60"></div>
-            
-            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2.5 bg-slate-50 text-slate-400 rounded-xl border border-slate-100">
-                            <Filter className="w-5 h-5"/>
-                        </div>
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Filtros Globais</span>
-                    </div>
-                    <h2 className="text-lg font-bold text-slate-800">Controle de Visualização</h2>
-                </div>
-                
-                <div className="relative w-full md:w-auto md:min-w-[300px]">
-                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500 pointer-events-none" />
-                    <select
-                        className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-sm font-semibold rounded-2xl pl-12 pr-10 py-4 appearance-none focus:ring-4 focus:ring-red-100 focus:border-red-500 outline-none transition-all cursor-pointer shadow-sm"
-                        value={selectedFilial}
-                        onChange={(e) => setSelectedFilial(e.target.value)}
-                    >
-                        <option value="TODAS">VISÃO GLOBAL - TODAS AS FILIAIS</option>
-                        {filialOptions.map(f => (
-                            <option key={f} value={f}>{f}</option>
-                        ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                    </div>
-                </div>
-            </div>
-        </div>
+      {/* Top Section: Filters */}
+      <div className="bg-white dark:bg-dark-800 p-8 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-dark-700 flex flex-col justify-center relative overflow-hidden group hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500">
+          {/* Background Decoration */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-slate-50 dark:from-dark-700 to-transparent rounded-full -mr-20 -mt-20 pointer-events-none transition-transform duration-700 group-hover:scale-110 opacity-60"></div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div>
+                  <div className="flex items-center gap-3 mb-2">
+                      <div className="p-2.5 bg-slate-50 dark:bg-dark-700 text-slate-400 rounded-xl border border-slate-100 dark:border-dark-600">
+                          <Filter className="w-5 h-5"/>
+                      </div>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Filtros Globais</span>
+                  </div>
+                  <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Controle de Visualização</h2>
+              </div>
+              
+              <div className="relative w-full md:w-auto md:min-w-[300px]">
+                  <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500 pointer-events-none" />
+                  <select
+                      className="w-full bg-slate-50 dark:bg-dark-900 hover:bg-slate-100 dark:hover:bg-dark-600 dark:hover:bg-dark-700 border border-slate-200 dark:border-dark-600 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-2xl pl-12 pr-10 py-4 appearance-none focus:ring-4 focus:ring-red-100 dark:focus:ring-red-900/30 focus:border-red-500 outline-none transition-all cursor-pointer shadow-sm"
+                      value={selectedFilial}
+                      onChange={(e) => setSelectedFilial(e.target.value)}
+                  >
+                      <option value="TODAS">VISÃO GLOBAL - TODAS AS FILIAIS</option>
+                      {filialOptions.map(f => (
+                          <option key={f} value={f}>{f}</option>
+                      ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  </div>
+              </div>
+          </div>
+      </div>
 
-        {/* KPI Card */}
-        <div className="md:col-span-4 bg-professional-red rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(127,29,29,0.4)] p-8 text-white relative overflow-hidden flex flex-col justify-between group">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        {/* Total Users Summary Card */}
+        <div className="bg-professional-red rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(127,29,29,0.4)] p-8 text-white relative overflow-hidden flex flex-col justify-between group">
              {/* Dynamic Background Elements */}
-            <div className="absolute top-0 right-0 w-56 h-56 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-white/10 transition-colors duration-700"></div>
+            <div className="absolute top-0 right-0 w-56 h-56 bg-white/5 dark:bg-dark-800/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-white dark:hover:bg-dark-700/10 transition-colors duration-700"></div>
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/20 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none"></div>
             
             <div className="relative z-10">
                 <div className="flex justify-between items-start mb-8">
-                     <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10 shadow-lg shadow-black/5">
+                     <div className="p-3.5 bg-white/10 dark:bg-dark-800/10 rounded-2xl backdrop-blur-md border border-white/10 shadow-lg shadow-black/5">
                         <Users className="w-6 h-6 text-white" />
                      </div>
                      <span className="flex items-center gap-1.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-100 px-3 py-1.5 rounded-full border border-emerald-400/20 backdrop-blur-sm">
@@ -168,13 +171,42 @@ export const Dashboard: React.FC = () => {
                 </div>
                 
                 <div className="mt-auto">
-                    <h2 className="text-6xl font-bold tracking-tighter mb-1 drop-shadow-sm">{filteredUsers.length}</h2>
-                    <div className="flex items-center justify-between">
-                        <p className="text-red-100 font-medium text-sm tracking-wide opacity-90">Total de Colaboradores</p>
-                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0">
-                            <ArrowUpRight className="w-4 h-4 text-white" />
-                        </div>
-                    </div>
+                    <h2 className="text-5xl font-bold tracking-tighter mb-1 drop-shadow-sm">{filteredUsers.length}</h2>
+                    <p className="text-red-100 font-medium text-sm tracking-wide opacity-90">Total de Colaboradores</p>
+                </div>
+            </div>
+        </div>
+
+        {/* Total Filiais Summary Card */}
+        <div className="bg-white dark:bg-dark-800 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-dark-700 p-8 relative overflow-hidden flex flex-col justify-between group hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500 delay-75">
+            <div className="absolute top-0 right-0 w-56 h-56 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-indigo-100/50 dark:group-hover:bg-indigo-900/20 transition-colors duration-700"></div>
+            <div className="relative z-10">
+                <div className="flex justify-between items-start mb-8">
+                     <div className="p-3.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm text-indigo-600 dark:text-indigo-400">
+                        <Building2 className="w-6 h-6" />
+                     </div>
+                </div>
+                
+                <div className="mt-auto">
+                    <h2 className="text-5xl font-bold tracking-tighter mb-1 text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{filialOptions.length}</h2>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium text-sm tracking-wide">Filiais Cadastradas</p>
+                </div>
+            </div>
+        </div>
+
+        {/* Logs Summary Card */}
+        <div className="bg-white dark:bg-dark-800 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-dark-700 p-8 relative overflow-hidden flex flex-col justify-between group hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500 delay-150">
+            <div className="absolute top-0 right-0 w-56 h-56 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-emerald-100/50 dark:group-hover:bg-emerald-900/20 transition-colors duration-700"></div>
+            <div className="relative z-10">
+                <div className="flex justify-between items-start mb-8">
+                     <div className="p-3.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl border border-emerald-100/50 dark:border-emerald-800/50 shadow-sm text-emerald-600 dark:text-emerald-400">
+                        <FileText className="w-6 h-6" />
+                     </div>
+                </div>
+                
+                <div className="mt-auto">
+                    <h2 className="text-5xl font-bold tracking-tighter mb-1 text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{logsCount}</h2>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium text-sm tracking-wide">Logs Recentes</p>
                 </div>
             </div>
         </div>
@@ -184,15 +216,15 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Bar Chart Card */}
-        <div className="bg-white p-8 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 h-[520px] flex flex-col relative overflow-hidden hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500 group">
+        <div className="bg-white dark:bg-dark-800 p-8 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-dark-700 h-[520px] flex flex-col relative overflow-hidden hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500 group">
            <div className="flex justify-between items-start mb-10 relative z-10">
               <div>
-                  <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                     Distribuição por Função
                   </h3>
                   <p className="text-slate-400 text-sm mt-1 font-medium">Quantidade de colaboradores por função</p>
               </div>
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <BarChart3 className="w-5 h-5" />
               </div>
            </div>
@@ -224,15 +256,15 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Pie Chart Card */}
-        <div className="bg-white p-8 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 h-[520px] flex flex-col relative overflow-hidden hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500 group">
+        <div className="bg-white dark:bg-dark-800 p-8 rounded-[2rem] shadow-[0_2px_20px_-4px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-dark-700 h-[520px] flex flex-col relative overflow-hidden hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06)] transition-all duration-500 group">
            <div className="flex justify-between items-start mb-10 relative z-10">
               <div>
-                  <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                     Distribuição por Setor
                   </h3>
                   <p className="text-slate-400 text-sm mt-1 font-medium">Top 6 setores com mais colaboradores</p>
               </div>
-              <div className="p-3 bg-red-50 text-red-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                  <PieIcon className="w-5 h-5" />
               </div>
            </div>
@@ -255,7 +287,7 @@ export const Dashboard: React.FC = () => {
                     <Cell 
                         key={`cell-${index}`} 
                         fill={VIBRANT_COLORS[(index + 4) % VIBRANT_COLORS.length]} 
-                        className="hover:opacity-80 transition-opacity duration-300 cursor-pointer outline-none focus:outline-none"
+                        className="hover:opacity-80 transition-opacity duration-300 cursor-pointer outline-none focus:outline-none dark:opacity-90"
                     />
                     ))}
                 </Pie>
@@ -265,10 +297,10 @@ export const Dashboard: React.FC = () => {
             
             {/* Center Text for Donut */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pt-14">
-                 <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-2">
+                 <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-dark-700 flex items-center justify-center mb-2">
                     <Sparkles className="w-5 h-5 text-slate-400" />
                  </div>
-                 <p className="text-4xl font-bold text-slate-800 tracking-tight">{sectorData.length}</p>
+                 <p className="text-4xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">{sectorData.length}</p>
                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Setores</p>
             </div>
           </div>

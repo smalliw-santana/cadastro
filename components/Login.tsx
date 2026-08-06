@@ -62,7 +62,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-100 p-4 font-sans relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-100 dark:bg-dark-700 p-4 font-sans relative overflow-hidden">
       
       <style>{`
         @keyframes welcomePop {
@@ -150,7 +150,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       {loginSuccess && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-primary-900/90 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
             <div className="flex flex-col items-center text-center p-8 animate-welcome-pop">
-                <div className="w-32 h-32 mb-8 rounded-full border-4 border-white/30 p-1 shadow-2xl overflow-hidden bg-white/10 backdrop-blur-xl flex items-center justify-center">
+                <div className="w-32 h-32 mb-8 rounded-full border-4 border-white/30 p-1 shadow-2xl overflow-hidden bg-white/10 dark:bg-dark-800/10 backdrop-blur-xl flex items-center justify-center">
                     {matchedUser?.avatarUrl ? (
                         <img 
                             src={matchedUser.avatarUrl} 
@@ -169,9 +169,9 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                     Bem-vindo de volta, <span className="font-bold">{matchedUser?.nome.split(' ')[0]}</span>.
                 </p>
                 <div className="mt-8 flex gap-2">
-                    <div className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-white dark:bg-dark-800 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-2 h-2 bg-white dark:bg-dark-800 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-2 h-2 bg-white dark:bg-dark-800 rounded-full animate-bounce"></div>
                 </div>
             </div>
         </div>
@@ -183,7 +183,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       <div className="absolute inset-0 bg-gradient-to-tr from-red-600/5 to-transparent pointer-events-none animate-shimmer"></div>
 
       {/* Main Container Card */}
-      <div className="relative bg-white rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden w-full max-w-[1000px] h-auto min-h-[600px] flex flex-col md:flex-row border border-white/50 backdrop-blur-xl animate-card-entrance">
+      <div className="relative bg-white dark:bg-dark-800 rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden w-full max-w-[1000px] h-auto min-h-[600px] flex flex-col md:flex-row border border-white/50 backdrop-blur-xl animate-card-entrance">
         <div className="absolute inset-0 pointer-events-none animate-subtle-float"></div>
         
         {/* Left Panel (Colored - Enterprise Theme) */}
@@ -197,7 +197,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center">
-                 <div className="mb-10 p-8 bg-white/5 rounded-[30px] backdrop-blur-md border border-white/10 shadow-2xl shadow-black/20 group hover:scale-105 transition-transform duration-500 ease-out animate-stagger-in [animation-delay:0.2s]">
+                 <div className="mb-10 p-8 bg-white/5 dark:bg-dark-800/5 rounded-[30px] backdrop-blur-md border border-white/10 shadow-2xl shadow-black/20 group hover:scale-105 transition-transform duration-500 ease-out animate-stagger-in [animation-delay:0.2s]">
                     <Logo className="w-20 h-20 drop-shadow-lg animate-slow-rotate" variant="white" />
                  </div>
                  
@@ -213,12 +213,12 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         </div>
 
         {/* Right Panel (White) - Form */}
-        <div className="w-full md:w-7/12 bg-white flex flex-col items-center justify-center p-8 md:p-16 relative">
+        <div className="w-full md:w-7/12 bg-white dark:bg-dark-800 flex flex-col items-center justify-center p-8 md:p-16 relative">
             
             <div className="w-full max-w-sm">
                 <div className="mb-10 text-center md:text-left flex flex-col items-center md:items-start">
                     {matchedUser && (
-                        <div className="w-24 h-24 mb-6 rounded-full border-4 border-white shadow-xl overflow-hidden bg-slate-50 flex items-center justify-center transition-all duration-500 ease-out animate-[scaleIn_0.3s_ease-out]">
+                        <div className="w-24 h-24 mb-6 rounded-full border-4 border-white shadow-xl overflow-hidden bg-slate-50 dark:bg-dark-900 flex items-center justify-center transition-all duration-500 ease-out animate-[scaleIn_0.3s_ease-out]">
                             {matchedUser.avatarUrl ? (
                                 <img 
                                     src={matchedUser.avatarUrl} 
@@ -231,7 +231,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                             )}
                         </div>
                     )}
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight animate-stagger-in [animation-delay:0.2s]">
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight animate-stagger-in [animation-delay:0.2s]">
                         {matchedUser ? `Olá, ${matchedUser.nome.split(' ')[0]}` : 'Login Seguro'}
                     </h1>
                     <p className="text-slate-500 text-sm animate-stagger-in [animation-delay:0.3s]">
@@ -243,7 +243,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                     
                     {/* Input User */}
                     <div className="space-y-1.5 animate-stagger-in [animation-delay:0.4s]">
-                        <label className="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">identificação</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider ml-1">identificação</label>
                         <div className="relative group">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
                                 <User className="w-5 h-5" />
@@ -255,14 +255,14 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                                 onChange={(e) => setLogin(e.target.value.toUpperCase())}
                                 required
                                 disabled={loading}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-100 focus:border-red-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white focus:bg-white"
+                                className="w-full bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-600 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-100 focus:border-red-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white dark:hover:bg-dark-700 focus:bg-white dark:focus:bg-dark-700"
                             />
                         </div>
                     </div>
 
                     {/* Input Password */}
                     <div className="space-y-1.5 animate-stagger-in [animation-delay:0.5s]">
-                        <label className="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Senha</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider ml-1">Senha</label>
                         <div className="relative group">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
                                 <Lock className="w-5 h-5" />
@@ -274,13 +274,13 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 disabled={loading}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-100 focus:border-red-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white focus:bg-white"
+                                className="w-full bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-600 rounded-xl px-4 py-3.5 pl-12 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-100 focus:border-red-500 transition-all shadow-sm disabled:opacity-50 hover:bg-white dark:hover:bg-dark-700 focus:bg-white dark:focus:bg-dark-700"
                             />
                         </div>
                     </div>
 
                     {error && (
-                        <div className="text-xs text-red-500 bg-red-50/50 p-4 rounded-xl text-center border border-red-100 animate-[shake_0.4s_ease-in-out] font-medium">
+                        <div className="text-xs text-red-500 bg-red-50 dark:bg-red-900/20/50 p-4 rounded-xl text-center border border-red-100 dark:border-red-900/50 animate-[shake_0.4s_ease-in-out] font-medium">
                             {error}
                         </div>
                     )}

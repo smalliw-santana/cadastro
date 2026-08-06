@@ -128,7 +128,7 @@ export const Reports: React.FC = () => {
   const ThSortable = ({ label, columnKey, align = 'left' }: { label: string, columnKey: SortKeys, align?: string }) => (
     <th 
       onClick={() => handleSort(columnKey)}
-      className={`px-2 py-3 font-bold text-slate-700 text-[10px] uppercase tracking-wider border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors select-none text-${align} print:text-black print:border-black print:text-xs print:p-2`}
+      className={`px-3 py-3 font-bold text-slate-700 dark:text-slate-200 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-dark-600 cursor-pointer hover:bg-slate-100 dark:hover:bg-dark-600 transition-colors select-none text-${align} print:text-black print:border-black print:text-xs print:p-2`}
     >
       <div className={`flex items-center ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
         {label}
@@ -138,7 +138,7 @@ export const Reports: React.FC = () => {
   );
 
   return (
-    <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out] print:p-0 print:space-y-0 print:w-full print:bg-white">
+    <div className="p-6 space-y-6 animate-[fadeIn_0.4s_ease-out] print:p-0 print:space-y-0 print:w-full print:bg-white dark:bg-dark-800">
       {/* 
         ROBUST PRINT STYLES WITH PORTAL SUPPORT
       */}
@@ -197,12 +197,12 @@ export const Reports: React.FC = () => {
       `}</style>
 
       {/* Main Screen Content Wrapper */}
-      <div id="reports-main-ui" className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 print:shadow-none print:border-none print:p-0 print:w-full print:rounded-none">
+      <div id="reports-main-ui" className="bg-white dark:bg-dark-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-dark-700 print:shadow-none print:border-none print:p-0 print:w-full print:rounded-none">
         
         {/* Screen Header - Hides on Print */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 print:hidden">
           <div>
-            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
               <FileBarChart2 className="w-6 h-6 text-primary-500" />
               Relatório de Usuários
             </h2>
@@ -222,7 +222,7 @@ export const Reports: React.FC = () => {
              <button 
                 onClick={() => setShowPreview(true)}
                 disabled={!selectedFilial || users.length === 0}
-                className="flex items-center gap-2 px-5 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-all font-bold uppercase tracking-wider text-xs"
+                className="flex items-center gap-2 px-5 py-3 bg-slate-100 dark:bg-dark-700 text-slate-700 dark:text-slate-200 rounded-xl hover:bg-slate-200 dark:bg-dark-600 transition-all font-bold uppercase tracking-wider text-xs"
               >
                 <Eye className="w-4 h-4" />
                 Visualizar
@@ -231,8 +231,8 @@ export const Reports: React.FC = () => {
         </div>
 
         {/* Screen Filters - Hides on Print */}
-        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8 print:hidden">
-            <label className="block text-sm font-medium text-slate-700 mb-2">Selecione a Filial de Origem</label>
+        <div className="bg-slate-50 dark:bg-dark-900 p-6 rounded-xl border border-slate-200 dark:border-dark-600 mb-8 print:hidden">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Selecione a Filial de Origem</label>
             <div className="relative max-w-md">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Building2 className="h-5 w-5 text-slate-400" />
@@ -240,7 +240,7 @@ export const Reports: React.FC = () => {
                 <select
                     value={selectedFilial}
                     onChange={(e) => setSelectedFilial(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white border border-slate-300 rounded-lg appearance-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all outline-none font-medium text-slate-700"
+                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-dark-800 border border-slate-300 dark:border-dark-500 rounded-lg appearance-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all outline-none font-medium text-slate-700 dark:text-slate-200"
                 >
                     <option value="">-- Selecione uma opção --</option>
                     <option value="TODAS">TODAS AS FILIAIS</option>
@@ -277,11 +277,11 @@ export const Reports: React.FC = () => {
             {/* Content Stats */}
             <div className="mb-6 flex justify-between items-end print:mb-4">
                 <div className={`${isExporting ? 'hidden' : 'block'} print:hidden`}>
-                    <h3 className="text-lg font-bold text-slate-800">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
                         {selectedFilial === 'TODAS' ? 'Quadro Geral' : selectedFilial}
                     </h3>
                 </div>
-                <div className="bg-slate-100 px-4 py-2 rounded-lg border border-slate-200 print:bg-transparent print:border-none print:px-0">
+                <div className="bg-slate-100 dark:bg-dark-700 px-4 py-2 rounded-lg border border-slate-200 dark:border-dark-600 print:bg-transparent print:border-none print:px-0">
                     <p className="text-xs text-slate-500 font-bold uppercase tracking-wider print:text-black">Total Registrados</p>
                     <p className="text-2xl font-bold text-primary-600 print:text-black flex items-center gap-2">
                         {users.length} <span className="text-sm text-slate-400 font-normal print:hidden">colaboradores</span>
@@ -290,16 +290,16 @@ export const Reports: React.FC = () => {
             </div>
 
             {users.length > 0 ? (
-                <div className="overflow-hidden rounded-lg border border-slate-200 print:border-none print:overflow-visible print:rounded-none">
+                <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-dark-600 print:border-none print:overflow-visible print:rounded-none">
                     <table className="w-full text-left border-collapse print:w-full print:text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap">
-                        <thead className="bg-slate-50 print:bg-white print:border-b-2 print:border-black">
+                        <thead className="bg-slate-50 print:bg-white dark:bg-dark-800 print:border-b-2 print:border-black">
                             <tr>
                                 <ThSortable label="Matrícula" columnKey="matricula" />
                                 <ThSortable label="Nome Completo" columnKey="nomeCompleto" />
                                 {selectedFilial === 'TODAS' && (
                                     <ThSortable label="Filial" columnKey="filial" />
                                 )}
-                                <th className="px-2 py-3 font-bold text-slate-700 border-b border-slate-200 text-left text-[10px] uppercase tracking-wider print:text-black print:border-black print:text-xs print:p-2">
+                                <th className="px-3 py-3 font-bold text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-dark-600 text-left text-xs uppercase tracking-wider print:text-black print:border-black print:text-xs print:p-2">
                                     Setor / Função
                                 </th>
                                 <ThSortable label="Login" columnKey="login" />
@@ -309,19 +309,19 @@ export const Reports: React.FC = () => {
                                 <ThSortable label="RHDO-TI" columnKey="rhdoTi" />
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 print:divide-slate-200">
+                        <tbody className="divide-y divide-slate-100 dark:divide-dark-700 print:divide-slate-200 dark:divide-dark-600">
                             {sortedUsers.map((user, index) => (
-                                <tr key={user.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} print:bg-transparent`}>
-                                    <td className="px-2 py-3 text-[11px] font-mono font-bold text-slate-600 print:text-black print:border-b print:border-gray-200">{user.matricula}</td>
+                                <tr key={user.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-dark-800' : 'bg-slate-50/50 dark:bg-dark-900/50'} print:bg-transparent`}>
+                                    <td className="px-3 py-3 text-sm font-mono font-medium text-slate-600 dark:text-slate-300 print:text-black print:border-b print:border-gray-200">{user.matricula}</td>
                                     
-                                    <td className="px-2 py-3 w-[200px] max-w-[200px] truncate print:text-black print:border-b print:border-gray-200">
-                                         <div className="font-semibold text-slate-800 text-[11px] truncate print:text-black" title={user.nomeCompleto}>{user.nomeCompleto}</div>
+                                    <td className="px-3 py-3 w-[200px] max-w-[200px] truncate print:text-black print:border-b print:border-gray-200">
+                                         <div className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate print:text-black" title={user.nomeCompleto}>{user.nomeCompleto}</div>
                                     </td>
                                     
                                     {selectedFilial === 'TODAS' && (
-                                        <td className="px-2 py-3 text-slate-600 print:text-black print:border-b print:border-gray-200">
+                                        <td className="px-3 py-3 text-slate-600 dark:text-slate-300 print:text-black print:border-b print:border-gray-200">
                                             {/* Changed from Red to Indigo/Slate */}
-                                            <span className="print:hidden inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-bold bg-red-50 text-red-700 border border-red-100">
+                                            <span className="print:hidden inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-bold bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/50">
                                                 {user.filial}
                                             </span>
                                             {/* Print Style: Text */}
@@ -329,26 +329,26 @@ export const Reports: React.FC = () => {
                                         </td>
                                     )}
                                     
-                                    <td className="px-2 py-3 w-[150px] max-w-[150px] truncate print:text-black print:border-b print:border-gray-200">
-                                         <div className="text-[11px] text-slate-700 font-medium truncate print:text-black" title={user.setor}>{user.setor}</div>
-                                         <div className="text-[10px] text-slate-500 uppercase tracking-wide truncate print:text-gray-600" title={user.funcao}>{user.funcao}</div>
+                                    <td className="px-3 py-3 w-[150px] max-w-[150px] truncate print:text-black print:border-b print:border-gray-200">
+                                         <div className="text-sm text-slate-700 dark:text-slate-200 font-medium truncate print:text-black" title={user.setor}>{user.setor}</div>
+                                         <div className="text-xs text-slate-500 uppercase tracking-wide truncate print:text-gray-600" title={user.funcao}>{user.funcao}</div>
                                     </td>
 
-                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
-                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.login}</span>
+                                    <td className="px-3 py-3 text-slate-600 dark:text-slate-300 text-sm print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 dark:bg-dark-700 px-2 py-1 rounded print:bg-transparent print:p-0">{user.login}</span>
                                     </td>
 
-                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
-                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.segmento || 'SUPERMERCADO'}</span>
+                                    <td className="px-3 py-3 text-slate-600 dark:text-slate-300 text-sm print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 dark:bg-dark-700 px-2 py-1 rounded print:bg-transparent print:p-0">{user.segmento || 'SUPERMERCADO'}</span>
                                     </td>
-                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
-                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.usuarioColetor || '-'}</span>
+                                    <td className="px-3 py-3 text-slate-600 dark:text-slate-300 text-sm print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 dark:bg-dark-700 px-2 py-1 rounded print:bg-transparent print:p-0">{user.usuarioColetor || '-'}</span>
                                     </td>
-                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
-                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.codigoVenda || '-'}</span>
+                                    <td className="px-3 py-3 text-slate-600 dark:text-slate-300 text-sm print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 dark:bg-dark-700 px-2 py-1 rounded print:bg-transparent print:p-0">{user.codigoVenda || '-'}</span>
                                     </td>
-                                    <td className="px-2 py-3 text-slate-600 text-[11px] print:text-black print:font-mono print:border-b print:border-gray-200">
-                                        <span className="bg-slate-100 px-2 py-1 rounded print:bg-transparent print:p-0">{user.rhdoTi || '-'}</span>
+                                    <td className="px-3 py-3 text-slate-600 dark:text-slate-300 text-sm print:text-black print:font-mono print:border-b print:border-gray-200">
+                                        <span className="bg-slate-100 dark:bg-dark-700 px-2 py-1 rounded print:bg-transparent print:p-0">{user.rhdoTi || '-'}</span>
                                     </td>
                                 </tr>
                             ))}
@@ -356,7 +356,7 @@ export const Reports: React.FC = () => {
                     </table>
                 </div>
             ) : (
-                <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-300 print:bg-white print:border-black">
+                <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-300 dark:border-dark-500 print:bg-white dark:bg-dark-800 print:border-black">
                     <Users className="w-12 h-12 text-slate-300 mx-auto mb-3 print:hidden" />
                     <p className="text-slate-500 font-medium print:text-black">Nenhum colaborador encontrado para esta seleção.</p>
                 </div>
@@ -368,7 +368,7 @@ export const Reports: React.FC = () => {
                 <p>Página 1 de 1</p>
             </div>
             
-            <div className="mt-8 pt-4 border-t border-slate-100 text-xs text-slate-400 flex justify-between print:hidden">
+            <div className="mt-8 pt-4 border-t border-slate-100 dark:border-dark-700 text-xs text-slate-400 flex justify-between print:hidden">
                 <p>Gerado pelo Gestão de Acessos</p>
                 <p>{new Date().toLocaleString()}</p>
             </div>
@@ -462,7 +462,7 @@ export const Reports: React.FC = () => {
                                 <th className="p-2 font-bold text-black text-xs uppercase text-left border-b border-gray-300">RHDO-TI</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200">
+                        <tbody className="divide-y divide-gray-200">
                             {sortedUsers.map((user) => (
                                 <tr key={user.id} className="bg-transparent">
                                     <td className="p-2 text-black border-b border-gray-200 font-mono">{user.matricula}</td>

@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { dbService } from '../services/dbService.ts';
 import { SystemUser } from '../types.ts';
 import { ShieldCheck, UserPlus, Trash2, Key, Save, AlertCircle, CheckCircle2, X, AlertTriangle, User, Pencil } from 'lucide-react';
 import { Input } from './Input.tsx';
 import { Select } from './Select.tsx';
+import { ConfirmModal } from './ConfirmModal.tsx';
 
 interface SystemUsersManagementProps {
   currentUser?: SystemUser;
@@ -193,7 +195,7 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
         `}</style>
 
         {/* Deletion Success Animation Overlay */}
-        {showDeleteSuccess && (
+        {showDeleteSuccess && createPortal(
             <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
                 <div className="flex flex-col items-center text-center p-8 animate-pop-in">
                     <div className="w-24 h-24 mb-6 rounded-full bg-red-600 flex items-center justify-center shadow-2xl shadow-red-600/40">
@@ -211,11 +213,12 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                         <div className="w-2 h-2 bg-red-400 rounded-full animate-ping [animation-delay:0.4s]"></div>
                     </div>
                 </div>
-            </div>
+            </div>,
+            document.body
         )}
 
         {/* Save Success Animation Overlay */}
-        {showSaveSuccess && (
+        {showSaveSuccess && createPortal(
             <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
                 <div className="flex flex-col items-center text-center p-8 animate-pop-in">
                     <div className="w-24 h-24 mb-6 rounded-full bg-green-600 flex items-center justify-center shadow-2xl shadow-green-600/40">
@@ -233,22 +236,24 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-ping [animation-delay:0.4s]"></div>
                     </div>
                 </div>
-            </div>
+            </div>,
+            document.body
         )}
         
-        {feedback && (
-            <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
-                feedback.type === 'success' ? 'bg-white border-green-200 text-green-700' : 'bg-white border-red-200 text-red-700'
+        {feedback && createPortal(
+            <div className={`fixed top-6 right-6 z-[150] p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
+                feedback.type === 'success' ? 'bg-white dark:bg-dark-800 border-green-200 text-green-700' : 'bg-white dark:bg-dark-800 border-red-200 text-red-700 dark:text-red-400'
             }`}>
                 {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <AlertCircle className="w-5 h-5 text-red-500"/>}
                 <span className="font-medium">{feedback.message}</span>
-                <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
-            </div>
+                <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600 dark:text-slate-300"><X className="w-4 h-4"/></button>
+            </div>,
+            document.body
         )}
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-sm border border-slate-100 dark:border-dark-700 overflow-hidden">
         <div className="bg-professional-red p-6 flex items-center gap-4">
-          <div className="p-3 bg-white/20 rounded-lg">
+          <div className="p-3 bg-white/20 dark:bg-dark-800/20 rounded-lg">
              <ShieldCheck className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -264,16 +269,16 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
             {/* Formulario - ONLY ADMIN */}
             {userRole === 'ADMIN' && (
                 <div className="lg:col-span-1 space-y-6">
-                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-dark-700 pb-2">
                         <UserPlus className="w-5 h-5 text-primary-500" />
                         {editingUserId ? 'Editar Usuário' : 'Novo Usuário de Sistema'}
                     </h3>
                     
                     <form onSubmit={handleAddUser} className="space-y-6">
                         {/* Avatar Card */}
-                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <div className="bg-slate-50 dark:bg-dark-900 p-6 rounded-xl border border-slate-200 dark:border-dark-600">
                             <div className="flex flex-col items-center space-y-4">
-                                <div className="w-24 h-24 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden shadow-inner">
+                                <div className="w-24 h-24 rounded-full bg-slate-200 dark:bg-dark-600 flex items-center justify-center overflow-hidden shadow-inner">
                                     {newUser.avatarUrl ? (
                                         <img src={newUser.avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                     ) : (
@@ -308,7 +313,7 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                                                 onClick={() => setNewUser({...newUser, avatarUrl: url})}
                                                 className={`shrink-0 w-12 h-12 rounded-full overflow-hidden border-2 transition-all ${newUser.avatarUrl === url ? 'border-primary-500 scale-110 shadow-md' : 'border-transparent hover:scale-105 hover:shadow'}`}
                                             >
-                                                <img src={url} alt={`Modelo ${i+1}`} className="w-full h-full object-cover bg-slate-100" referrerPolicy="no-referrer" />
+                                                <img src={url} alt={`Modelo ${i+1}`} className="w-full h-full object-cover bg-slate-100 dark:bg-dark-700" referrerPolicy="no-referrer" />
                                             </button>
                                         ))}
                                     </div>
@@ -317,7 +322,7 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                         </div>
 
                         {/* Form Fields Card */}
-                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
+                        <div className="bg-slate-50 dark:bg-dark-900 p-6 rounded-xl border border-slate-200 dark:border-dark-600 space-y-4">
                             <Input 
                                 label="Nome do Usuário"
                             value={newUser.nome}
@@ -352,7 +357,7 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                                 <button 
                                     type="button"
                                     onClick={cancelEdit}
-                                    className="flex-1 flex items-center justify-center gap-2 bg-slate-100 text-slate-600 py-3 rounded-lg hover:bg-slate-200 transition-all font-semibold"
+                                    className="flex-1 flex items-center justify-center gap-2 bg-slate-100 dark:bg-dark-700 text-slate-600 dark:text-slate-300 py-3 rounded-lg hover:bg-slate-200 dark:bg-dark-600 transition-all font-semibold"
                                 >
                                     Cancelar
                                 </button>
@@ -372,14 +377,14 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
 
             {/* Lista - Full width if Operator */}
             <div className={`space-y-4 ${userRole !== 'ADMIN' ? 'lg:col-span-3' : 'lg:col-span-2'}`}>
-                 <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2">
+                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-dark-700 pb-2">
                     <Key className="w-5 h-5 text-slate-500" />
                     Usuários com Acesso ({users.length})
                 </h3>
 
-                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                <div className="bg-white dark:bg-dark-800 rounded-xl border border-slate-200 dark:border-dark-600 overflow-hidden">
                     <table className="w-full text-left">
-                        <thead className="bg-slate-50 border-b border-slate-200">
+                        <thead className="bg-slate-50 dark:bg-dark-900 border-b border-slate-200 dark:border-dark-600">
                             <tr>
                                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase">Usuário</th>
                                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase">Login</th>
@@ -387,27 +392,27 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                                 {userRole === 'ADMIN' && <th className="p-4 text-xs font-semibold text-slate-500 uppercase text-right">Ações</th>}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 dark:divide-dark-700">
                             {users.map(user => (
-                                <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                                <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors">
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
                                             {user.avatarUrl ? (
-                                                <img src={user.avatarUrl} alt={user.nome} className="w-8 h-8 rounded-full object-cover border border-slate-200" referrerPolicy="no-referrer" />
+                                                <img src={user.avatarUrl} alt={user.nome} className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-dark-600" referrerPolicy="no-referrer" />
                                             ) : (
-                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                                                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-dark-700 flex items-center justify-center border border-slate-200 dark:border-dark-600">
                                                     <User className="w-4 h-4 text-slate-400" />
                                                 </div>
                                             )}
                                             <div>
-                                                <div className="font-bold text-slate-700">{user.nome}</div>
+                                                <div className="font-bold text-slate-700 dark:text-slate-200">{user.nome}</div>
                                                 <div className="text-xs text-slate-400">Criado em: {new Date(user.createdAt).toLocaleDateString()}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="p-4 text-sm font-mono text-slate-600 bg-slate-50 w-fit rounded">{user.login}</td>
+                                    <td className="p-4 text-sm font-mono text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-dark-900 w-fit rounded">{user.login}</td>
                                     <td className="p-4">
-                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold ${user.role === 'ADMIN' ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-700'}`}>
+                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold ${user.role === 'ADMIN' ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 dark:bg-dark-700 text-slate-700 dark:text-slate-200'}`}>
                                             {user.role === 'ADMIN' ? <ShieldCheck className="w-3 h-3" /> : <User className="w-3 h-3" />}
                                             {user.role}
                                         </span>
@@ -424,7 +429,7 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
                                                 </button>
                                                 <button 
                                                     onClick={(e) => confirmDelete(e, user)}
-                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                    className="p-2 text-slate-400 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-900/20 rounded-lg transition-all"
                                                     title="Revogar Acesso"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -443,37 +448,16 @@ export const SystemUsersManagement: React.FC<SystemUsersManagementProps> = ({ cu
       </div>
 
        {/* Delete Confirmation Modal */}
-        {isDeleteModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-[fadeIn_0.2s]">
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-[scaleIn_0.2s_ease-out]">
-                    <div className="p-6 text-center">
-                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <AlertTriangle className="w-8 h-8 text-red-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-800 mb-2">Confirmar Revogação</h3>
-                        <p className="text-slate-500 mb-6">
-                            Tem certeza que deseja revogar o acesso do usuário <strong>{userToDelete?.nome}</strong> (Login: {userToDelete?.login})?
-                        </p>
-                        
-                        <div className="flex gap-3 justify-center">
-                            <button 
-                                onClick={() => setIsDeleteModalOpen(false)}
-                                className="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium"
-                            >
-                                Cancelar
-                            </button>
-                            <button 
-                                onClick={handleExecuteDelete}
-                                className="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium shadow-lg shadow-red-500/30 flex items-center gap-2"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                                Sim, Revogar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )}
+        <ConfirmModal
+            isOpen={isDeleteModalOpen}
+            title="Confirmar Revogação"
+            message={`Tem certeza que deseja revogar o acesso do usuário ${userToDelete?.nome} (Login: ${userToDelete?.login})?`}
+            confirmText="Sim, Revogar"
+            onConfirm={handleExecuteDelete}
+            onCancel={() => setIsDeleteModalOpen(false)}
+            icon={Trash2}
+            variant="danger"
+        />
     </div>
   );
 };

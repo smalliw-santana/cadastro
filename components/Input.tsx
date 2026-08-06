@@ -12,7 +12,7 @@ export const Input: React.FC<InputProps> = ({ label, error, fullWidth, className
   return (
     <div className={`mb-4 ${fullWidth ? 'w-full' : ''} ${className}`}>
       {label && (
-        <label className="block text-sm font-medium text-slate-700 mb-1">
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
           {label}
         </label>
       )}
@@ -24,8 +24,8 @@ export const Input: React.FC<InputProps> = ({ label, error, fullWidth, className
         )}
         <input
           className={`
-            w-full px-4 py-2 bg-white border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 outline-none
-            ${error ? 'border-red-500' : 'border-slate-300'}
+            w-full px-4 py-2 bg-white dark:bg-dark-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 outline-none
+            ${error ? 'border-red-500' : 'border-slate-300 dark:border-dark-500'}
             ${Icon ? 'pl-10' : ''}
           `}
           {...props}

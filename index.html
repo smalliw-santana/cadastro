@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             fontFamily: {
@@ -35,13 +36,41 @@
                 600: '#475569', // Slate 600
               },
               dark: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#475569',
+                700: '#334155',
                 800: '#1e293b',
                 900: '#0f172a',
+                950: '#020617',
               }
             },
             boxShadow: {
               'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
               'glow': '0 4px 20px 0px rgba(220, 38, 38, 0.2)', // Red glow
+            },
+            keyframes: {
+              slideUpFade: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              scaleIn: {
+                '0%': { opacity: '0', transform: 'scale(0.95)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              }
+            },
+            animation: {
+              slideUpFade: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              fadeIn: 'fadeIn 0.3s ease-out',
+              scaleIn: 'scaleIn 0.3s ease-out'
             },
             backgroundImage: {
               'professional-red': 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #450a0a 100%)',
@@ -74,6 +103,13 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #94a3b8; 
       }
+      
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
 
       /* CRITICAL PRINT STYLES */
       @media print {
@@ -94,7 +130,7 @@
     </style>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-white text-slate-800 antialiased h-screen overflow-hidden">
+  <body class="bg-white dark:bg-dark-800 text-slate-800 dark:text-slate-100 antialiased h-screen overflow-hidden">
     <div id="root" class="h-full"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

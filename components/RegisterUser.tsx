@@ -176,11 +176,11 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
     if (userRole !== 'ADMIN') {
         return (
             <div className="flex h-full items-center justify-center p-6 animate-[fadeIn_0.3s]">
-                <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md">
-                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <ShieldAlert className="w-8 h-8 text-red-600" />
+                <div className="bg-white dark:bg-dark-800 p-8 rounded-2xl shadow-xl text-center max-w-md">
+                    <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <ShieldAlert className="w-8 h-8 text-red-600 dark:text-red-400" />
                     </div>
-                    <h2 className="text-xl font-bold text-slate-800 mb-2">Acesso Restrito</h2>
+                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Acesso Restrito</h2>
                     <p className="text-slate-500">
                         Seu nível de acesso (CONVIDADO) não permite realizar novos cadastros. Solicite permissão ao administrador.
                     </p>
@@ -193,11 +193,11 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
         <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out] relative">
             {feedback && (
                 <div className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${
-                    feedback.type === 'success' ? 'bg-white border-green-200 text-green-700' : 'bg-white border-red-200 text-red-700'
+                    feedback.type === 'success' ? 'bg-white dark:bg-dark-800 border-green-200 text-green-700' : 'bg-white dark:bg-dark-800 border-red-200 text-red-700 dark:text-red-400'
                 }`}>
                     {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-500"/> : <AlertCircle className="w-5 h-5 text-red-500"/>}
                     <span className="font-medium">{feedback.message}</span>
-                    <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600"><X className="w-4 h-4"/></button>
+                    <button onClick={() => setFeedback(null)} className="ml-2 text-slate-400 hover:text-slate-600 dark:text-slate-300"><X className="w-4 h-4"/></button>
                 </div>
             )}
 
@@ -241,7 +241,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
                 </div>
             )}
 
-            <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl border border-slate-100 dark:border-dark-700 overflow-hidden">
                 <div className="bg-professional-red p-6 flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold text-white">Novo Colaborador</h2>
@@ -255,14 +255,14 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
 
                 <form onSubmit={handleSubmit} className="p-8">
                     {existingUser && (
-                        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-4 animate-[fadeIn_0.3s_ease-out]">
-                            <div className="p-2 bg-amber-100 rounded-lg text-amber-600 shrink-0">
+                        <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-xl flex items-start gap-4 animate-[fadeIn_0.3s_ease-out]">
+                            <div className="p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg text-amber-600 dark:text-amber-400 shrink-0">
                                 <UserIcon className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="text-amber-800 font-bold text-sm mb-1">Matrícula já cadastrada</h3>
-                                <p className="text-amber-700 text-sm mb-2">Os dados abaixo pertencem ao colaborador que já utiliza esta matrícula:</p>
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-amber-900/80">
+                                <h3 className="text-amber-800 dark:text-amber-200 font-bold text-sm mb-1">Matrícula já cadastrada</h3>
+                                <p className="text-amber-700 dark:text-amber-300 text-sm mb-2">Os dados abaixo pertencem ao colaborador que já utiliza esta matrícula:</p>
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-amber-900/80 dark:text-amber-100/70">
                                     <p><span className="font-semibold">Nome:</span> {existingUser.nomeCompleto}</p>
                                     <p><span className="font-semibold">Filial:</span> {existingUser.filial}</p>
                                     <p><span className="font-semibold">Setor:</span> {existingUser.setor}</p>
