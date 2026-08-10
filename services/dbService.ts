@@ -219,8 +219,7 @@ export const dbService = {
           segmento: user.segmento,
           dataCadastro: user.data_cadastro,
           usuarioColetor: user.usuario_coletor,
-          rhdoTi: user.rhdo_ti,
-          status: user.status || 'ATIVO'
+          rhdoTi: user.rhdo_ti
       }));
   },
 
@@ -247,8 +246,7 @@ export const dbService = {
           segmento: data.segmento,
           dataCadastro: data.data_cadastro,
           usuarioColetor: data.usuario_coletor,
-          rhdoTi: data.rhdo_ti,
-          status: data.status || 'ATIVO'
+          rhdoTi: data.rhdo_ti
       };
   },
 
@@ -277,8 +275,7 @@ export const dbService = {
               codigo_venda: user.codigoVenda,
               segmento: user.segmento,
               usuario_coletor: user.usuarioColetor,
-              rhdo_ti: user.rhdoTi,
-              status: user.status || 'ATIVO'
+              rhdo_ti: user.rhdoTi
           }]);
           
       if (error) {
@@ -327,8 +324,7 @@ export const dbService = {
               codigo_venda: updatedUser.codigoVenda,
               segmento: updatedUser.segmento,
               usuario_coletor: updatedUser.usuarioColetor,
-              rhdo_ti: updatedUser.rhdoTi,
-              status: updatedUser.status || 'ATIVO'
+              rhdo_ti: updatedUser.rhdoTi
           })
           .eq('id', updatedUser.id);
           

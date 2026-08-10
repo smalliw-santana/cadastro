@@ -14,7 +14,6 @@ export interface User {
   segmento: string;
   usuarioColetor?: string;
   rhdoTi?: string;
-  status?: 'ATIVO' | 'INATIVO';
 }
 
 export interface SystemUser {

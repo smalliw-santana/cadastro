@@ -111,7 +111,7 @@ export const RegisterUser: React.FC<RegisterUserProps> = ({ currentUser }) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const requiredFields = ['matricula', 'nomeCompleto', 'filial', 'login', 'senha', 'funcao', 'setor'];
+        const requiredFields = ['matricula', 'nomeCompleto', 'filial', 'login', 'senha', 'funcao', 'setor', 'segmento'];
         if (requiredFields.some(field => !formData[field as keyof typeof formData])) {
             setFeedback({ type: 'error', message: 'Por favor, preencha todos os campos obrigatórios.' });
             return;

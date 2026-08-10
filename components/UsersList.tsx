@@ -18,7 +18,6 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
   const userRole = currentUser?.role || 'CONVIDADO';
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'TODOS' | 'ATIVO' | 'INATIVO'>('TODOS');
   const [funcaoFilter, setFuncaoFilter] = useState<string>('TODAS');
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -55,8 +54,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
       codigoVenda: '', // Optional
       segmento: '',
       usuarioColetor: '',
-      rhdoTi: '',
-      status: 'ATIVO' as 'ATIVO' | 'INATIVO'
+      rhdoTi: ''
   });
   
   // Options for Edit Form
@@ -164,8 +162,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           codigoVenda: user.codigoVenda || '',
           segmento: user.segmento || 'SUPERMERCADO',
           usuarioColetor: user.usuarioColetor || '',
-          rhdoTi: user.rhdoTi || '',
-          status: user.status || 'ATIVO'
+          rhdoTi: user.rhdoTi || ''
       });
       
       // Ensure current values are in the options list so the select doesn't break
@@ -196,8 +193,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
           codigoVenda: editForm.codigoVenda,
           segmento: editForm.segmento,
           usuarioColetor: editForm.usuarioColetor,
-          rhdoTi: editForm.rhdoTi,
-          status: editForm.status
+          rhdoTi: editForm.rhdoTi
       };
 
       setTimeout(async () => {
@@ -236,10 +232,6 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
   const filteredUsers = useMemo(() => {
     let result = users;
 
-    if (statusFilter !== 'TODOS') {
-        result = result.filter(user => user.status === statusFilter || (!user.status && statusFilter === 'ATIVO'));
-    }
-
     if (funcaoFilter !== 'TODAS') {
         result = result.filter(user => user.funcao === funcaoFilter);
     }
@@ -257,7 +249,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
     }
     
     return result;
-  }, [users, searchTerm, statusFilter, funcaoFilter]);
+  }, [users, searchTerm, funcaoFilter]);
 
   return (
     <div className="h-full p-6 flex flex-col gap-6 animate-[fadeIn_0.4s_ease-out] print:p-0 print:space-y-0">
@@ -366,16 +358,6 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                 <div className="flex gap-3 w-full xl:w-auto flex-col sm:flex-row flex-wrap justify-end">
                     <div className="flex gap-3 flex-1 sm:flex-none">
                         <select
-                            className="bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-600 rounded-xl px-3 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 min-w-[120px]"
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value as any)}
-                            disabled={isLoading}
-                        >
-                            <option value="TODOS">Todos os Status</option>
-                            <option value="ATIVO">Ativos</option>
-                            <option value="INATIVO">Inativos</option>
-                        </select>
-                        <select
                             className="bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-600 rounded-xl px-3 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 min-w-[160px] flex-1 sm:flex-none"
                             value={funcaoFilter}
                             onChange={(e) => setFuncaoFilter(e.target.value)}
@@ -437,7 +419,6 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                             <th className="px-3 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Usuário de Coletor</th>
                             <th className="px-3 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">Código de Venda</th>
                             <th className="px-3 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900">RHDO-TI</th>
-                            <th className="px-3 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wider print:text-slate-900 text-center">Status</th>
                             {userRole === 'ADMIN' && (
                                 <th className="px-3 py-3 font-semibold text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider text-right print:hidden">Ações</th>
                             )}
@@ -446,7 +427,7 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                     <tbody className="divide-y divide-slate-100 dark:divide-dark-700 bg-white dark:bg-dark-800">
                         {isLoading ? (
                             <tr>
-                                <td colSpan={12} className="p-12 text-center">
+                                <td colSpan={11} className="p-12 text-center">
                                      <div className="flex flex-col items-center justify-center gap-3">
                                         <Spinner size="lg" />
                                         <p className="text-slate-400 font-medium">Carregando registros...</p>
@@ -490,15 +471,6 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                     <td className="px-3 py-3 text-sm text-slate-600 font-mono text-center print:text-slate-800">{user.usuarioColetor || '-'}</td>
                                     <td className="px-3 py-3 text-sm text-slate-600 font-mono text-center print:text-slate-800">{user.codigoVenda || '-'}</td>
                                     <td className="px-3 py-3 text-sm text-slate-600 font-mono print:text-slate-800">{user.rhdoTi || '-'}</td>
-                                    <td className="px-3 py-3 text-center">
-                                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold border ${
-                                            user.status === 'INATIVO' 
-                                                ? 'bg-slate-50 dark:bg-dark-900 text-slate-500 border-slate-200 dark:border-dark-600'
-                                                : 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900/50'
-                                        }`}>
-                                            {user.status === 'INATIVO' ? 'INATIVO' : 'ATIVO'}
-                                        </span>
-                                    </td>
                                     
                                     {/* Action Column */}
                                     {userRole === 'ADMIN' && (
@@ -624,15 +596,6 @@ export const UsersList: React.FC<UsersListProps> = ({ onNavigateToRegister, curr
                                 options={options.funcoes}
                                 value={editForm.funcao}
                                 onChange={e => setEditForm({...editForm, funcao: e.target.value})}
-                                required
-                                disabled={userRole !== 'ADMIN'}
-                            />
-
-                            <Select 
-                                label="Status" 
-                                options={['ATIVO', 'INATIVO']}
-                                value={editForm.status}
-                                onChange={e => setEditForm({...editForm, status: e.target.value as 'ATIVO' | 'INATIVO'})}
                                 required
                                 disabled={userRole !== 'ADMIN'}
                             />
