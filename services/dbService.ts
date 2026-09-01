@@ -280,6 +280,12 @@ export const dbService = {
           
       if (error) {
           console.error('Error adding user:', error);
+          if (error.code === '23505') {
+              return { success: false, message: 'Já existe um usuário com esta matrícula ou login.' };
+          }
+          if (error.message.includes('row-level security policy') || error.code === '42501') {
+              return { success: false, message: 'Bloqueado por RLS (Row-Level Security). No Supabase SQL Editor, execute: ALTER TABLE users DISABLE ROW LEVEL SECURITY; (ou crie uma Policy permissiva).' };
+          }
           if (error.message.includes('rhdo_ti')) {
               return { success: false, message: 'Falta a coluna rhdo_ti. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN rhdo_ti text;' };
           }
@@ -292,7 +298,7 @@ export const dbService = {
           if (error.message.includes('segmento')) {
               return { success: false, message: 'Falta a coluna segmento. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN segmento text;' };
           }
-          return { success: false, message: 'Erro ao cadastrar usuário.' };
+          return { success: false, message: `Erro ao cadastrar usuário: ${error.message}` };
       }
       
       return { success: true, message: 'Usuário cadastrado com sucesso!' };
@@ -330,6 +336,12 @@ export const dbService = {
           
       if (error) {
           console.error('Error updating user:', error);
+          if (error.code === '23505') {
+              return { success: false, message: 'Já existe um usuário com esta matrícula ou login.' };
+          }
+          if (error.message.includes('row-level security policy') || error.code === '42501') {
+              return { success: false, message: 'Bloqueado por RLS (Row-Level Security). No Supabase SQL Editor, execute: ALTER TABLE users DISABLE ROW LEVEL SECURITY;' };
+          }
           if (error.message.includes('rhdo_ti')) {
               return { success: false, message: 'Falta a coluna rhdo_ti. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN rhdo_ti text;' };
           }
@@ -342,7 +354,7 @@ export const dbService = {
           if (error.message.includes('segmento')) {
               return { success: false, message: 'Falta a coluna segmento. Execute no SQL Editor do Supabase: ALTER TABLE users ADD COLUMN segmento text;' };
           }
-          return { success: false, message: 'Erro ao atualizar usuário.' };
+          return { success: false, message: `Erro ao atualizar usuário: ${error.message}` };
       }
       
       return { success: true, message: 'Usuário atualizado com sucesso!' };
@@ -356,6 +368,9 @@ export const dbService = {
           
       if (error) {
           console.error('Error deleting user:', error);
+          if (error.message.includes('row-level security policy') || error.code === '42501') {
+              return { success: false, message: 'Bloqueado por RLS. No Supabase SQL Editor, execute: ALTER TABLE users DISABLE ROW LEVEL SECURITY;' };
+          }
           return { success: false, message: 'Erro: Usuário não encontrado para exclusão.' };
       }
       
@@ -370,6 +385,9 @@ export const dbService = {
           
       if (error) {
           console.error('Error deleting all users:', error);
+          if (error.message.includes('row-level security policy') || error.code === '42501') {
+              return { success: false, message: 'Bloqueado por RLS. No Supabase SQL Editor, execute: ALTER TABLE users DISABLE ROW LEVEL SECURITY;' };
+          }
           return { success: false, message: 'Erro ao limpar base de dados.' };
       }
       
