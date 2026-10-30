@@ -73,13 +73,14 @@ export const UserProfile: React.FC<UserProfileProps> = ({ currentUser, onUpdate 
         setTimeout(() => setFeedback(null), 3000);
     };
 
-    const PREDEFINED_AVATARS = [
-        'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&backgroundColor=f8fafc',
-        'https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&backgroundColor=f8fafc',
-        'https://api.dicebear.com/7.x/adventurer/svg?seed=Leo&backgroundColor=f8fafc',
-        'https://api.dicebear.com/7.x/adventurer/svg?seed=Max&backgroundColor=f8fafc',
-        'https://api.dicebear.com/7.x/adventurer/svg?seed=Sam&backgroundColor=f8fafc'
+    const RAW_SVGS = [
+        `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#E2E8F0"/><path d="M 15 100 C 15 60 85 60 85 100" fill="#1E293B"/><path d="M 35 100 L 50 60 L 65 100 Z" fill="#FFFFFF"/><path d="M 47 100 L 50 72 L 53 100 Z" fill="#B91C1C"/><rect x="43" y="55" width="14" height="15" fill="#FFC3A0" rx="4"/><circle cx="50" cy="42" r="18" fill="#FFC3A0"/><path d="M 32 42 C 32 15 68 15 68 42 C 68 30 50 25 32 42 Z" fill="#0F172A"/></svg>`,
+        `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#F1F5F9"/><path d="M 20 100 C 20 65 80 65 80 100" fill="#DB2777"/><rect x="43" y="55" width="14" height="15" fill="#FAD7A1" rx="4"/><circle cx="50" cy="42" r="18" fill="#FAD7A1"/><path d="M 32 42 C 32 10 68 10 68 42 L 72 65 C 72 70 65 70 65 65 L 62 45 C 55 25 45 25 38 45 L 35 65 C 35 70 28 70 28 65 Z" fill="#451A03"/></svg>`,
+        `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#E2E8F0"/><path d="M 20 100 C 20 65 80 65 80 100" fill="#0F766E"/><rect x="43" y="55" width="14" height="15" fill="#F5CBA7" rx="4"/><circle cx="50" cy="42" r="18" fill="#F5CBA7"/><path d="M 32 42 C 32 70 68 70 68 42 C 50 55 32 42 32 42 Z" fill="#111827"/><path d="M 32 42 C 32 15 68 15 68 42 C 68 30 32 30 32 42 Z" fill="#111827"/></svg>`,
+        `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#F1F5F9"/><path d="M 32 42 L 25 80 C 25 90 75 90 75 80 L 68 42 Z" fill="#FCD34D"/><path d="M 20 100 C 20 65 80 65 80 100" fill="#2563EB"/><rect x="43" y="55" width="14" height="15" fill="#FFC3A0" rx="4"/><circle cx="50" cy="42" r="18" fill="#FFC3A0"/><path d="M 32 42 C 32 10 68 10 68 42 C 68 30 50 25 32 42 Z" fill="#FCD34D"/></svg>`,
+        `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#E2E8F0"/><path d="M 20 100 C 20 65 80 65 80 100" fill="#16A34A"/><rect x="43" y="55" width="14" height="15" fill="#F5CBA7" rx="4"/><circle cx="50" cy="42" r="18" fill="#F5CBA7"/><path d="M 32 42 C 32 15 68 15 68 42 C 68 25 50 15 32 42 Z" fill="#9A3412"/></svg>`
     ];
+    const PREDEFINED_AVATARS = RAW_SVGS.map(svg => `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`);
 
     return (
         <div className="max-w-4xl mx-auto p-6 animate-[fadeIn_0.3s_ease-out]">

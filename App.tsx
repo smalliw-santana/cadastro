@@ -13,7 +13,7 @@ import { SystemUsersManagement } from './components/SystemUsersManagement.tsx';
 import { SystemLogs } from './components/SystemLogs.tsx';
 import { UserProfile } from './components/UserProfile.tsx';
 import { Logo } from './components/Logo.tsx';
-import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck, User, ScrollText, Maximize, Minimize, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, UserPlus, LogOut, Menu, Database, ClipboardList, Settings, Layers, Building, Briefcase, ShieldCheck, User, ScrollText, Maximize, Minimize, Moon, Sun, RotateCw, Bell } from 'lucide-react';
 
 const App: React.FC = () => {
   // Now storing the full user object instead of just boolean
@@ -186,53 +186,96 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative print:block print:h-auto print:overflow-visible print:w-full print:static bg-white dark:bg-dark-900">
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative print:block print:h-auto print:overflow-visible print:w-full print:static bg-[#eef2f6] dark:bg-[#0b0f19]">
         {/* Top Header with Glassmorphism */}
-        <header className="h-20 bg-white/80 dark:bg-dark-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-dark-800/60 flex items-center justify-between px-8 z-10 shrink-0 print:hidden sticky top-0 transition-all">
-           <div className="flex items-center gap-4">
+        <header className="h-16 md:h-18 bg-white/90 dark:bg-dark-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-dark-800 shadow-xs flex items-center justify-between px-4 md:px-8 z-10 shrink-0 print:hidden sticky top-0 transition-all">
+           <div className="flex items-center gap-3 md:gap-4">
              {!isFullscreen && (
                  <button 
                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                   className="p-2.5 hover:bg-slate-50 dark:hover:bg-dark-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:shadow-sm border border-transparent hover:border-slate-100 dark:hover:border-dark-700 transition-all active:scale-95"
+                   className="p-2.5 hover:bg-slate-100 dark:hover:bg-dark-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:shadow-xs border border-transparent hover:border-slate-200 dark:hover:border-dark-700 transition-all active:scale-95"
                  >
-                   <Menu className="w-6 h-6" />
+                   <Menu className="w-5 h-5" />
                  </button>
              )}
+             
+             {/* Corporate Analytics Branding Badge */}
+             <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#991b1b] to-[#dc2626] flex items-center justify-center text-white shadow-xs shrink-0">
+                  <Logo className="w-4 h-4" variant="white" />
+                </div>
+                <span className="text-xs font-black tracking-widest text-slate-500 dark:text-slate-400 uppercase hidden sm:block">
+                  ANALYTICS CORPORATIVO
+                </span>
+             </div>
            </div>
            
-           <div className="flex items-center gap-2 md:gap-4">
+           <div className="flex items-center gap-2 md:gap-3">
+               {/* Quick Refresh Button */}
+               <button 
+                 onClick={() => {
+                   window.location.reload();
+                 }}
+                 className="p-2 hover:bg-slate-100 dark:hover:bg-dark-800 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all active:scale-95"
+                 title="Atualizar dados"
+               >
+                 <RotateCw className="w-4 h-4" />
+               </button>
+
+               {/* Notification Bell with indicator */}
+               <div className="relative">
+                 <button 
+                   onClick={() => setCurrentView('SYSTEM_LOGS')}
+                   className="p-2 hover:bg-slate-100 dark:hover:bg-dark-800 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all active:scale-95"
+                   title="Notificações e Logs"
+                 >
+                   <Bell className="w-4 h-4" />
+                   <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-dark-900"></span>
+                 </button>
+               </div>
+
+               {/* User Avatar & Name Pill */}
+               <div 
+                 onClick={() => setCurrentView('PROFILE')}
+                 className="flex items-center gap-2.5 pl-2 pr-3 py-1 rounded-2xl hover:bg-slate-100 dark:hover:bg-dark-800 cursor-pointer transition-all border border-transparent hover:border-slate-200 dark:hover:border-dark-700"
+               >
+                 <div className="w-8 h-8 rounded-full bg-slate-900 text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
+                   {currentUser.nome.substring(0, 2).toUpperCase()}
+                 </div>
+                 <div className="hidden md:flex flex-col text-left leading-none">
+                   <span className="text-xs font-black text-slate-800 dark:text-slate-100">
+                     {currentUser.nome}
+                   </span>
+                   <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mt-0.5">
+                     {currentUser.role === 'ADMIN' ? 'Admin Central' : 'Convidado'}
+                   </span>
+                 </div>
+               </div>
+
+               <div className="h-5 w-px bg-slate-200 dark:bg-dark-700 mx-1 hidden sm:block"></div>
+
                {/* Theme Toggle Button */}
                <button 
                  onClick={() => setIsDarkMode(!isDarkMode)}
-                 className="p-2.5 hover:bg-slate-50 dark:hover:bg-dark-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:shadow-sm border border-transparent hover:border-slate-100 dark:hover:border-dark-700 transition-all active:scale-95"
+                 className="p-2 hover:bg-slate-100 dark:hover:bg-dark-800 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all active:scale-95"
                  title={isDarkMode ? "Modo Claro" : "Modo Escuro"}
                >
-                 {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                 {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                </button>
                
                {/* Fullscreen Toggle Button */}
                <button 
                  onClick={() => setIsFullscreen(!isFullscreen)}
-                 className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 dark:hover:bg-dark-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:shadow-sm border border-transparent hover:border-slate-100 dark:hover:border-dark-700 transition-all active:scale-95"
+                 className="p-2 hover:bg-slate-100 dark:hover:bg-dark-800 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all active:scale-95"
                  title={isFullscreen ? "Sair da Tela Cheia" : "Tela Cheia"}
                >
-                 {isFullscreen ? (
-                   <>
-                     <Minimize className="w-5 h-5" />
-                     <span className="text-sm font-medium hidden sm:block">Sair da Tela Cheia</span>
-                   </>
-                 ) : (
-                   <>
-                     <Maximize className="w-5 h-5" />
-                     <span className="text-sm font-medium hidden sm:block">Tela Cheia</span>
-                   </>
-                 )}
+                 {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
                </button>
            </div>
         </header>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-auto bg-white dark:bg-dark-900 print:overflow-visible print:bg-white print:h-auto print:block scroll-smooth">
+        <div className="flex-1 overflow-auto bg-[#eef2f6] dark:bg-[#0b0f19] print:overflow-visible print:bg-white print:h-auto print:block scroll-smooth">
           <div key={currentView} className="w-full px-4 md:px-8 mx-auto min-h-full flex flex-col py-6 animate-slideUpFade">
             {currentView === 'DASHBOARD' && <Dashboard />}
             {currentView === 'REGISTER' && <RegisterUser currentUser={currentUser} />}
